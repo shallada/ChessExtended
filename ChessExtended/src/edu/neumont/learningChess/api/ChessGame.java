@@ -19,7 +19,7 @@ public class ChessGame {
 	public ChessGameState getGameState() {
 		ChessGameState gameState = new ChessGameState();
 		
-		for (LocationEnumeration locations = new LocationEnumeration(); locations.hasMoreElements(); ) {
+		for (LocationIterator locations = new LocationIterator(); locations.hasMoreElements(); ) {
 			Location location = locations.nextElement();
 		}
 		return gameState;

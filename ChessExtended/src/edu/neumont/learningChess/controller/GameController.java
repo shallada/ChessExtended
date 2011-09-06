@@ -13,6 +13,7 @@ import edu.neumont.learnignChess.model.HumanPlayer;
 import edu.neumont.learnignChess.model.ICheckChecker;
 import edu.neumont.learnignChess.model.King;
 import edu.neumont.learnignChess.model.Knight;
+import edu.neumont.learnignChess.model.LocationIterator;
 import edu.neumont.learnignChess.model.Move;
 import edu.neumont.learnignChess.model.Pawn;
 import edu.neumont.learnignChess.model.Player;
@@ -20,7 +21,13 @@ import edu.neumont.learnignChess.model.Queen;
 import edu.neumont.learnignChess.model.RemotePlayer;
 import edu.neumont.learnignChess.model.Rook;
 import edu.neumont.learnignChess.model.Team;
+import edu.neumont.learnignChess.model.Pawn.IPromotionListener;
+import edu.neumont.learningChess.api.ChessGame;
+import edu.neumont.learningChess.api.ChessGameState;
 import edu.neumont.learningChess.api.Location;
+import edu.neumont.learningChess.api.PieceDescription;
+import edu.neumont.learningChess.api.PieceType;
+import edu.neumont.learningChess.api.TeamColor;
 import edu.neumont.learningChess.view.BoardDisplay;
 import edu.neumont.learningChess.view.BoardDisplayPiece;
 import edu.neumont.learningChess.view.IDisplay;
@@ -71,6 +78,77 @@ public class GameController implements ChessBoard.IListener, ICheckChecker {
 		buildTeamPawns(blackTeam, blackPlayer.getPromotionListener());
 		
 		boardDisplay.setVisible(true);
+	}
+	
+	private PieceType getPieceTypeFromChessPiece(ChessPiece chessPiece){
+		PieceType pieceType = null;
+		
+		if(chessPiece instanceof King){
+			pieceType = PieceType.KING;
+		}
+		else if(chessPiece instanceof Queen){
+			pieceType = PieceType.QUEEN;
+		}
+		else if(chessPiece instanceof Bishop){
+			pieceType = PieceType.BISHOP;
+		}
+		else if(chessPiece instanceof Knight){
+			pieceType = PieceType.KNIGHT;
+		}
+		else if(chessPiece instanceof Rook){
+			pieceType = PieceType.ROOK;
+		}
+		else if(chessPiece instanceof Pawn){
+			pieceType = PieceType.PAWN;
+		}
+		
+		return pieceType;
+	}
+	
+	private ChessPiece getChessPieceFromPieceType(PieceType pieceType, IPromotionListener promotionListener){
+		ChessPiece chessPiece = null;
+		
+		switch(pieceType){
+		case KING:
+			chessPiece = new King(this);
+			break;
+		case QUEEN:
+			chessPiece = new Queen();
+			break;
+		case BISHOP:
+			chessPiece = new Bishop();
+			break;
+		case KNIGHT:
+			chessPiece = new Knight();
+			break;
+		case ROOK:
+			chessPiece = new Rook();
+			break;
+		case PAWN:
+			chessPiece = new Pawn(promotionListener);
+			break;
+		}
+		
+		return chessPiece;
+	}
+	
+	public ChessGameState getCurrentGameState(){
+		ChessGameState chessGameState = new ChessGameState();
+		LocationIterator locations = new LocationIterator();
+		
+		while(locations.hasNext()){
+			Location location = locations.next();
+			ChessPiece chessPiece = getPiece(location);
+			
+			TeamColor teamColor = chessPiece.getTeam().isWhite() ? TeamColor.LIGHT : TeamColor.DARK;
+			PieceType pieceType = getPieceTypeFromChessPiece(chessPiece);
+			PieceDescription pieceDescription = new PieceDescription(teamColor, chessPiece.hasMoved(), pieceType);
+			
+			chessGameState.setPieceDescription(location, pieceDescription);
+			
+		}
+		
+		return chessGameState;
 	}
 
 	private Player createPlayer(PlayerType playerType, Team team) {
