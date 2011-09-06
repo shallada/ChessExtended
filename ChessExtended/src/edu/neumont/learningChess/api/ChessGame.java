@@ -5,7 +5,7 @@ package edu.neumont.learningChess.api;
 //import java.util.Enumeration;
 //import java.util.Iterator;
 //import java.util.Vector;
-import edu.neumont.learnignChess.model.*;
+import edu.neumont.learningChess.model.*;
 
 public class ChessGame {
 

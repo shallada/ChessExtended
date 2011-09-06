@@ -1,4 +1,4 @@
-package edu.neumont.learnignChess.model;
+package edu.neumont.learningChess.model;
 
 import java.io.InputStream;
 import java.io.BufferedReader;
