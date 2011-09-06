@@ -1,7 +1,8 @@
 package edu.neumont.learningChess.model;
 import java.util.ArrayList;
-import java.util.Enumeration;
+import java.util.Arrays;
 import java.util.Iterator;
+import java.util.List;
 
 import edu.neumont.learningChess.api.Location;
 
@@ -73,5 +74,28 @@ public class Team {
 			}
 		}
 		return moves.iterator();
+	}
+	
+
+	@SuppressWarnings("rawtypes")
+	public boolean onlyHasPieces(Class<?extends ChessPiece> ... pieces) {
+		List<Class> chessPieces = new ArrayList<Class>();
+		chessPieces.addAll(Arrays.asList(new Class[]{Pawn.class, Rook.class, Bishop.class, Queen.class, King.class, Knight.class}));
+		boolean onlyHasPieces = workingPieces.size() == pieces.length;
+		if(onlyHasPieces) {
+			int[] pieceTypeCount = new int[6];
+			List<Class> workingPiecesList = new ArrayList<Class>();
+			for (ChessPiece piece : workingPieces) {
+				workingPiecesList.add(piece.getClass());
+			}
+			for (Class piece : workingPiecesList) {
+				pieceTypeCount[chessPieces.indexOf(piece)]++;
+			}
+			for (Class piece : pieces) {
+				pieceTypeCount[chessPieces.indexOf(piece)]--;
+			}
+			onlyHasPieces = Arrays.equals(pieceTypeCount, new int[16]);
+		}
+		return onlyHasPieces;
 	}
 }

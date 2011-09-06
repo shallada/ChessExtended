@@ -1,6 +1,7 @@
 package edu.neumont.learningChess.controller;
 
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Vector;
 
@@ -54,6 +55,8 @@ public class GameController implements IListener, ICheckChecker {
 	private Player currentPlayer;
 	
 	private boolean showDisplay;
+	
+	private ArrayList<ChessGameState> history = new ArrayList<ChessGameState>(); 
 
 	public GameController(PlayerType whiteType, PlayerType blackType) {
 
@@ -78,6 +81,8 @@ public class GameController implements IListener, ICheckChecker {
 
 		buildTeamPawns(whiteTeam, whitePlayer.getPromotionListener());
 		buildTeamPawns(blackTeam, blackPlayer.getPromotionListener());
+		
+		history.add(getCurrentGameState());
 		
 		boardDisplay.setVisible(true);
 	}
@@ -148,6 +153,19 @@ public class GameController implements IListener, ICheckChecker {
 			
 			chessGameState.setPieceDescription(location, pieceDescription);
 			
+			MoveDescription moveDescription = getMostRecentMoveDescription();
+			ChessPiece movingPiece = moveDescription.getMovingPiece();
+			if(movingPiece != null && movingPiece instanceof Pawn){
+				Move move = moveDescription.getMove();
+				Location fromLocation = move.getFrom();
+				Location toLocation = move.getTo();
+				
+				int pawnMoveDistance = Math.abs(fromLocation.getRow() - toLocation.getRow());
+				if(pawnMoveDistance == 2){
+					chessGameState.setPawnMovedTwoLocation(toLocation);
+				}
+			}
+			
 		}
 		
 		return chessGameState;
@@ -180,6 +198,7 @@ public class GameController implements IListener, ICheckChecker {
 			Move move = currentPlayer.getMove();
 			board.makeMove(move);
 			togglePlayers();
+			history.add(getCurrentGameState());
 			isCheckmate = isCheckmate();
 			isStalemate = isStalemate();
 			if (!isCheckmate && isInCheck(currentPlayer.getTeam())) {
@@ -285,8 +304,66 @@ public class GameController implements IListener, ICheckChecker {
 	public boolean isStalemate() {
 		Team currentTeam = currentPlayer.getTeam();
 		return (!isInCheck(currentTeam) && !canMove(currentTeam))
-				|| ((whiteTeam.getPieceCount() == 1) && (blackTeam
-						.getPieceCount() == 1));
+				|| ((isThreeFoldRepetition() 
+						|| hasFiftyMovesWithNoCapturesOrPawnMoves() 
+						|| isStalematePieceCombination()));
+	}
+
+	@SuppressWarnings("unchecked")
+	private boolean isStalematePieceCombination() {
+		return ((whiteTeam.onlyHasPieces(King.class) && blackTeam.onlyHasPieces(King.class))
+				|| (whiteTeam.onlyHasPieces(King.class) && blackTeam.onlyHasPieces(King.class, Knight.class))
+				|| (whiteTeam.onlyHasPieces(King.class, Knight.class) && blackTeam.onlyHasPieces(King.class))
+				|| (whiteTeam.onlyHasPieces(King.class) && blackTeam.onlyHasPieces(King.class, Bishop.class))
+				|| (whiteTeam.onlyHasPieces(King.class, Bishop.class) && blackTeam.onlyHasPieces(King.class)) || isStalemateBishopPieceCombination());
+	}
+	
+	@SuppressWarnings("unchecked")
+	private boolean isStalemateBishopPieceCombination() {
+		boolean isStalematePossible = whiteTeam.onlyHasPieces(King.class, Bishop.class) && blackTeam.onlyHasPieces(King.class, Bishop.class);
+		boolean firstBishopFound = false;
+		boolean secondBishopFound = false;
+		boolean isFirstBishopOnDark = false;
+		for (Iterator<Location> locations = new LocationIterator(); !secondBishopFound && isStalematePossible && locations.hasNext();) {
+			Location location = locations.next();
+			if (getPieceTypeAt(location, Bishop.class) != null) {
+				if (!firstBishopFound) {
+					isFirstBishopOnDark = ChessBoard.isDarkSquare(location);
+					firstBishopFound = true;
+				} else {
+					isStalematePossible = isFirstBishopOnDark == ChessBoard.isDarkSquare(location);
+				}
+			}
+		}
+		return isStalematePossible;
+	}
+	
+	@SuppressWarnings("unchecked")
+	private <T extends ChessPiece> T getPieceTypeAt(Location location, Class<T> cls) {
+		T returnedPiece = null;
+		ChessPiece piece = board.getPiece(location);
+		if ((piece != null) && (piece.getClass().equals(cls))) {
+			returnedPiece = (T) piece;
+		}
+		return returnedPiece;
+	}
+
+	private boolean hasFiftyMovesWithNoCapturesOrPawnMoves() {
+		return board.hasFiftyMovesWithNoCapturesOrPawnMoves();
+		
+	}
+
+	private boolean isThreeFoldRepetition() {
+		int seen = 1;
+
+		ChessGameState currentState = getCurrentGameState();
+		for (Iterator<ChessGameState> states = history.iterator(); (seen < 3) && states.hasNext();) {
+			ChessGameState state = states.next();
+			if (currentState.equals(state))
+				seen++;
+		}
+
+		return seen >= 3;
 	}
 
 	@Override
@@ -346,7 +423,11 @@ public class GameController implements IListener, ICheckChecker {
 	}
 
 	public Iterator<ExtendedMove> getGameHistory() {
-		// TODO Auto-generated method stub
-		return null;
+		Vector<ExtendedMove> extendedMoves = new Vector<ExtendedMove>();
+		for(Iterator<MoveDescription> tryingMovesIterator = board.getTryingMovesIterator();tryingMovesIterator.hasNext();) {
+			MoveDescription moveDescription = tryingMovesIterator.next();
+			extendedMoves.add(new ExtendedMove(moveDescription.getMove(),getPieceTypeFromChessPiece(moveDescription.getPromotionPiece())));
+		}
+		return extendedMoves.iterator();
 	}
 }

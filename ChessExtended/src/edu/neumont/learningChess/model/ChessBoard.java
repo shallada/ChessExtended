@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Stack;
 
+import edu.neumont.learningChess.api.ChessGameState;
 import edu.neumont.learningChess.api.Location;
+import edu.neumont.learningChess.api.PieceType;
 
 
 public class ChessBoard {
@@ -259,6 +261,25 @@ public class ChessBoard {
 			putPiece(rook, rookMove.getFrom());
 			rook.decrementMoveCount();
 		}
+	}
+	
+	public static boolean isDarkSquare(Location location) {
+		return (location.getRow() + location.getColumn()) % 2 == 0;
+	}
+
+	public boolean hasFiftyMovesWithNoCapturesOrPawnMoves() {
+		boolean captureOrMove = false;
+		int count = 0;
+		
+		for (Iterator<MoveDescription> moves = tryingMoves.iterator(); moves.hasNext() && count < 50 && !captureOrMove;count++) {
+			MoveDescription move = moves.next();
+			captureOrMove = (move.getTakenPiece() != null) || (move.getMovingPiece().getClass() == Pawn.class);
+		}
+		return captureOrMove;
+	}
+	
+	public Iterator<MoveDescription> getTryingMovesIterator() {
+		return tryingMoves.iterator();
 	}
 	
 }
