@@ -26,6 +26,7 @@ import edu.neumont.learningChess.model.MoveDescription;
 import edu.neumont.learningChess.model.Pawn;
 import edu.neumont.learningChess.model.Pawn.IPromotionListener;
 import edu.neumont.learningChess.model.Player;
+import edu.neumont.learningChess.model.ProxyPlayer;
 import edu.neumont.learningChess.model.Queen;
 import edu.neumont.learningChess.model.RemotePlayer;
 import edu.neumont.learningChess.model.Rook;
@@ -38,7 +39,7 @@ import edu.neumont.learningChess.view.NullDisplay;
 public class GameController implements IListener, ICheckChecker {
 
 	public enum PlayerType {
-		Human, AI, Remote
+		Human, AI, Remote, Proxy
 	}
 
 	private IDisplay boardDisplay;
@@ -108,7 +109,7 @@ public class GameController implements IListener, ICheckChecker {
 		// TODO Auto-generated constructor stub
 	}
 
-	private PieceType getPieceTypeFromChessPiece(ChessPiece chessPiece){
+	public static PieceType getPieceTypeFromChessPiece(ChessPiece chessPiece){
 		PieceType pieceType = null;
 
 		if (chessPiece instanceof King) {
@@ -127,10 +128,8 @@ public class GameController implements IListener, ICheckChecker {
 
 		return pieceType;
 	}
-
-	@SuppressWarnings("unused")
-	private ChessPiece getChessPieceFromPieceType(PieceType pieceType,
-			IPromotionListener promotionListener) {
+	
+	public ChessPiece getChessPieceFromPieceType(PieceType pieceType, IPromotionListener promotionListener){
 		ChessPiece chessPiece = null;
 
 		switch (pieceType) {
@@ -206,6 +205,9 @@ public class GameController implements IListener, ICheckChecker {
 			player = new AIPlayer(board, team, (team == whiteTeam) ? blackTeam
 					: whiteTeam);
 			break;
+		case Proxy:
+			player = new ProxyPlayer(team);
+			break;
 		}
 		return player;
 	}
@@ -232,9 +234,9 @@ public class GameController implements IListener, ICheckChecker {
 			boardDisplay.notifyStalemate();
 		}
 	}
-
-	public void tryMove(MoveDescription moveDescription) {
-		board.tryMove(moveDescription.getMove());
+	
+	public void tryMove(Move move) {
+		board.tryMove(move);
 		togglePlayers();
 	}
 
@@ -468,5 +470,9 @@ public class GameController implements IListener, ICheckChecker {
 
 	public ChessBoard getBoard() {
 		return board;
+	}
+
+	public Player getCurrentPlayer() {
+		return currentPlayer;
 	}
 }

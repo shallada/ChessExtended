@@ -1,6 +1,5 @@
 package edu.neumont.learningChess.model;
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.Iterator;
 
 import edu.neumont.learningChess.api.Location;
