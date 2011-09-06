@@ -4,7 +4,6 @@ import java.net.URL;
 import java.util.Iterator;
 import java.util.Vector;
 
-import edu.neumont.learnignChess.model.LocationIterator;
 import edu.neumont.learningChess.api.ChessGameState;
 import edu.neumont.learningChess.api.ExtendedMove;
 import edu.neumont.learningChess.api.Location;
@@ -20,6 +19,7 @@ import edu.neumont.learningChess.model.HumanPlayer;
 import edu.neumont.learningChess.model.ICheckChecker;
 import edu.neumont.learningChess.model.King;
 import edu.neumont.learningChess.model.Knight;
+import edu.neumont.learningChess.model.LocationIterator;
 import edu.neumont.learningChess.model.Move;
 import edu.neumont.learningChess.model.Pawn;
 import edu.neumont.learningChess.model.Pawn.IPromotionListener;
