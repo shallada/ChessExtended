@@ -6,7 +6,7 @@ import edu.neumont.learningChess.api.Location;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 
-public class RemotePlayer extends Player implements ChessCommandHandler, ChessBoard.IListener {
+public class RemotePlayer extends Player implements ChessCommandHandler, IListener {
 	
 	public class CommandProcessor extends Thread {
 		private TextCommandProcessor commandProcessor;
