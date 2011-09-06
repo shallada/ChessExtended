@@ -267,7 +267,7 @@ public class ChessBoard {
 		return (location.getRow() + location.getColumn()) % 2 == 0;
 	}
 
-	public boolean hasFiftyMovesWithNoCapturesOrPawnMoves() {
+	public boolean hasFiftyMovesWithCapturesOrPawnMoves() {
 		boolean captureOrMove = false;
 		int count = 0;
 		

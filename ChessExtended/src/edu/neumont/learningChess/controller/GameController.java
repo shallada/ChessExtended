@@ -171,13 +171,17 @@ public class GameController implements IListener, ICheckChecker {
 			Location location = locations.next();
 			ChessPiece chessPiece = getPiece(location);
 			
-			TeamColor teamColor = chessPiece.getTeam().isWhite() ? TeamColor.LIGHT : TeamColor.DARK;
-			PieceType pieceType = getPieceTypeFromChessPiece(chessPiece);
-			PieceDescription pieceDescription = new PieceDescription(teamColor, chessPiece.hasMoved(), pieceType);
-			
-			chessGameState.setPieceDescription(location, pieceDescription);
-			
-			MoveDescription moveDescription = getMostRecentMoveDescription();
+			if(chessPiece != null){
+				TeamColor teamColor = chessPiece.getTeam().isWhite() ? TeamColor.LIGHT : TeamColor.DARK;
+				PieceType pieceType = getPieceTypeFromChessPiece(chessPiece);
+				PieceDescription pieceDescription = new PieceDescription(teamColor, chessPiece.hasMoved(), pieceType);
+				
+				chessGameState.setPieceDescription(location, pieceDescription);
+			}
+		}
+		
+		MoveDescription moveDescription = getMostRecentMoveDescription();
+		if(moveDescription != null){
 			ChessPiece movingPiece = moveDescription.getMovingPiece();
 			if(movingPiece != null && movingPiece instanceof Pawn){
 				Move move = moveDescription.getMove();
@@ -189,7 +193,6 @@ public class GameController implements IListener, ICheckChecker {
 					chessGameState.setPawnMovedTwoLocation(toLocation);
 				}
 			}
-			
 		}
 		
 		return chessGameState;
@@ -332,7 +335,7 @@ public class GameController implements IListener, ICheckChecker {
 		Team currentTeam = currentPlayer.getTeam();
 		return (!isInCheck(currentTeam) && !canMove(currentTeam))
 				|| ((isThreeFoldRepetition() 
-						|| hasFiftyMovesWithNoCapturesOrPawnMoves() 
+						|| !hasFiftyMovesWithCapturesOrPawnMoves() 
 						|| isStalematePieceCombination()));
 	}
 
@@ -375,8 +378,8 @@ public class GameController implements IListener, ICheckChecker {
 		return returnedPiece;
 	}
 
-	private boolean hasFiftyMovesWithNoCapturesOrPawnMoves() {
-		return board.hasFiftyMovesWithNoCapturesOrPawnMoves();
+	private boolean hasFiftyMovesWithCapturesOrPawnMoves() {
+		return board.hasFiftyMovesWithCapturesOrPawnMoves();
 		
 	}
 
