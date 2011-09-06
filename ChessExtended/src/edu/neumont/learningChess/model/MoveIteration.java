@@ -6,7 +6,7 @@ import java.util.Iterator;
 import edu.neumont.learningChess.api.Location;
 
 
-public class MoveEnumeration implements Enumeration<Location> {
+public class MoveIteration implements Iterator<Location> {
 
 	private ChessBoard board;
 	private Location from;
@@ -14,7 +14,7 @@ public class MoveEnumeration implements Enumeration<Location> {
 	private ArrayList<Location> locations = new ArrayList<Location>();
 	private Iterator<Location> iter = null;
 	
-	public MoveEnumeration(ChessBoard board, Location from) {
+	public MoveIteration(ChessBoard board, Location from) {
 		this.board = board;
 		this.from = from;
 		ChessPiece piece = board.getPiece(from);
@@ -112,8 +112,10 @@ public class MoveEnumeration implements Enumeration<Location> {
 		}
 	}
 	
+	
+
 	@Override
-	public boolean hasMoreElements() {
+	public boolean hasNext() {
 		if (iter == null) {
 			iter = locations.iterator();
 		}
@@ -121,7 +123,12 @@ public class MoveEnumeration implements Enumeration<Location> {
 	}
 
 	@Override
-	public Location nextElement() {
+	public Location next() {
 		return iter.next();
+	}
+
+	@Override
+	public void remove() {
+		throw new RuntimeException("Can't remove moves");
 	}
 }

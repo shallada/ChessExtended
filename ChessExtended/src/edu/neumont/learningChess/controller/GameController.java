@@ -3,12 +3,15 @@ package edu.neumont.learningChess.controller;
 import java.net.URL;
 import java.util.Enumeration;
 import java.util.Iterator;
+import java.util.Vector;
 
-
+import edu.neumont.learningChess.api.ChessGameState;
+import edu.neumont.learningChess.api.ExtendedMove;
 import edu.neumont.learningChess.api.Location;
 import edu.neumont.learningChess.model.AIPlayer;
 import edu.neumont.learningChess.model.Bishop;
 import edu.neumont.learningChess.model.ChessBoard;
+import edu.neumont.learningChess.model.ChessBoard.MoveDescription;
 import edu.neumont.learningChess.model.ChessPiece;
 import edu.neumont.learningChess.model.HumanPlayer;
 import edu.neumont.learningChess.model.ICheckChecker;
@@ -25,7 +28,6 @@ import edu.neumont.learningChess.view.BoardDisplay;
 import edu.neumont.learningChess.view.BoardDisplayPiece;
 import edu.neumont.learningChess.view.IDisplay;
 import edu.neumont.learningChess.view.NullDisplay;
-import edu.neumont.learningChess.view.IDisplay.Piece;
 
 public class GameController implements ChessBoard.IListener, ICheckChecker {
 
@@ -99,8 +101,7 @@ public class GameController implements ChessBoard.IListener, ICheckChecker {
 			boardDisplay.promptForMove((currentPlayer == whitePlayer));
 			Move move = currentPlayer.getMove();
 			board.makeMove(move);
-			currentPlayer = (currentPlayer == whitePlayer) ? blackPlayer
-					: whitePlayer;
+			togglePlayers();
 			isCheckmate = isCheckmate();
 			isStalemate = isStalemate();
 			if (!isCheckmate && isInCheck(currentPlayer.getTeam())) {
@@ -112,6 +113,16 @@ public class GameController implements ChessBoard.IListener, ICheckChecker {
 		} else if (isStalemate) {
 			boardDisplay.notifyStalemate();
 		}
+	}
+	
+	public void tryMove(MoveDescription moveDescription) {
+		board.tryMove(moveDescription.getMove());
+		togglePlayers();
+	}
+
+	private void togglePlayers() {
+		currentPlayer = (currentPlayer == whitePlayer) ? blackPlayer
+				: whitePlayer;
 	}
 	
 	public ChessPiece getPiece(Location location) {
@@ -173,9 +184,9 @@ public class GameController implements ChessBoard.IListener, ICheckChecker {
 		for (Iterator<ChessPiece> i = team.getPieces(); !canMove && i.hasNext();) {
 			ChessPiece piece = i.next();
 			// For each valid move of that piece and checkmate applies...
-			for (Enumeration<Location> e = piece.getLegalMoves(board); !canMove
-					&& e.hasMoreElements();) {
-				Location to = e.nextElement();
+			for (Iterator<Location> e = piece.getLegalMoves(board); !canMove
+					&& e.hasNext();) {
+				Location to = e.next();
 				// Apply the move
 				board.tryMove(new Move(piece.getLocation(), to));
 				// checkmate applies If the current team is not in check
@@ -226,5 +237,43 @@ public class GameController implements ChessBoard.IListener, ICheckChecker {
 	public void removePiece(Location location) {
 		IDisplay.Piece displayPiece = boardDisplay.removePiece(location);
 		displayPiece.setPieceLocation(null);
+	}
+
+	public MoveDescription getMostRecentMoveDescription() {
+		return board.getMostRecentMoveDescription();
+	}
+
+	public void untryMove() {
+		togglePlayers();
+		board.undoTriedMove();
+	}
+
+	public Team getCurrentTeam() {
+		return currentPlayer.getTeam();
+	}
+
+	public Iterator<Move> getPossibleMovesForCurrentTeam() {
+		return currentPlayer.getTeam().getMoves(board);
+	}
+
+	public Iterator<Move> getPossibleMoves(Location location) {
+		Iterator<Location> legalMoves = getPiece(location).getLegalMoves(board);
+		Vector<Move> moves = new Vector<Move>();
+		for(;legalMoves.hasNext();) {
+			Location legalMoveDestination = legalMoves.next();
+			moves.add(new Move(location, legalMoveDestination ));
+		}
+		return moves.iterator();
+		
+	}
+
+	public Iterator<ExtendedMove> getGameHistory() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public ChessGameState getCurrentGameState() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

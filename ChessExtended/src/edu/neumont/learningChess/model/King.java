@@ -1,6 +1,7 @@
 package edu.neumont.learningChess.model;
 
 import java.util.Enumeration;
+import java.util.Iterator;
 
 import edu.neumont.learningChess.api.Location;
 
@@ -33,8 +34,8 @@ public class King extends ChessPiece {
 		return NAME;
 	}
 
-	public Enumeration<Location> getLegalMoves(ChessBoard board) {
-		MoveEnumeration moves = new MoveEnumeration(board, location);
+	public Iterator<Location> getLegalMoves(ChessBoard board) {
+		MoveIteration moves = new MoveIteration(board, location);
 		moves.addAdjustments(kingAdjustments);
 		if (!hasMoved()) {
 			Move leftCastle = new Move(location, new Location(location.getRow(), location.getColumn() - 2));
@@ -49,16 +50,16 @@ public class King extends ChessPiece {
 		return moves;
 	}
 
-	public Enumeration<Location> getLegalMovesSansCastling(ChessBoard board) {
-		MoveEnumeration moves = new MoveEnumeration(board, location);
+	public Iterator<Location> getLegalMovesSansCastling(ChessBoard board) {
+		MoveIteration moves = new MoveIteration(board, location);
 		moves.addAdjustments(kingAdjustments);
 		return moves;
 	}
 
 	public boolean canAttack(ChessBoard board, Location target) {
 		boolean attacks = false;
-		for (Enumeration<Location> e = getLegalMovesSansCastling(board); !attacks && e.hasMoreElements(); ) {
-			Location location = e.nextElement();
+		for (Iterator<Location> e = getLegalMovesSansCastling(board); !attacks && e.hasNext(); ) {
+			Location location = e.next();
 			attacks = target.equals(location);
 		}
 		return attacks;

@@ -70,11 +70,11 @@ public class Pawn extends ChessPiece {
 		return new Location(location.getRow()+step, location.getColumn()+right);
 	}
 
-	public Enumeration<Location> getLegalMoves(ChessBoard board) {
+	public Iterator<Location> getLegalMoves(ChessBoard board) {
 		return new PawnMoves(board, this);
 	}
 	
-	public class PawnMoves implements Enumeration<Location> {
+	public class PawnMoves implements Iterator<Location> {
 
 		private Iterator<Location> iter;
 		
@@ -119,15 +119,20 @@ public class Pawn extends ChessPiece {
 			
 			return target;
 		}
-		
+
 		@Override
-		public boolean hasMoreElements() {
+		public boolean hasNext() {
 			return iter.hasNext();
 		}
 
 		@Override
-		public Location nextElement() {
+		public Location next() {
 			return iter.next();
+		}
+
+		@Override
+		public void remove() {
+			throw new RuntimeException("Can't remove pawn moves");
 		}
 		
 	}
