@@ -8,7 +8,6 @@ import edu.neumont.learningChess.api.Location;
 import edu.neumont.learningChess.api.PieceDescription;
 import edu.neumont.learningChess.api.PieceType;
 import edu.neumont.learningChess.api.TeamColor;
-import edu.neumont.learningChess.model.ChessBoard.MoveDescription;
 import edu.neumont.learningChess.model.Move;
 import edu.neumont.learningChess.model.Pawn.IPromotionListener;
 
