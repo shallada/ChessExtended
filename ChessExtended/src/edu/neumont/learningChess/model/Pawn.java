@@ -1,6 +1,5 @@
 package edu.neumont.learningChess.model;
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.Iterator;
 
 import edu.neumont.learningChess.api.Location;
@@ -108,7 +107,7 @@ public class Pawn extends ChessPiece {
 		
 		private Location getEnPassantTarget(ChessBoard board) {
 			Location target = null;
-			ChessBoard.MoveDescription description = board.getMostRecentMoveDescription();
+			MoveDescription description = board.getMostRecentMoveDescription();
 			if (description != null) {
 				Move move = description.getMove();
 				if ((board.getPiece(move.getTo()) instanceof Pawn)  &&

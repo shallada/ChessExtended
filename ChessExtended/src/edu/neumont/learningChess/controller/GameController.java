@@ -14,14 +14,15 @@ import edu.neumont.learningChess.api.TeamColor;
 import edu.neumont.learningChess.model.AIPlayer;
 import edu.neumont.learningChess.model.Bishop;
 import edu.neumont.learningChess.model.ChessBoard;
-import edu.neumont.learningChess.model.ChessBoard.MoveDescription;
 import edu.neumont.learningChess.model.ChessPiece;
 import edu.neumont.learningChess.model.HumanPlayer;
 import edu.neumont.learningChess.model.ICheckChecker;
+import edu.neumont.learningChess.model.IListener;
 import edu.neumont.learningChess.model.King;
 import edu.neumont.learningChess.model.Knight;
 import edu.neumont.learningChess.model.LocationIterator;
 import edu.neumont.learningChess.model.Move;
+import edu.neumont.learningChess.model.MoveDescription;
 import edu.neumont.learningChess.model.Pawn;
 import edu.neumont.learningChess.model.Pawn.IPromotionListener;
 import edu.neumont.learningChess.model.Player;
@@ -36,7 +37,7 @@ import edu.neumont.learningChess.view.NullDisplay;
 
 
 
-public class GameController implements ChessBoard.IListener, ICheckChecker {
+public class GameController implements IListener, ICheckChecker {
 
 	public enum PlayerType {
 		Human, AI, Remote

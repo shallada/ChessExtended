@@ -18,56 +18,9 @@ public class ChessBoard {
 	private static final int BLACK_PROMOTION_ROW = 0;
 	
 	
-	public class MoveDescription {
-		private Move move;
-		private ChessPiece movingPiece;
-		private Team takenTeam;
-		private ChessPiece takenPiece;
-		private ChessPiece promotionPiece = null;
-		
-		public MoveDescription(Move move, ChessPiece movingPiece, Team takenTeam, ChessPiece takenPiece) {
-			this.move = move;
-			this.movingPiece = movingPiece;
-			this.takenTeam = takenTeam;
-			this.takenPiece = takenPiece;
-		}
-		
-		public Move getMove() {
-			return move;
-		}
-		
-		public ChessPiece getMovingPiece() {
-			return movingPiece;
-		}
-		
-		public Team getTakenTeam() {
-			return takenTeam;
-		}
-		
-		public ChessPiece getTakenPiece() {
-			return takenPiece;
-		}
-		
-		public void setTakenPiece(ChessPiece piece) {
-			takenPiece = piece;
-			takenTeam = piece.getTeam();
-		}
-
-		public ChessPiece getPromotionPiece() {
-			return promotionPiece;
-		}
-
-		public void setPromotionPiece(ChessPiece promotionPiece) {
-			this.promotionPiece = promotionPiece;
-		}
-
-	}
 	
-	public interface IListener {
-		public void movePiece(Move move, boolean capturePiece);
-		public void placePiece(ChessPiece piece, Location location);
-		public void removePiece(Location location);
-	}
+	
+	
 	
 	public static boolean isInBounds(Location location) {
 		return (location.getRow() >= 0) && (location.getRow() < NUMBER_OF_ROWS) && (location.getColumn() >= 0) && (location.getColumn() < NUMBER_OF_COLUMNS);
