@@ -87,6 +87,29 @@ public class GameController implements IListener, ICheckChecker {
 		boardDisplay.setVisible(true);
 	}
 	
+	public GameController(ChessGameState gameState) {
+		// TODO finish this method
+		
+		TeamColor movingTeamColor = gameState.getMovingTeamColor();
+		currentPlayer = movingTeamColor == TeamColor.DARK ? blackPlayer : whitePlayer;
+		
+		gameState.getPawnMovedTwoLocation();
+		
+		for (LocationIterator locationIterator = new LocationIterator(); locationIterator.hasNext();) {
+			Location location = locationIterator.next();
+			PieceDescription pieceDescription = gameState.getPieceDescription(location);
+			ChessPiece chessPieceFromPieceType = getChessPieceFromPieceType(pieceDescription.getPieceType(),null);
+			Team team = null;			
+			this.setupPiece(chessPieceFromPieceType, location, team);
+			
+		}
+		
+	}
+
+	public GameController(IDisplay display) {
+		// TODO Auto-generated constructor stub
+	}
+
 	private PieceType getPieceTypeFromChessPiece(ChessPiece chessPiece){
 		PieceType pieceType = null;
 		
@@ -432,5 +455,9 @@ public class GameController implements IListener, ICheckChecker {
 			extendedMoves.add(new ExtendedMove(moveDescription.getMove(),getPieceTypeFromChessPiece(moveDescription.getPromotionPiece())));
 		}
 		return extendedMoves.iterator();
+	}
+
+	public ChessBoard getBoard() {
+		return board;
 	}
 }
