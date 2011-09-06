@@ -106,7 +106,7 @@ public class GameController implements IListener, ICheckChecker {
 		
 	}
 
-	public GameController(NullDisplay nullDisplay) {
+	public GameController(IDisplay display) {
 		// TODO Auto-generated constructor stub
 	}
 
