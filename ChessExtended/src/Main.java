@@ -1,6 +1,6 @@
-import edu.neumont.learnignChess.model.TextCommandProcessor;
-import edu.neumont.learnignChess.model.TextCommandProcessorOutput;
 import edu.neumont.learningChess.controller.GameController;
+import edu.neumont.learningChess.model.TextCommandProcessor;
+import edu.neumont.learningChess.model.TextCommandProcessorOutput;
 
 
 

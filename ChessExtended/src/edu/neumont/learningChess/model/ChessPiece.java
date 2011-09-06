@@ -1,6 +1,7 @@
-package edu.neumont.learnignChess.model;
+package edu.neumont.learningChess.model;
 
 import java.util.Enumeration;
+import java.util.Iterator;
 
 import edu.neumont.learningChess.api.Location;
 
@@ -50,12 +51,12 @@ public abstract class ChessPiece {
 		return team;
 	}
 	
-	public abstract Enumeration<Location> getLegalMoves(ChessBoard board);
+	public abstract Iterator<Location> getLegalMoves(ChessBoard board);
 	
 	public boolean canAttack(ChessBoard board, Location target) {
 		boolean attacks = false;
-		for (Enumeration<Location> e = getLegalMoves(board); !attacks && e.hasMoreElements(); ) {
-			Location location = e.nextElement();
+		for (Iterator<Location> e = getLegalMoves(board); !attacks && e.hasNext(); ) {
+			Location location = e.next();
 			attacks = target.equals(location);
 		}
 		return attacks;
@@ -64,8 +65,8 @@ public abstract class ChessPiece {
 	public boolean isLegalMove(ChessBoard board, Move move) {
 		boolean isValid = false;
 		
-		for (Enumeration<Location> e = getLegalMoves(board); !isValid && e.hasMoreElements(); ) {
-			Location there = e.nextElement();
+		for (Iterator<Location> e = getLegalMoves(board); !isValid && e.hasNext(); ) {
+			Location there = e.next();
 			isValid = there.equals(move.getTo());
 		}
 		return isValid;

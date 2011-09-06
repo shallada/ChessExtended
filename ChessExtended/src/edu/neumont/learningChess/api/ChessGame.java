@@ -5,56 +5,65 @@ package edu.neumont.learningChess.api;
 //import java.util.Enumeration;
 //import java.util.Iterator;
 //import java.util.Vector;
-import edu.neumont.learnignChess.model.*;
+import java.util.Iterator;
+
+import edu.neumont.learningChess.controller.GameController;
+import edu.neumont.learningChess.controller.GameController.PlayerType;
+import edu.neumont.learningChess.model.ChessBoard.MoveDescription;
+import edu.neumont.learningChess.model.Move;
+import edu.neumont.learningChess.model.Pawn.IPromotionListener;
 
 public class ChessGame {
 
+	
+	private GameController gameController;
 
-	public ChessGame() {
+	public ChessGame(PlayerType whiteType, PlayerType blackType) {
+		this.gameController = new GameController(whiteType, blackType);
+	}
+	
+	public ChessGame(GameController gameController) {
+		this.gameController = gameController;
 	}
 
-//	public ChessGame(ChessGameState gameState) {
-//	}
-//
 	public ChessGameState getGameState() {
-		ChessGameState gameState = new ChessGameState();
-		
-		for (LocationIterator locations = new LocationIterator(); locations.hasMoreElements(); ) {
-			Location location = locations.nextElement();
-		}
-		return gameState;
+		return gameController.getCurrentGameState();
 	}
 
-//	public MoveDescription getMoveDescription(Move move,
-//			IPromotionListener promotionListener) {
-//
-//	}
-//
-//	public void makeMove(MoveDescription moveDescription) {
-//	}
-//
-//	public void unMakeMove() {
-//	}
-//	
-//	public void setGameState(ChessGameState gameState) {
-//	}
-//
-//
-//	public boolean isCheck() {
-//	}
-//
-//	public boolean isCheckMate() {
-//	}
-//
-//	public boolean isStaleMate() {
-//	}
-//
-//	public Enumeration<Move> getPossibleMoves() {
-//	}
-//
-//	public Enumeration<Move> getPossibleMoves(Location location) {
-//	}
-//
-//	public Enumeration<ExtendedMove> getGameHistory() {
-//	}
+	public MoveDescription getMoveDescription(Move move,
+			IPromotionListener promotionListener) {
+		return gameController.getMostRecentMoveDescription();
+	}
+	
+	public void makeMove(MoveDescription moveDescription) {
+		gameController.tryMove(moveDescription);
+	}
+
+	public void unMakeMove() {
+		gameController.untryMove();
+	}
+	
+	public boolean isCheck() {
+		return gameController.isInCheck(gameController.getCurrentTeam());
+	}
+
+	public boolean isCheckMate() {
+		return gameController.isCheckmate();
+	}
+
+	public boolean isStaleMate() {
+		return gameController.isStalemate();
+	}
+	
+	public Iterator<Move> getPossibleMoves() {
+		return gameController.getPossibleMovesForCurrentTeam();
+	}
+	
+	public Iterator<Move> getPossibleMoves(Location location) {
+		return gameController.getPossibleMoves(location);
+	}
+	
+	public Iterator<ExtendedMove> getGameHistory() {
+		return gameController.getGameHistory();
+	}
 }

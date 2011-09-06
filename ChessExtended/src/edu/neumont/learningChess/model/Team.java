@@ -1,4 +1,4 @@
-package edu.neumont.learnignChess.model;
+package edu.neumont.learningChess.model;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Iterator;
@@ -66,8 +66,8 @@ public class Team {
 		ArrayList<ChessPiece> pieces = (ArrayList<ChessPiece>) workingPieces.clone();
 		for (Iterator<ChessPiece> i = pieces.iterator(); i.hasNext();  ) {
 			ChessPiece piece = i.next();
-			for (Enumeration<Location> e = piece.getLegalMoves(board); e.hasMoreElements(); ) {
-				Location to = e.nextElement();
+			for (Iterator<Location> e = piece.getLegalMoves(board); e.hasNext(); ) {
+				Location to = e.next();
 				Move move = new Move(piece.getLocation(), to);
 				moves.add(move);
 			}

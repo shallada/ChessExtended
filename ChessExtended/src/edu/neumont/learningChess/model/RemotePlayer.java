@@ -1,4 +1,4 @@
-package edu.neumont.learnignChess.model;
+package edu.neumont.learningChess.model;
 import java.util.ArrayList;
 
 import edu.neumont.learningChess.api.Location;

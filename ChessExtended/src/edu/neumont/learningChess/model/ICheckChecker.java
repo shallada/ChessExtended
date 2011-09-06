@@ -1,4 +1,4 @@
-package edu.neumont.learnignChess.model;
+package edu.neumont.learningChess.model;
 
 public interface ICheckChecker {
 	public boolean isInCheck(Team team);

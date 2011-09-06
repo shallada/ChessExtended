@@ -3,6 +3,7 @@ package edu.neumont.learnignChess.model;
 import java.util.Iterator;
 
 import edu.neumont.learningChess.api.Location;
+import edu.neumont.learningChess.model.ChessBoard;
 
 public class LocationIterator implements Iterator<Location> {
 

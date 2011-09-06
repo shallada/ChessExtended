@@ -1,7 +1,7 @@
 package edu.neumont.learningChess.view;
-import edu.neumont.learnignChess.model.Move;
-import edu.neumont.learnignChess.model.Pawn;
 import edu.neumont.learningChess.api.Location;
+import edu.neumont.learningChess.model.Move;
+import edu.neumont.learningChess.model.Pawn;
 
 
 

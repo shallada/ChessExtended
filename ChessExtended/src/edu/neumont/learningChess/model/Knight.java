@@ -1,8 +1,10 @@
-package edu.neumont.learnignChess.model;
+package edu.neumont.learningChess.model;
 
-import java.util.Enumeration;
+import java.util.Iterator;
 
 import edu.neumont.learningChess.api.Location;
+
+
 
 
 public class Knight extends ChessPiece {
@@ -30,8 +32,8 @@ public class Knight extends ChessPiece {
 		return NAME;
 	}
 	
-	public Enumeration<Location> getLegalMoves(ChessBoard board) {
-		MoveEnumeration moves = new MoveEnumeration(board, location);
+	public Iterator<Location> getLegalMoves(ChessBoard board) {
+		MoveIteration moves = new MoveIteration(board, location);
 		moves.addAdjustments(knightAdjustments);
 		return moves;
 	}

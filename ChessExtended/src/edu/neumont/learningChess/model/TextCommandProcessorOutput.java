@@ -1,4 +1,4 @@
-package edu.neumont.learnignChess.model;
+package edu.neumont.learningChess.model;
 import java.io.PrintStream;
 import java.util.Hashtable;
 

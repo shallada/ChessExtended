@@ -8,11 +8,11 @@ import java.util.Iterator;
 import javax.swing.*;
 
 
-import edu.neumont.learnignChess.model.ChessBoard;
-import edu.neumont.learnignChess.model.ChessPiece;
-import edu.neumont.learnignChess.model.Move;
-import edu.neumont.learnignChess.model.Queen;
 import edu.neumont.learningChess.api.Location;
+import edu.neumont.learningChess.model.ChessBoard;
+import edu.neumont.learningChess.model.ChessPiece;
+import edu.neumont.learningChess.model.Move;
+import edu.neumont.learningChess.model.Queen;
 
 @SuppressWarnings("serial")
 public class BoardDisplay extends JFrame implements MouseListener, MouseMotionListener, IDisplay {
