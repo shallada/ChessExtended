@@ -1,5 +1,7 @@
 package edu.neumont.learningChess.tests.api;
 
+import org.junit.Test;
+
 import edu.neumont.learningChess.api.ChessGame;
 import edu.neumont.learningChess.api.ChessGameState;
 import edu.neumont.learningChess.api.Location;

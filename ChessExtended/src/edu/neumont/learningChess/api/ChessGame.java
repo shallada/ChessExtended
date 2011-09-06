@@ -9,8 +9,8 @@ import java.util.Iterator;
 
 import edu.neumont.learningChess.controller.GameController;
 import edu.neumont.learningChess.controller.GameController.PlayerType;
-import edu.neumont.learningChess.model.ChessBoard.MoveDescription;
 import edu.neumont.learningChess.model.Move;
+import edu.neumont.learningChess.model.MoveDescription;
 import edu.neumont.learningChess.model.Pawn.IPromotionListener;
 
 public class ChessGame {
