@@ -271,11 +271,16 @@ public class ChessBoard {
 		boolean captureOrMove = false;
 		int count = 0;
 		
-		for (Iterator<MoveDescription> moves = tryingMoves.iterator(); moves.hasNext() && count < 50 && !captureOrMove;count++) {
+		for (Iterator<MoveDescription> moves = tryingMoves.iterator(); moves.hasNext() && count < 50;count++) {
 			MoveDescription move = moves.next();
 			captureOrMove = (move.getTakenPiece() != null) || (move.getMovingPiece().getClass() == Pawn.class);
+			if(captureOrMove)
+			{
+				count=0;
+			}
 		}
-		return captureOrMove;
+		System.out.println(count);
+		return count<50;
 	}
 	
 	public Iterator<MoveDescription> getTryingMovesIterator() {

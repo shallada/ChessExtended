@@ -84,8 +84,31 @@ public class GameController implements IListener, ICheckChecker {
 
 		boardDisplay.setVisible(true);
 	}
+	
+	public GameController(ChessGameState gameState) {
+		// TODO finish this method
+		
+		TeamColor movingTeamColor = gameState.getMovingTeamColor();
+		currentPlayer = movingTeamColor == TeamColor.DARK ? blackPlayer : whitePlayer;
+		
+		gameState.getPawnMovedTwoLocation();
+		
+		for (LocationIterator locationIterator = new LocationIterator(); locationIterator.hasNext();) {
+			Location location = locationIterator.next();
+			PieceDescription pieceDescription = gameState.getPieceDescription(location);
+			ChessPiece chessPieceFromPieceType = getChessPieceFromPieceType(pieceDescription.getPieceType(),null);
+			Team team = null;			
+			this.setupPiece(chessPieceFromPieceType, location, team);
+			
+		}
+		
+	}
 
-	private PieceType getPieceTypeFromChessPiece(ChessPiece chessPiece) {
+	public GameController(IDisplay display) {
+		// TODO Auto-generated constructor stub
+	}
+
+	private PieceType getPieceTypeFromChessPiece(ChessPiece chessPiece){
 		PieceType pieceType = null;
 
 		if (chessPiece instanceof King) {
@@ -141,30 +164,29 @@ public class GameController implements IListener, ICheckChecker {
 		while (locations.hasNext()) {
 			Location location = locations.next();
 			ChessPiece chessPiece = getPiece(location);
-			if (chessPiece != null) {
+			
+			if(chessPiece != null){
 				TeamColor teamColor = chessPiece.getTeam().isWhite() ? TeamColor.LIGHT : TeamColor.DARK;
 				PieceType pieceType = getPieceTypeFromChessPiece(chessPiece);
-				PieceDescription pieceDescription = new PieceDescription(teamColor,chessPiece.hasMoved(), pieceType);
-
+				PieceDescription pieceDescription = new PieceDescription(teamColor, chessPiece.hasMoved(), pieceType);
+				
 				chessGameState.setPieceDescription(location, pieceDescription);
 			}
-
-			MoveDescription moveDescription = getMostRecentMoveDescription();
-			if (moveDescription != null) {
-				ChessPiece movingPiece = moveDescription.getMovingPiece();
-				if (movingPiece != null && movingPiece instanceof Pawn) {
-					Move move = moveDescription.getMove();
-					Location fromLocation = move.getFrom();
-					Location toLocation = move.getTo();
-
-					int pawnMoveDistance = Math.abs(fromLocation.getRow()
-							- toLocation.getRow());
-					if (pawnMoveDistance == 2) {
-						chessGameState.setPawnMovedTwoLocation(toLocation);
-					}
+		}
+		
+		MoveDescription moveDescription = getMostRecentMoveDescription();
+		if(moveDescription != null){
+			ChessPiece movingPiece = moveDescription.getMovingPiece();
+			if(movingPiece != null && movingPiece instanceof Pawn){
+				Move move = moveDescription.getMove();
+				Location fromLocation = move.getFrom();
+				Location toLocation = move.getTo();
+				
+				int pawnMoveDistance = Math.abs(fromLocation.getRow() - toLocation.getRow());
+				if(pawnMoveDistance == 2){
+					chessGameState.setPawnMovedTwoLocation(toLocation);
 				}
 			}
-
 		}
 
 		return chessGameState;
@@ -304,8 +326,9 @@ public class GameController implements IListener, ICheckChecker {
 	public boolean isStalemate() {
 		Team currentTeam = currentPlayer.getTeam();
 		return (!isInCheck(currentTeam) && !canMove(currentTeam))
-				|| ((isThreeFoldRepetition()
-						|| !hasFiftyMovesWithCapturesOrPawnMoves() || isStalematePieceCombination()));
+				|| ((isThreeFoldRepetition() 
+						|| !hasFiftyMovesWithCapturesOrPawnMoves() 
+						|| isStalematePieceCombination()));
 	}
 
 	@SuppressWarnings("unchecked")
@@ -359,7 +382,6 @@ public class GameController implements IListener, ICheckChecker {
 
 	private boolean hasFiftyMovesWithCapturesOrPawnMoves() {
 		return board.hasFiftyMovesWithCapturesOrPawnMoves();
-
 	}
 
 	private boolean isThreeFoldRepetition() {
@@ -442,5 +464,9 @@ public class GameController implements IListener, ICheckChecker {
 							.getPromotionPiece())));
 		}
 		return extendedMoves.iterator();
+	}
+
+	public ChessBoard getBoard() {
+		return board;
 	}
 }
