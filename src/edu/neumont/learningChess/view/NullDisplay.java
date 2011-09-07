@@ -58,9 +58,4 @@ public class NullDisplay implements IDisplay {
 	@Override
 	public void setVisible(boolean visible) {
 	}
-
-	@Override
-	public ChessPiece getPromotionPiece(Location location) {
-		return new Queen();
-	}
 }
