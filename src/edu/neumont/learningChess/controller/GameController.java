@@ -209,7 +209,7 @@ public class GameController implements IListener, ICheckChecker {
 			player = new ProxyPlayer(team);
 			break;
 		case LearningServer:
-			player = new ServerPlayer(team); //TODO work on this!!! bzhou
+			player = new ServerPlayer(team);
 			break;
 		}
 		return player;
