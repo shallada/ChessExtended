@@ -58,7 +58,7 @@ public class RemotePlayer extends Player implements ChessCommandHandler, IListen
 	public synchronized void handleMovement(Location from, Location to, boolean takesPiece) {
 		Move move = new Move(from, to);
 		
-		if (isLegalMove(move)) {
+		if (isLegalMove(move, null)) {
 			moves.add(move);
 			if (moves.size() == 1) {
 				notify();
@@ -74,7 +74,7 @@ public class RemotePlayer extends Player implements ChessCommandHandler, IListen
 		throw new NotImplementedException();
 	}
 	
-	public boolean isLegalMove(Move move) {
+	public boolean isLegalMove(Move move, ChessBoard board) {
 		ChessPiece movingPiece = board.getPiece(move.getFrom());
 		Team movingTeam = movingPiece.getTeam();
 		return (movingTeam == team) && movingPiece.isLegalMove(board, move) && !causesCheckmate(move);

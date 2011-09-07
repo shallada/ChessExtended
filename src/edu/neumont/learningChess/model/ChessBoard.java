@@ -284,5 +284,9 @@ public class ChessBoard {
 	public Iterator<MoveDescription> getTryingMovesIterator() {
 		return tryingMoves.iterator();
 	}
+
+	public void addMoveToHistory(MoveDescription moveDescription) {
+		tryingMoves.push(moveDescription);
+	}
 	
 }

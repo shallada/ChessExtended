@@ -12,10 +12,11 @@ import edu.neumont.learningChess.api.Location;
 import edu.neumont.learningChess.model.ChessBoard;
 import edu.neumont.learningChess.model.ChessPiece;
 import edu.neumont.learningChess.model.Move;
+import edu.neumont.learningChess.model.Pawn;
 import edu.neumont.learningChess.model.Queen;
 
 @SuppressWarnings("serial")
-public class BoardDisplay extends JFrame implements MouseListener, MouseMotionListener, IDisplay {
+public class BoardDisplay extends JFrame implements MouseListener, MouseMotionListener, IDisplay, Pawn.IPromotionListener {
 	
 	public static final int N_ROWS = ChessBoard.NUMBER_OF_ROWS;
 	public static final int N_COLS = ChessBoard.NUMBER_OF_COLUMNS;

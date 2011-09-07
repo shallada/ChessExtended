@@ -6,7 +6,7 @@ import edu.neumont.learningChess.model.Pawn;
 
 
 
-public interface IDisplay extends Pawn.IPromotionListener {
+public interface IDisplay {
 	
 	public interface Piece {
 		public void setPieceLocation(Location location);
