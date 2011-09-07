@@ -39,7 +39,7 @@ import edu.neumont.learningChess.view.NullDisplay;
 public class GameController implements IListener, ICheckChecker {
 
 	public enum PlayerType {
-		Human, AI, Remote, Proxy
+		Human, AI, Remote, Proxy, LearningServer
 	}
 
 	private IDisplay boardDisplay;
@@ -207,6 +207,9 @@ public class GameController implements IListener, ICheckChecker {
 			break;
 		case Proxy:
 			player = new ProxyPlayer(team);
+			break;
+		case LearningServer:
+			player = new ServerPlayer(team); //TODO work on this!!! bzhou
 			break;
 		}
 		return player;

@@ -94,7 +94,7 @@ public class Team {
 			for (Class piece : pieces) {
 				pieceTypeCount[chessPieces.indexOf(piece)]--;
 			}
-			onlyHasPieces = Arrays.equals(pieceTypeCount, new int[16]);
+			onlyHasPieces = Arrays.equals(pieceTypeCount, new int[6]);
 		}
 		return onlyHasPieces;
 	}
