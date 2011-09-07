@@ -52,22 +52,22 @@ public class ServerDisplay implements IDisplay {
 
 	@Override
 	public void notifyCheckmate(boolean isWhite) {
-		isCheckmate = false;
+		isCheckmate = true;
 		addCurrentGameState();
 		endOfGameAnalysis();
 	}
 	
 	private void endOfGameAnalysis() {
 		if(isCheckmate)
-			learningEngine.analyzeStaleStack(chessGameStates);
-		else
 			learningEngine.analyzeStack(chessGameStates);
+		else
+			learningEngine.analyzeStaleStack(chessGameStates);
 			
 	}
 
 	@Override
 	public void notifyStalemate() {
-		isCheckmate = true;
+		isCheckmate = false;
 		addCurrentGameState();
 		endOfGameAnalysis();
 	}
