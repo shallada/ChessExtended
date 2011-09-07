@@ -70,7 +70,7 @@ public class GameController implements IListener, ICheckChecker {
 
 		showDisplay = (whiteType == PlayerType.Human)
 				|| (blackType == PlayerType.Human);
-		showDisplay = true;
+//		showDisplay = true;
 
 		board = new ChessBoard();
 		board.AddListener(this);
