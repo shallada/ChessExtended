@@ -209,7 +209,7 @@ public class GameController implements IListener, ICheckChecker {
 			player = new ProxyPlayer(team);
 			break;
 		case LearningServer:
-			player = new ServerPlayer(team);
+			player = new ServerPlayer(team, this);
 			break;
 		}
 		return player;
@@ -368,6 +368,7 @@ public class GameController implements IListener, ICheckChecker {
 				} else {
 					isStalematePossible = isFirstBishopOnDark == ChessBoard
 							.isDarkSquare(location);
+					secondBishopFound = true;
 				}
 			}
 		}
