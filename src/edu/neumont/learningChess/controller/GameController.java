@@ -8,6 +8,7 @@ import java.util.Vector;
 import edu.neumont.learningChess.api.ChessGameState;
 import edu.neumont.learningChess.api.ExtendedMove;
 import edu.neumont.learningChess.api.Location;
+import edu.neumont.learningChess.api.MoveHistory;
 import edu.neumont.learningChess.api.PieceDescription;
 import edu.neumont.learningChess.api.PieceType;
 import edu.neumont.learningChess.api.TeamColor;
@@ -35,6 +36,7 @@ import edu.neumont.learningChess.view.BoardDisplay;
 import edu.neumont.learningChess.view.BoardDisplayPiece;
 import edu.neumont.learningChess.view.IDisplay;
 import edu.neumont.learningChess.view.NullDisplay;
+import edu.neumont.learningChess.view.ServerDisplay;
 
 public class GameController implements IListener, ICheckChecker {
 
@@ -57,6 +59,13 @@ public class GameController implements IListener, ICheckChecker {
 
 	private ArrayList<ChessGameState> history = new ArrayList<ChessGameState>();
 
+	public GameController(HistoryAnalyzer analyzer, MoveHistory history) {
+		this(PlayerType.Proxy, PlayerType.Proxy);
+		((ProxyPlayer) whitePlayer).setMoveHistory(history);
+		((ProxyPlayer) blackPlayer).setMoveHistory(history);
+		showDisplay = false;
+		boardDisplay = new ServerDisplay(this,analyzer);
+	}
 	public GameController(PlayerType whiteType, PlayerType blackType) {
 
 		showDisplay = (whiteType == PlayerType.Human)
@@ -86,27 +95,46 @@ public class GameController implements IListener, ICheckChecker {
 		boardDisplay.setVisible(true);
 	}
 	
-	public GameController(ChessGameState gameState) {
-		// TODO finish this method
+	public GameController(ChessGameState gameState, HistoryAnalyzer learningEngine) {
+		board = new ChessBoard();
+		board.AddListener(this);
+		whiteTeam = new Team(Team.Color.LIGHT);
+		blackTeam = new Team(Team.Color.DARK);
+		
+
+		whitePlayer = createPlayer(PlayerType.Proxy, whiteTeam);
+		blackPlayer = createPlayer(PlayerType.Proxy, blackTeam);
 		
 		TeamColor movingTeamColor = gameState.getMovingTeamColor();
 		currentPlayer = movingTeamColor == TeamColor.DARK ? blackPlayer : whitePlayer;
-		
-		gameState.getPawnMovedTwoLocation();
+		boardDisplay = new ServerDisplay(this, learningEngine);
 		
 		for (LocationIterator locationIterator = new LocationIterator(); locationIterator.hasNext();) {
 			Location location = locationIterator.next();
 			PieceDescription pieceDescription = gameState.getPieceDescription(location);
-			ChessPiece chessPieceFromPieceType = getChessPieceFromPieceType(pieceDescription.getPieceType(),null);
-			Team team = null;			
-			this.setupPiece(chessPieceFromPieceType, location, team);
+			Player player = pieceDescription.getColor() == TeamColor.LIGHT ? whitePlayer : blackPlayer;
+			IPromotionListener promotionListener = player.getPromotionListener();
 			
+			ChessPiece chessPieceFromPieceType = getChessPieceFromPieceType(pieceDescription.getPieceType(),promotionListener);
+			if(pieceDescription.hasMoved())
+				chessPieceFromPieceType.incrementMoveCount();
+			Team team = player.getTeam();			
+			this.setupPiece(chessPieceFromPieceType, location, team);
 		}
+		
+		Location pawnMovedTwoLocation = gameState.getPawnMovedTwoLocation();
+		if(pawnMovedTwoLocation!=null) {
+			ChessPiece pawn = board.getPiece(pawnMovedTwoLocation);
+			MoveDescription moveDescription = new MoveDescription(getPawnMovedTwoMove(pawnMovedTwoLocation), pawn, pawn.getTeam(), null);
+			board.addMoveToHistory(moveDescription);
+		}
+		history.add(gameState);
 		
 	}
 
-	public GameController(IDisplay display) {
-		// TODO Auto-generated constructor stub
+	private Move getPawnMovedTwoMove(Location pawnMovedTwoLocation) {
+		Location from = new Location(pawnMovedTwoLocation.getRow() == 3 ? 1 : 6, pawnMovedTwoLocation.getColumn());
+		return new Move(from, pawnMovedTwoLocation);
 	}
 
 	public static PieceType getPieceTypeFromChessPiece(ChessPiece chessPiece){
@@ -195,7 +223,7 @@ public class GameController implements IListener, ICheckChecker {
 		Player player = null;
 		switch (playerType) {
 		case Human:
-			player = new HumanPlayer(team, board, this, boardDisplay);
+			player = new HumanPlayer(team, board, this, (BoardDisplay) boardDisplay);
 			boardDisplay.addMoveHandler((HumanPlayer) player);
 			break;
 		case Remote:
