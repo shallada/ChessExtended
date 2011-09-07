@@ -119,12 +119,12 @@ public class BoardDisplay extends JFrame implements MouseListener, MouseMotionLi
 	
 	public void notifyCheckmate(boolean isWhite) {
 		this.setTitle("Checkmate!  "+((isWhite)?"White":"Black")+" wins");
-		//JOptionPane.showMessageDialog(this.getParent(), "Checkmate!  "+((isWhite)?"White":"Black")+" wins");
+		JOptionPane.showMessageDialog(this.getParent(), "Checkmate!  "+((isWhite)?"White":"Black")+" wins");
 	}
 	
 	public void notifyStalemate() {
 		this.setTitle("Stalemate");
-		//JOptionPane.showMessageDialog(this.getParent(), "Stalemate");
+		JOptionPane.showMessageDialog(this.getParent(), "Stalemate");
 	}
 	
 	public void promptForMove(boolean isWhite) {

@@ -70,6 +70,7 @@ public class GameController implements IListener, ICheckChecker {
 
 		showDisplay = (whiteType == PlayerType.Human)
 				|| (blackType == PlayerType.Human);
+//		showDisplay = true;
 
 		board = new ChessBoard();
 		board.AddListener(this);
@@ -360,7 +361,7 @@ public class GameController implements IListener, ICheckChecker {
 		Team currentTeam = currentPlayer.getTeam();
 		return (!isInCheck(currentTeam) && !canMove(currentTeam))
 				|| ((isThreeFoldRepetition() 
-						|| !hasFiftyMovesWithCapturesOrPawnMoves() 
+						|| hasFiftyMovesWithCapturesOrPawnMoves() 
 						|| isStalematePieceCombination()));
 	}
 
@@ -415,7 +416,7 @@ public class GameController implements IListener, ICheckChecker {
 	}
 
 	private boolean hasFiftyMovesWithCapturesOrPawnMoves() {
-		return board.hasFiftyMovesWithCapturesOrPawnMoves();
+		return board.hasFiftyMovesWithNoCapturesOrPawnMoves();
 	}
 
 	private boolean isThreeFoldRepetition() {

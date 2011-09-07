@@ -265,20 +265,14 @@ public class ChessBoard {
 		return (location.getRow() + location.getColumn()) % 2 == 0;
 	}
 
-	public boolean hasFiftyMovesWithCapturesOrPawnMoves() {
-		boolean captureOrMove = false;
-		int count = 0;
+	public boolean hasFiftyMovesWithNoCapturesOrPawnMoves() {
+		boolean fiftyMovesWithNoCapturesOrPawnMoves = (tryingMoves.size() >= 50);
 		
-		for (Iterator<MoveDescription> moves = tryingMoves.iterator(); moves.hasNext() && count < 50;count++) {
-			MoveDescription move = moves.next();
-			captureOrMove = (move.getTakenPiece() != null) || (move.getMovingPiece().getClass() == Pawn.class);
-			if(captureOrMove)
-			{
-				count=0;
-			}
+		for (int i = 0; fiftyMovesWithNoCapturesOrPawnMoves && (i < 50); i++) {
+			MoveDescription description = tryingMoves.get(tryingMoves.size() - i - 1);
+			fiftyMovesWithNoCapturesOrPawnMoves = (description.getTakenPiece() == null) && (description.getMovingPiece().getClass() != Pawn.class);
 		}
-		System.out.println(count);
-		return count<50;
+		return fiftyMovesWithNoCapturesOrPawnMoves;
 	}
 	
 	public Iterator<MoveDescription> getTryingMovesIterator() {
