@@ -64,6 +64,7 @@ public class GameController implements IListener, ICheckChecker {
 	private boolean showDisplay;
 
 	private List<ChessGameState> history = new ArrayList<ChessGameState>();
+	private ArrayList<ExtendedMove> moveHistory = new ArrayList<ExtendedMove>();
 
 	public GameController(HistoryAnalyzer analyzer, MoveHistory history) {
 		this(PlayerType.Proxy, PlayerType.Proxy);
@@ -73,10 +74,11 @@ public class GameController implements IListener, ICheckChecker {
 		boardDisplay = new ServerDisplay(this, analyzer);
 	}
 	public GameController(PlayerType whiteType, PlayerType blackType) {
-
+		moveHistory = new ArrayList<ExtendedMove>();
+		
 		showDisplay = (whiteType == PlayerType.Human) || (blackType == PlayerType.Human);
 		// showDisplay = true;
-
+		
 		board = new ChessBoard();
 		board.AddListener(this);
 		if (showDisplay) {
@@ -106,6 +108,7 @@ public class GameController implements IListener, ICheckChecker {
 		board.AddListener(this);
 		whiteTeam = new Team(Team.Color.LIGHT);
 		blackTeam = new Team(Team.Color.DARK);
+		moveHistory = new ArrayList<ExtendedMove>();
 
 		whitePlayer = createPlayer(PlayerType.Proxy, whiteTeam);
 		blackPlayer = createPlayer(PlayerType.Proxy, blackTeam);
@@ -257,6 +260,7 @@ public class GameController implements IListener, ICheckChecker {
 			boardDisplay.promptForMove((currentPlayer == whitePlayer));
 			Move move = currentPlayer.getMove();
 			board.makeMove(move);
+			moveList.add(move);
 			togglePlayers();
 			history.add(getCurrentGameState());
 			isCheckmate = isCheckmate();
