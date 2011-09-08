@@ -281,8 +281,8 @@ public class GameController implements IListener, ICheckChecker {
 	private void tellTheServer() {
 		MoveHistory moveHistory = new MoveHistory(this.moveHistory);
 
-		String endpoint = "http://chess.neumont.edu:8081/ChessGame/getgamestateinfo";
-//		String endpoint = "http://localhost:8080/LearningChessWebServer/getgamestateinfo";
+//		String endpoint = "http://chess.neumont.edu:8081/ChessGame/analyzehistory";
+		String endpoint = "http://localhost:8080/LearningChessWebServer/analyzehistory";
 
 		URL url;
 		try {
