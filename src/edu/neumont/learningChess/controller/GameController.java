@@ -113,14 +113,16 @@ public class GameController implements IListener, ICheckChecker {
 		for (LocationIterator locationIterator = new LocationIterator(); locationIterator.hasNext();) {
 			Location location = locationIterator.next();
 			PieceDescription pieceDescription = gameState.getPieceDescription(location);
-			Player player = pieceDescription.getColor() == TeamColor.LIGHT ? whitePlayer : blackPlayer;
-			IPromotionListener promotionListener = player.getPromotionListener();
-			
-			ChessPiece chessPieceFromPieceType = getChessPieceFromPieceType(pieceDescription.getPieceType(),promotionListener);
-			if(pieceDescription.hasMoved())
-				chessPieceFromPieceType.incrementMoveCount();
-			Team team = player.getTeam();			
-			this.setupPiece(chessPieceFromPieceType, location, team);
+			if(pieceDescription != null) {
+				Player player = pieceDescription.getColor() == TeamColor.LIGHT ? whitePlayer : blackPlayer;
+				IPromotionListener promotionListener = player.getPromotionListener();
+				
+				ChessPiece chessPieceFromPieceType = getChessPieceFromPieceType(pieceDescription.getPieceType(),promotionListener);
+				if(pieceDescription.hasMoved())
+					chessPieceFromPieceType.incrementMoveCount();
+				Team team = player.getTeam();			
+				this.setupPiece(chessPieceFromPieceType, location, team);
+			}
 		}
 		
 		Location pawnMovedTwoLocation = gameState.getPawnMovedTwoLocation();
