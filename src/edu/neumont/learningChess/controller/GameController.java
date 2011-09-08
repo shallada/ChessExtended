@@ -190,7 +190,7 @@ public class GameController implements IListener, ICheckChecker {
 	public ChessGameState getCurrentGameState() {
 		ChessGameState chessGameState = new ChessGameState();
 		LocationIterator locations = new LocationIterator();
-
+		chessGameState.setMovingTeamColor(currentPlayer == whitePlayer ? TeamColor.LIGHT : TeamColor.DARK);
 		while (locations.hasNext()) {
 			Location location = locations.next();
 			ChessPiece chessPiece = getPiece(location);
@@ -262,6 +262,9 @@ public class GameController implements IListener, ICheckChecker {
 				boardDisplay.notifyCheck(currentPlayer == whitePlayer);
 			}
 		}
+		if(isCheckmate || isStalemate) {
+			tellTheServer(history);
+		}
 		if (isCheckmate) {
 			boardDisplay.notifyCheckmate(currentPlayer == blackPlayer);
 		} else if (isStalemate) {
@@ -269,6 +272,11 @@ public class GameController implements IListener, ICheckChecker {
 		}
 	}
 	
+	private void tellTheServer(ArrayList<ChessGameState> history2) {
+		// TODO Finish this
+		MoveHistory moveHistory = null;
+				
+	}
 	public void tryMove(Move move) {
 		board.tryMove(move);
 		togglePlayers();

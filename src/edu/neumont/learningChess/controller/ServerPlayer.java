@@ -25,7 +25,8 @@ public class ServerPlayer extends Player {
 	
 
 	private PromotionListener promotionListener = null;
-	private final String endpoint = "http://chess.neumont.edu:8081/ChessGame/getmove";
+//	private final String endpoint = "http://chess.neumont.edu:8081/ChessGame/getmove";
+	private final String endpoint = "http://localhost:8080/LearningChessWebServer/getmove";
 	private GameController gameController = null;
 	
 	public ServerPlayer(Team team, GameController game) {
@@ -62,21 +63,23 @@ public class ServerPlayer extends Player {
 		return extendedMoveFromServer;
 	}
 	
-	private void setPromotionPiece(PieceType type){
+	private void setPromotionPiece(PieceType pieceType){
 		ChessPiece piece = null;
-		switch (type) {
-		case QUEEN:
-			piece = new Queen();
-			break;
-		case ROOK:
-			piece = new Rook();
-			break;
-		case KNIGHT:
-			piece = new Knight();
-			break;
-		case BISHOP:
-			piece = new Bishop();
-			break;
+		if (pieceType != null) {
+			switch (pieceType) {
+			case QUEEN:
+				piece = new Queen();
+				break;
+			case ROOK:
+				piece = new Rook();
+				break;
+			case KNIGHT:
+				piece = new Knight();
+				break;
+			case BISHOP:
+				piece = new Bishop();
+				break;
+			}
 		}
 		promotionListener = new PromotionListener(piece);
 	}
@@ -85,5 +88,4 @@ public class ServerPlayer extends Player {
 	public IPromotionListener getPromotionListener() {
 		return promotionListener;
 	}
-
 }
