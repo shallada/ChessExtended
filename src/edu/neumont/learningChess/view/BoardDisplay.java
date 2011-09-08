@@ -9,6 +9,7 @@ import javax.swing.*;
 
 
 import edu.neumont.learningChess.api.Location;
+import edu.neumont.learningChess.dev.DevTools;
 import edu.neumont.learningChess.model.ChessBoard;
 import edu.neumont.learningChess.model.ChessPiece;
 import edu.neumont.learningChess.model.Move;
@@ -16,7 +17,7 @@ import edu.neumont.learningChess.model.Pawn;
 import edu.neumont.learningChess.model.Queen;
 
 @SuppressWarnings("serial")
-public class BoardDisplay extends JFrame implements MouseListener, MouseMotionListener, IDisplay, Pawn.IPromotionListener {
+public class BoardDisplay extends JFrame implements KeyListener, MouseListener, MouseMotionListener, IDisplay, Pawn.IPromotionListener {
 	
 	public static final int N_ROWS = ChessBoard.NUMBER_OF_ROWS;
 	public static final int N_COLS = ChessBoard.NUMBER_OF_COLUMNS;
@@ -84,6 +85,8 @@ public class BoardDisplay extends JFrame implements MouseListener, MouseMotionLi
 		}
 		return canHandle;
 	}
+	
+	
 	
 	public void placePiece(IDisplay.Piece piece, Location location) {
 		piece.setVisible(false);
@@ -212,5 +215,27 @@ public class BoardDisplay extends JFrame implements MouseListener, MouseMotionLi
 	public ChessPiece getPromotionPiece(Location location) {
 		// TODO Auto-generated method stub
 		return new Queen();
+	}
+
+	@Override
+	public void keyTyped(KeyEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	// for debugging - saves current gamestate to a file
+	@Override
+	public void keyPressed(KeyEvent e) {
+		boolean ctrlIsPressed = e.isControlDown();
+		char pressedChar = e.getKeyChar();
+		if(ctrlIsPressed && pressedChar == 's'){
+			DevTools.saveCurrentGameState();
+		}
+	}
+
+	@Override
+	public void keyReleased(KeyEvent e) {
+		// TODO Auto-generated method stub
+		
 	}
 }
