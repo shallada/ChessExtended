@@ -25,13 +25,19 @@ public class ServerPlayer extends Player {
 	
 
 	private PromotionListener promotionListener = null;
-	private final String endpoint = "http://chess.neumont.edu:8081/ChessGame/getmove";
-//	private final String endpoint = "http://localhost:8080/LearningChessWebServer/getmove";
+	
+	private final String endpoint;
+
 	private GameController gameController = null;
 	
 	public ServerPlayer(Team team, GameController game) {
 		super(team);
 		this.gameController = game;
+		if(GameController.IS_LOCAL) {
+			endpoint = "http://localhost:8080/LearningChessWebServer/getmove";
+		} else {
+			endpoint = "http://chess.neumont.edu:8081/ChessGame/getmove";
+		}
 	}
 
 	@Override

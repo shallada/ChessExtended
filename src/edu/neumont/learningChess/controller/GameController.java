@@ -62,6 +62,8 @@ public class GameController implements IListener, ICheckChecker {
 	private Player currentPlayer;
 
 	private boolean showDisplay;
+	
+	public static final boolean IS_LOCAL = false;
 
 	private List<ChessGameState> history = new ArrayList<ChessGameState>();
 	private ArrayList<ExtendedMove> moveHistory = new ArrayList<ExtendedMove>();
@@ -281,16 +283,17 @@ public class GameController implements IListener, ICheckChecker {
 	}
 
 	private void tellTheServer() {
-		// TODO initialize this
 		MoveHistory moveHistory = new MoveHistory(this.moveHistory);
+		String endpoint;
+		if(IS_LOCAL) {
+			endpoint = "http://localhost:8080/LearningChessWebServer/analyzehistory";
+		}
+		else {
+			endpoint = "http://chess.neumont.edu:8081/ChessGame/analyzehistory";
+		}
 
-		String endpoint = "http://chess.neumont.edu:8081/ChessGame/getgamestateinfo";
-//		String endpoint = "http://localhost:8080/LearningChessWebServer/getgamestateinfo";
-
-		URL url;
 		try {
-			url = new URL(endpoint);
-
+			URL url = new URL(endpoint);
 			URLConnection connection = url.openConnection();
 			connection.setDoOutput(true);
 			OutputStreamWriter writer = new OutputStreamWriter(connection.getOutputStream());
