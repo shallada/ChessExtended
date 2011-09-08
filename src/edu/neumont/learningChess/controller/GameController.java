@@ -86,6 +86,8 @@ public class GameController implements IListener, ICheckChecker {
 		} else {
 			boardDisplay = new NullDisplay();
 		}
+		boardDisplay = new BoardDisplay();
+		showDisplay = true;
 		// boardDisplay = (showDisplay)? new BoardDisplay(): new NullDisplay();
 
 		whiteTeam = buildTeam(Team.Color.LIGHT);
