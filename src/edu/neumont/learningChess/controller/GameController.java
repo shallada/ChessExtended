@@ -259,7 +259,7 @@ public class GameController implements IListener, ICheckChecker {
 		while (!(isCheckmate || isStalemate)) {
 			boardDisplay.promptForMove((currentPlayer == whitePlayer));
 			Move move = currentPlayer.getMove();
-			board.makeMove(move);
+			moveHistory.add(board.makeMove(move));
 			togglePlayers();
 			history.add(getCurrentGameState());
 			isCheckmate = isCheckmate();
@@ -269,7 +269,7 @@ public class GameController implements IListener, ICheckChecker {
 			}
 		}
 		if (isCheckmate || isStalemate) {
-			tellTheServer(history);
+			tellTheServer();
 		}
 		if (isCheckmate) {
 			boardDisplay.notifyCheckmate(currentPlayer == blackPlayer);
@@ -278,9 +278,9 @@ public class GameController implements IListener, ICheckChecker {
 		}
 	}
 
-	private void tellTheServer(List<ChessGameState> history) {
+	private void tellTheServer() {
 		// TODO initialize this
-		MoveHistory moveHistory = null;
+		MoveHistory moveHistory = new MoveHistory(this.moveHistory);
 
 		String endpoint = "http://chess.neumont.edu:8081/ChessGame/getgamestateinfo";
 //		String endpoint = "http://localhost:8080/LearningChessWebServer/getgamestateinfo";

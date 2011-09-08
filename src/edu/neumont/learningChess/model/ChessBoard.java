@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Stack;
 
+import edu.neumont.learningChess.api.ExtendedMove;
 import edu.neumont.learningChess.api.Location;
+import edu.neumont.learningChess.controller.GameController;
 
 
 public class ChessBoard {
@@ -113,7 +115,8 @@ public class ChessBoard {
 		return moveDescription;
 	}
 
-	public void makeMove(Move move) {
+	public ExtendedMove makeMove(Move move) {
+		ExtendedMove extendedMove = new ExtendedMove(move);
 		if (isCastlingMove(move)) {
 			Move castlingMove = getCastlingRookMove(move);
 			makeBasicMove(castlingMove);
@@ -145,7 +148,9 @@ public class ChessBoard {
 			ChessPiece replacement = pawn.getPromotionPiece(move.getTo());
 			pawnsTeam.add(replacement);
 			placePiece(replacement, move.getTo());
+			extendedMove.setPromotionPieceType(GameController.getPieceTypeFromChessPiece(replacement));
 		}
+		return extendedMove;
 	}
 	
 	private boolean requiresPromotion(Move move) {
