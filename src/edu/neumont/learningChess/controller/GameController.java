@@ -279,7 +279,6 @@ public class GameController implements IListener, ICheckChecker {
 	}
 
 	private void tellTheServer() {
-		// TODO initialize this
 		MoveHistory moveHistory = new MoveHistory(this.moveHistory);
 
 		String endpoint = "http://chess.neumont.edu:8081/ChessGame/getgamestateinfo";
