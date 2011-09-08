@@ -1,8 +1,13 @@
 package edu.neumont.learningChess.controller;
 
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Vector;
 
 import edu.neumont.learningChess.api.ChessGameState;
@@ -12,6 +17,7 @@ import edu.neumont.learningChess.api.MoveHistory;
 import edu.neumont.learningChess.api.PieceDescription;
 import edu.neumont.learningChess.api.PieceType;
 import edu.neumont.learningChess.api.TeamColor;
+import edu.neumont.learningChess.json.Jsonizer;
 import edu.neumont.learningChess.model.AIPlayer;
 import edu.neumont.learningChess.model.Bishop;
 import edu.neumont.learningChess.model.ChessBoard;
@@ -57,20 +63,19 @@ public class GameController implements IListener, ICheckChecker {
 
 	private boolean showDisplay;
 
-	private ArrayList<ChessGameState> history = new ArrayList<ChessGameState>();
+	private List<ChessGameState> history = new ArrayList<ChessGameState>();
 
 	public GameController(HistoryAnalyzer analyzer, MoveHistory history) {
 		this(PlayerType.Proxy, PlayerType.Proxy);
 		((ProxyPlayer) whitePlayer).setMoveHistory(history);
 		((ProxyPlayer) blackPlayer).setMoveHistory(history);
 		showDisplay = false;
-		boardDisplay = new ServerDisplay(this,analyzer);
+		boardDisplay = new ServerDisplay(this, analyzer);
 	}
 	public GameController(PlayerType whiteType, PlayerType blackType) {
 
-		showDisplay = (whiteType == PlayerType.Human)
-				|| (blackType == PlayerType.Human);
-//		showDisplay = true;
+		showDisplay = (whiteType == PlayerType.Human) || (blackType == PlayerType.Human);
+		// showDisplay = true;
 
 		board = new ChessBoard();
 		board.AddListener(this);
@@ -95,44 +100,43 @@ public class GameController implements IListener, ICheckChecker {
 
 		boardDisplay.setVisible(true);
 	}
-	
+
 	public GameController(ChessGameState gameState, HistoryAnalyzer learningEngine) {
 		board = new ChessBoard();
 		board.AddListener(this);
 		whiteTeam = new Team(Team.Color.LIGHT);
 		blackTeam = new Team(Team.Color.DARK);
-		
 
 		whitePlayer = createPlayer(PlayerType.Proxy, whiteTeam);
 		blackPlayer = createPlayer(PlayerType.Proxy, blackTeam);
-		
+
 		TeamColor movingTeamColor = gameState.getMovingTeamColor();
 		currentPlayer = movingTeamColor == TeamColor.DARK ? blackPlayer : whitePlayer;
 		boardDisplay = new ServerDisplay(this, learningEngine);
-		
+
 		for (LocationIterator locationIterator = new LocationIterator(); locationIterator.hasNext();) {
 			Location location = locationIterator.next();
 			PieceDescription pieceDescription = gameState.getPieceDescription(location);
-			if(pieceDescription != null) {
+			if (pieceDescription != null) {
 				Player player = pieceDescription.getColor() == TeamColor.LIGHT ? whitePlayer : blackPlayer;
 				IPromotionListener promotionListener = player.getPromotionListener();
-				
-				ChessPiece chessPieceFromPieceType = getChessPieceFromPieceType(pieceDescription.getPieceType(),promotionListener);
-				if(pieceDescription.hasMoved())
+
+				ChessPiece chessPieceFromPieceType = getChessPieceFromPieceType(pieceDescription.getPieceType(), promotionListener);
+				if (pieceDescription.hasMoved())
 					chessPieceFromPieceType.incrementMoveCount();
-				Team team = player.getTeam();			
+				Team team = player.getTeam();
 				this.setupPiece(chessPieceFromPieceType, location, team);
 			}
 		}
-		
+
 		Location pawnMovedTwoLocation = gameState.getPawnMovedTwoLocation();
-		if(pawnMovedTwoLocation!=null) {
+		if (pawnMovedTwoLocation != null) {
 			ChessPiece pawn = board.getPiece(pawnMovedTwoLocation);
 			MoveDescription moveDescription = new MoveDescription(getPawnMovedTwoMove(pawnMovedTwoLocation), pawn, pawn.getTeam(), null);
 			board.addMoveToHistory(moveDescription);
 		}
 		history.add(gameState);
-		
+
 	}
 
 	private Move getPawnMovedTwoMove(Location pawnMovedTwoLocation) {
@@ -140,7 +144,7 @@ public class GameController implements IListener, ICheckChecker {
 		return new Move(from, pawnMovedTwoLocation);
 	}
 
-	public static PieceType getPieceTypeFromChessPiece(ChessPiece chessPiece){
+	public static PieceType getPieceTypeFromChessPiece(ChessPiece chessPiece) {
 		PieceType pieceType = null;
 
 		if (chessPiece instanceof King) {
@@ -159,29 +163,29 @@ public class GameController implements IListener, ICheckChecker {
 
 		return pieceType;
 	}
-	
-	public ChessPiece getChessPieceFromPieceType(PieceType pieceType, IPromotionListener promotionListener){
+
+	public ChessPiece getChessPieceFromPieceType(PieceType pieceType, IPromotionListener promotionListener) {
 		ChessPiece chessPiece = null;
 
 		switch (pieceType) {
-		case KING:
-			chessPiece = new King(this);
-			break;
-		case QUEEN:
-			chessPiece = new Queen();
-			break;
-		case BISHOP:
-			chessPiece = new Bishop();
-			break;
-		case KNIGHT:
-			chessPiece = new Knight();
-			break;
-		case ROOK:
-			chessPiece = new Rook();
-			break;
-		case PAWN:
-			chessPiece = new Pawn(promotionListener);
-			break;
+			case KING :
+				chessPiece = new King(this);
+				break;
+			case QUEEN :
+				chessPiece = new Queen();
+				break;
+			case BISHOP :
+				chessPiece = new Bishop();
+				break;
+			case KNIGHT :
+				chessPiece = new Knight();
+				break;
+			case ROOK :
+				chessPiece = new Rook();
+				break;
+			case PAWN :
+				chessPiece = new Pawn(promotionListener);
+				break;
 		}
 
 		return chessPiece;
@@ -194,26 +198,26 @@ public class GameController implements IListener, ICheckChecker {
 		while (locations.hasNext()) {
 			Location location = locations.next();
 			ChessPiece chessPiece = getPiece(location);
-			
-			if(chessPiece != null){
+
+			if (chessPiece != null) {
 				TeamColor teamColor = chessPiece.getTeam().isWhite() ? TeamColor.LIGHT : TeamColor.DARK;
 				PieceType pieceType = getPieceTypeFromChessPiece(chessPiece);
 				PieceDescription pieceDescription = new PieceDescription(teamColor, chessPiece.hasMoved(), pieceType);
-				
+
 				chessGameState.setPieceDescription(location, pieceDescription);
 			}
 		}
-		
+
 		MoveDescription moveDescription = getMostRecentMoveDescription();
-		if(moveDescription != null){
+		if (moveDescription != null) {
 			ChessPiece movingPiece = moveDescription.getMovingPiece();
-			if(movingPiece != null && movingPiece instanceof Pawn){
+			if (movingPiece != null && movingPiece instanceof Pawn) {
 				Move move = moveDescription.getMove();
 				Location fromLocation = move.getFrom();
 				Location toLocation = move.getTo();
-				
+
 				int pawnMoveDistance = Math.abs(fromLocation.getRow() - toLocation.getRow());
-				if(pawnMoveDistance == 2){
+				if (pawnMoveDistance == 2) {
 					chessGameState.setPawnMovedTwoLocation(toLocation);
 				}
 			}
@@ -225,23 +229,22 @@ public class GameController implements IListener, ICheckChecker {
 	private Player createPlayer(PlayerType playerType, Team team) {
 		Player player = null;
 		switch (playerType) {
-		case Human:
-			player = new HumanPlayer(team, board, this, (BoardDisplay) boardDisplay);
-			boardDisplay.addMoveHandler((HumanPlayer) player);
-			break;
-		case Remote:
-			player = new RemotePlayer(team, board, this);
-			break;
-		case AI:
-			player = new AIPlayer(board, team, (team == whiteTeam) ? blackTeam
-					: whiteTeam);
-			break;
-		case Proxy:
-			player = new ProxyPlayer(team);
-			break;
-		case LearningServer:
-			player = new ServerPlayer(team, this);
-			break;
+			case Human :
+				player = new HumanPlayer(team, board, this, (BoardDisplay) boardDisplay);
+				boardDisplay.addMoveHandler((HumanPlayer) player);
+				break;
+			case Remote :
+				player = new RemotePlayer(team, board, this);
+				break;
+			case AI :
+				player = new AIPlayer(board, team, (team == whiteTeam) ? blackTeam : whiteTeam);
+				break;
+			case Proxy :
+				player = new ProxyPlayer(team);
+				break;
+			case LearningServer :
+				player = new ServerPlayer(team, this);
+				break;
 		}
 		return player;
 	}
@@ -262,7 +265,7 @@ public class GameController implements IListener, ICheckChecker {
 				boardDisplay.notifyCheck(currentPlayer == whitePlayer);
 			}
 		}
-		if(isCheckmate || isStalemate) {
+		if (isCheckmate || isStalemate) {
 			tellTheServer(history);
 		}
 		if (isCheckmate) {
@@ -271,11 +274,30 @@ public class GameController implements IListener, ICheckChecker {
 			boardDisplay.notifyStalemate();
 		}
 	}
-	
-	private void tellTheServer(ArrayList<ChessGameState> history2) {
-		// TODO Finish this
+
+	private void tellTheServer(List<ChessGameState> history) {
+		// TODO initialize this
 		MoveHistory moveHistory = null;
-				
+
+		String endpoint = "http://chess.neumont.edu:8081/ChessGame/getgamestateinfo";
+//		String endpoint = "http://localhost:8080/LearningChessWebServer/getgamestateinfo";
+
+		URL url;
+		try {
+			url = new URL(endpoint);
+
+			URLConnection connection = url.openConnection();
+			connection.setDoOutput(true);
+			OutputStreamWriter writer = new OutputStreamWriter(connection.getOutputStream());
+			String jsonOut = Jsonizer.jsonize(moveHistory);
+			writer.write(jsonOut);
+			writer.flush();
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
 	}
 	public void tryMove(Move move) {
 		board.tryMove(move);
@@ -283,8 +305,7 @@ public class GameController implements IListener, ICheckChecker {
 	}
 
 	private void togglePlayers() {
-		currentPlayer = (currentPlayer == whitePlayer) ? blackPlayer
-				: whitePlayer;
+		currentPlayer = (currentPlayer == whitePlayer) ? blackPlayer : whitePlayer;
 	}
 
 	public ChessPiece getPiece(Location location) {
@@ -312,13 +333,11 @@ public class GameController implements IListener, ICheckChecker {
 		return team;
 	}
 
-	private void buildTeamPawns(Team team,
-			Pawn.IPromotionListener promotionListener) {
+	private void buildTeamPawns(Team team, Pawn.IPromotionListener promotionListener) {
 
 		char pawnRow = team.isWhite() ? '2' : '7';
 		for (int i = 0; i < BoardDisplay.N_COLS; i++) {
-			setupPiece(new Pawn(promotionListener), new Location(pawnRow,
-					(char) ('a' + i)), team);
+			setupPiece(new Pawn(promotionListener), new Location(pawnRow, (char) ('a' + i)), team);
 		}
 	}
 
@@ -347,8 +366,7 @@ public class GameController implements IListener, ICheckChecker {
 		for (Iterator<ChessPiece> i = team.getPieces(); !canMove && i.hasNext();) {
 			ChessPiece piece = i.next();
 			// For each valid move of that piece and checkmate applies...
-			for (Iterator<Location> e = piece.getLegalMoves(board); !canMove
-					&& e.hasNext();) {
+			for (Iterator<Location> e = piece.getLegalMoves(board); !canMove && e.hasNext();) {
 				Location to = e.next();
 				// Apply the move
 				board.tryMove(new Move(piece.getLocation(), to));
@@ -369,44 +387,31 @@ public class GameController implements IListener, ICheckChecker {
 
 	public boolean isStalemate() {
 		Team currentTeam = currentPlayer.getTeam();
-		return (!isInCheck(currentTeam) && !canMove(currentTeam))
-				|| ((isThreeFoldRepetition() 
-						|| hasFiftyMovesWithCapturesOrPawnMoves() 
-						|| isStalematePieceCombination()));
+		return (!isInCheck(currentTeam) && !canMove(currentTeam)) || ((isThreeFoldRepetition() || hasFiftyMovesWithCapturesOrPawnMoves() || isStalematePieceCombination()));
 	}
 
 	@SuppressWarnings("unchecked")
 	private boolean isStalematePieceCombination() {
-		return ((whiteTeam.onlyHasPieces(King.class) && blackTeam
-				.onlyHasPieces(King.class))
-				|| (whiteTeam.onlyHasPieces(King.class) && blackTeam
-						.onlyHasPieces(King.class, Knight.class))
-				|| (whiteTeam.onlyHasPieces(King.class, Knight.class) && blackTeam
-						.onlyHasPieces(King.class))
-				|| (whiteTeam.onlyHasPieces(King.class) && blackTeam
-						.onlyHasPieces(King.class, Bishop.class))
-				|| (whiteTeam.onlyHasPieces(King.class, Bishop.class) && blackTeam
-						.onlyHasPieces(King.class)) || isStalemateBishopPieceCombination());
+		return ((whiteTeam.onlyHasPieces(King.class) && blackTeam.onlyHasPieces(King.class)) || (whiteTeam.onlyHasPieces(King.class) && blackTeam.onlyHasPieces(King.class, Knight.class))
+				|| (whiteTeam.onlyHasPieces(King.class, Knight.class) && blackTeam.onlyHasPieces(King.class))
+				|| (whiteTeam.onlyHasPieces(King.class) && blackTeam.onlyHasPieces(King.class, Bishop.class))
+				|| (whiteTeam.onlyHasPieces(King.class, Bishop.class) && blackTeam.onlyHasPieces(King.class)) || isStalemateBishopPieceCombination());
 	}
 
 	@SuppressWarnings("unchecked")
 	private boolean isStalemateBishopPieceCombination() {
-		boolean isStalematePossible = whiteTeam.onlyHasPieces(King.class,
-				Bishop.class)
-				&& blackTeam.onlyHasPieces(King.class, Bishop.class);
+		boolean isStalematePossible = whiteTeam.onlyHasPieces(King.class, Bishop.class) && blackTeam.onlyHasPieces(King.class, Bishop.class);
 		boolean firstBishopFound = false;
 		boolean secondBishopFound = false;
 		boolean isFirstBishopOnDark = false;
-		for (Iterator<Location> locations = new LocationIterator(); !secondBishopFound
-				&& isStalematePossible && locations.hasNext();) {
+		for (Iterator<Location> locations = new LocationIterator(); !secondBishopFound && isStalematePossible && locations.hasNext();) {
 			Location location = locations.next();
 			if (getPieceTypeAt(location, Bishop.class) != null) {
 				if (!firstBishopFound) {
 					isFirstBishopOnDark = ChessBoard.isDarkSquare(location);
 					firstBishopFound = true;
 				} else {
-					isStalematePossible = isFirstBishopOnDark == ChessBoard
-							.isDarkSquare(location);
+					isStalematePossible = isFirstBishopOnDark == ChessBoard.isDarkSquare(location);
 					secondBishopFound = true;
 				}
 			}
@@ -415,8 +420,7 @@ public class GameController implements IListener, ICheckChecker {
 	}
 
 	@SuppressWarnings("unchecked")
-	private <T extends ChessPiece> T getPieceTypeAt(Location location,
-			Class<T> cls) {
+	private <T extends ChessPiece> T getPieceTypeAt(Location location, Class<T> cls) {
 		T returnedPiece = null;
 		ChessPiece piece = board.getPiece(location);
 		if ((piece != null) && (piece.getClass().equals(cls))) {
@@ -433,8 +437,7 @@ public class GameController implements IListener, ICheckChecker {
 		int seen = 1;
 
 		ChessGameState currentState = getCurrentGameState();
-		for (Iterator<ChessGameState> states = history.iterator(); (seen < 3)
-				&& states.hasNext();) {
+		for (Iterator<ChessGameState> states = history.iterator(); (seen < 3) && states.hasNext();) {
 			ChessGameState state = states.next();
 			if (currentState.equals(state))
 				seen++;
@@ -446,8 +449,7 @@ public class GameController implements IListener, ICheckChecker {
 	@Override
 	public void movePiece(Move move, boolean capturePiece) {
 		if (capturePiece) {
-			IDisplay.Piece displayPiece = boardDisplay
-					.removePiece(move.getTo());
+			IDisplay.Piece displayPiece = boardDisplay.removePiece(move.getTo());
 			displayPiece.setPieceLocation(null);
 		}
 		IDisplay.Piece displayPiece = boardDisplay.removePiece(move.getFrom());
@@ -458,8 +460,7 @@ public class GameController implements IListener, ICheckChecker {
 	@Override
 	public void placePiece(ChessPiece piece, Location location) {
 		if (showDisplay) {
-			IDisplay.Piece displayPiece = new BoardDisplayPiece(
-					getImageURL(piece));
+			IDisplay.Piece displayPiece = new BoardDisplayPiece(getImageURL(piece));
 			boardDisplay.placePiece(displayPiece, location);
 			displayPiece.setPieceLocation(location);
 		}
@@ -501,12 +502,9 @@ public class GameController implements IListener, ICheckChecker {
 
 	public Iterator<ExtendedMove> getGameHistory() {
 		Vector<ExtendedMove> extendedMoves = new Vector<ExtendedMove>();
-		for (Iterator<MoveDescription> tryingMovesIterator = board
-				.getTryingMovesIterator(); tryingMovesIterator.hasNext();) {
+		for (Iterator<MoveDescription> tryingMovesIterator = board.getTryingMovesIterator(); tryingMovesIterator.hasNext();) {
 			MoveDescription moveDescription = tryingMovesIterator.next();
-			extendedMoves.add(new ExtendedMove(moveDescription.getMove(),
-					getPieceTypeFromChessPiece(moveDescription
-							.getPromotionPiece())));
+			extendedMoves.add(new ExtendedMove(moveDescription.getMove(), getPieceTypeFromChessPiece(moveDescription.getPromotionPiece())));
 		}
 		return extendedMoves.iterator();
 	}
