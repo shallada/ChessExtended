@@ -25,11 +25,7 @@ public class DevTools {
 			sb.append(cal.get(Calendar.DATE));
 			sb.append("-");
 			sb.append(cal.getTime());
-			File dir = new File("gamestates");
-			if(!dir.exists()){
-				dir = new File("gamestates");
-			}
-			File file = new File(dir, sb.toString());
+			File file = new File(sb.toString());
 	
 			ChessGameState currentState = DevTools.gameController.getCurrentGameState();
 			String jsonizedState = Jsonizer.jsonize(currentState);
@@ -39,7 +35,6 @@ public class DevTools {
 				wr.flush();
 				wr.close();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}

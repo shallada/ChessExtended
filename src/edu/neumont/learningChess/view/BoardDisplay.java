@@ -21,6 +21,8 @@ public class BoardDisplay extends JFrame implements KeyListener, MouseListener, 
 	
 	public static final int N_ROWS = ChessBoard.NUMBER_OF_ROWS;
 	public static final int N_COLS = ChessBoard.NUMBER_OF_COLUMNS;
+	private boolean ctrlIsPressed;
+	private boolean sIsPressed;
 	
 	JLayeredPane layeredPane;
 	JPanel chessBoard;
@@ -39,6 +41,7 @@ public class BoardDisplay extends JFrame implements KeyListener, MouseListener, 
 		layeredPane.setPreferredSize(boardSize);
 		layeredPane.addMouseListener(this);
 		layeredPane.addMouseMotionListener(this);
+		this.addKeyListener(this);
 
 		chessBoard = new JPanel();
 		layeredPane.add(chessBoard, JLayeredPane.DEFAULT_LAYER);
@@ -226,10 +229,16 @@ public class BoardDisplay extends JFrame implements KeyListener, MouseListener, 
 	// for debugging - saves current gamestate to a file
 	@Override
 	public void keyPressed(KeyEvent e) {
-		boolean ctrlIsPressed = e.isControlDown();
-		char pressedChar = e.getKeyChar();
-		if(ctrlIsPressed && pressedChar == 's'){
+		if(e.isControlDown()){
+			ctrlIsPressed = true;
+		}
+		if(e.getKeyChar() == 's'){
+			sIsPressed = true;
+		}
+		if(ctrlIsPressed && sIsPressed){
 			DevTools.saveCurrentGameState();
+			ctrlIsPressed = false;
+			sIsPressed = false;
 		}
 	}
 
