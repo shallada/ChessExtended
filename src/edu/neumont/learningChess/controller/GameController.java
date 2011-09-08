@@ -260,7 +260,6 @@ public class GameController implements IListener, ICheckChecker {
 			boardDisplay.promptForMove((currentPlayer == whitePlayer));
 			Move move = currentPlayer.getMove();
 			board.makeMove(move);
-			moveList.add(move);
 			togglePlayers();
 			history.add(getCurrentGameState());
 			isCheckmate = isCheckmate();
