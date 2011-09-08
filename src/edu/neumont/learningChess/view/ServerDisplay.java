@@ -12,6 +12,18 @@ public class ServerDisplay implements IDisplay {
 	private final GameController gameController;
 	private final HistoryAnalyzer learningEngine;
 	private boolean isCheckmate = false;
+	private Piece piece = new Piece() {
+		
+		@Override
+		public void setVisible(boolean isVisible) {
+			
+		}
+		
+		@Override
+		public void setPieceLocation(Location location) {
+			
+		}
+	};
 
 	public ServerDisplay(GameController gameController, HistoryAnalyzer learningEngine) {
 		this.gameController = gameController;
@@ -20,7 +32,7 @@ public class ServerDisplay implements IDisplay {
 	
 	@Override
 	public Piece removePiece(Location location) {
-		return null;
+		return piece;
 	}
 
 	@Override

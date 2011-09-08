@@ -1,10 +1,6 @@
 package edu.neumont.learningChess.controller;
 
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -17,7 +13,6 @@ import edu.neumont.learningChess.api.MoveHistory;
 import edu.neumont.learningChess.api.PieceDescription;
 import edu.neumont.learningChess.api.PieceType;
 import edu.neumont.learningChess.api.TeamColor;
-import edu.neumont.learningChess.json.Jsonizer;
 import edu.neumont.learningChess.model.AIPlayer;
 import edu.neumont.learningChess.model.Bishop;
 import edu.neumont.learningChess.model.ChessBoard;
@@ -63,10 +58,7 @@ public class GameController implements IListener, ICheckChecker {
 
 	private boolean showDisplay;
 	
-	public static final boolean IS_LOCAL = false;
-
 	private List<ChessGameState> history = new ArrayList<ChessGameState>();
-	private ArrayList<ExtendedMove> moveHistory = new ArrayList<ExtendedMove>();
 
 	public GameController(HistoryAnalyzer analyzer, MoveHistory history) {
 		this(PlayerType.Proxy, PlayerType.Proxy);
@@ -76,7 +68,6 @@ public class GameController implements IListener, ICheckChecker {
 		boardDisplay = new ServerDisplay(this, analyzer);
 	}
 	public GameController(PlayerType whiteType, PlayerType blackType) {
-		moveHistory = new ArrayList<ExtendedMove>();
 		
 		showDisplay = (whiteType == PlayerType.Human) || (blackType == PlayerType.Human);
 		// showDisplay = true;
@@ -110,7 +101,6 @@ public class GameController implements IListener, ICheckChecker {
 		board.AddListener(this);
 		whiteTeam = new Team(Team.Color.LIGHT);
 		blackTeam = new Team(Team.Color.DARK);
-		moveHistory = new ArrayList<ExtendedMove>();
 
 		whitePlayer = createPlayer(PlayerType.Proxy, whiteTeam);
 		blackPlayer = createPlayer(PlayerType.Proxy, blackTeam);
@@ -261,7 +251,7 @@ public class GameController implements IListener, ICheckChecker {
 		while (!(isCheckmate || isStalemate)) {
 			boardDisplay.promptForMove((currentPlayer == whitePlayer));
 			Move move = currentPlayer.getMove();
-			moveHistory.add(board.makeMove(move));
+			board.makeMove(move);
 			togglePlayers();
 			history.add(getCurrentGameState());
 			isCheckmate = isCheckmate();
@@ -270,9 +260,6 @@ public class GameController implements IListener, ICheckChecker {
 				boardDisplay.notifyCheck(currentPlayer == whitePlayer);
 			}
 		}
-		if (isCheckmate || isStalemate) {
-			tellTheServer();
-		}
 		if (isCheckmate) {
 			boardDisplay.notifyCheckmate(currentPlayer == blackPlayer);
 		} else if (isStalemate) {
@@ -280,31 +267,7 @@ public class GameController implements IListener, ICheckChecker {
 		}
 	}
 
-	private void tellTheServer() {
-		MoveHistory moveHistory = new MoveHistory(this.moveHistory);
-		String endpoint;
-		if(IS_LOCAL) {
-			endpoint = "http://localhost:8080/LearningChessWebServer/analyzehistory";
-		}
-		else {
-			endpoint = "http://chess.neumont.edu:8081/ChessGame/analyzehistory";
-		}
-
-		try {
-			URL url = new URL(endpoint);
-			URLConnection connection = url.openConnection();
-			connection.setDoOutput(true);
-			OutputStreamWriter writer = new OutputStreamWriter(connection.getOutputStream());
-			String jsonOut = Jsonizer.jsonize(moveHistory);
-			writer.write(jsonOut);
-			writer.flush();
-		} catch (MalformedURLException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
-	}
+	
 	public void tryMove(Move move) {
 		board.tryMove(move);
 		togglePlayers();

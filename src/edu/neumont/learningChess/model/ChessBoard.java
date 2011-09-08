@@ -115,8 +115,7 @@ public class ChessBoard {
 		return moveDescription;
 	}
 
-	public ExtendedMove makeMove(Move move) {
-		ExtendedMove extendedMove = new ExtendedMove(move);
+	public void makeMove(Move move) {
 		if (isCastlingMove(move)) {
 			Move castlingMove = getCastlingRookMove(move);
 			makeBasicMove(castlingMove);
@@ -148,9 +147,7 @@ public class ChessBoard {
 			ChessPiece replacement = pawn.getPromotionPiece(move.getTo());
 			pawnsTeam.add(replacement);
 			placePiece(replacement, move.getTo());
-			extendedMove.setPromotionPieceType(GameController.getPieceTypeFromChessPiece(replacement));
 		}
-		return extendedMove;
 	}
 	
 	private boolean requiresPromotion(Move move) {
@@ -203,23 +200,23 @@ public class ChessBoard {
 		return rookMove;
 	}
 
-	public void tryMove(Move move) {
+	public MoveDescription tryMove(Move move) {
 		if (isCastlingMove(move)) {
 			Move castlingMove = getCastlingRookMove(move);
 			tryingMoves.push(makeBasicMove(castlingMove));
 		}
-		MoveDescription description = null;
+		MoveDescription moveDescription = null;
 		if (isEnPassantMove(move)) {
 			Location target = getEnPassantTarget(move);
-			description = makeBasicMove(move);
+			moveDescription = makeBasicMove(move);
 			ChessPiece capturedPiece = removePiece(target);
 			Team capturedTeam = capturedPiece.getTeam();
-			description.setTakenPiece(capturedPiece);
+			moveDescription.setTakenPiece(capturedPiece);
 			capturedTeam.remove(capturedPiece);
-			tryingMoves.push(description);
+			tryingMoves.push(moveDescription);
 		} else {
-			description = makeBasicMove(move);
-			tryingMoves.push(description);
+			moveDescription = makeBasicMove(move);
+			tryingMoves.push(moveDescription);
 		}
 		if (requiresPromotion(move)) {
 			Pawn pawn = (Pawn) removePiece(move.getTo());
@@ -228,8 +225,9 @@ public class ChessBoard {
 			ChessPiece replacement = pawn.getPromotionPiece(move.getTo());
 			pawnsTeam.add(replacement);
 			putPiece(replacement, move.getTo());
-			description.setPromotionPiece(replacement);
+			moveDescription.setPromotionPiece(replacement);
 		}
+		return moveDescription;
 	}
 
 	public void undoTriedMove() {

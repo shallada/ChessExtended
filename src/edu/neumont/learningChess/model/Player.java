@@ -16,4 +16,6 @@ public abstract class Player {
 	public abstract Move getMove();
 	
 	public abstract Pawn.IPromotionListener getPromotionListener();
+	
+	public void gameIsOver(){}
 }
