@@ -84,8 +84,8 @@ public class GameController implements IListener, ICheckChecker {
 		} else {
 			boardDisplay = new NullDisplay();
 		}
-		boardDisplay = new BoardDisplay();
-		showDisplay = true;
+//		boardDisplay = new BoardDisplay();
+//		showDisplay = true;
 		// boardDisplay = (showDisplay)? new BoardDisplay(): new NullDisplay();
 
 		whiteTeam = buildTeam(Team.Color.LIGHT);
@@ -272,8 +272,12 @@ public class GameController implements IListener, ICheckChecker {
 		}
 		if (isCheckmate) {
 			boardDisplay.notifyCheckmate(currentPlayer == blackPlayer);
+			whitePlayer.gameIsOver();
+			blackPlayer.gameIsOver();
 		} else if (isStalemate) {
 			boardDisplay.notifyStalemate();
+			whitePlayer.gameIsOver();
+			blackPlayer.gameIsOver();
 		}
 	}
 
