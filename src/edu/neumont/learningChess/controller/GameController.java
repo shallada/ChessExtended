@@ -64,7 +64,7 @@ public class GameController implements IListener, ICheckChecker {
 	
 	// TODO: for development only. remove before deployment
 	private DevTools devTools = null;
-	
+
 	public GameController(HistoryAnalyzer analyzer, MoveHistory history) {
 		this(PlayerType.Proxy, PlayerType.Proxy);
 		((ProxyPlayer) whitePlayer).setMoveHistory(history);
@@ -242,7 +242,7 @@ public class GameController implements IListener, ICheckChecker {
 				player = new RemotePlayer(team, board, this);
 				break;
 			case AI :
-				player = new AIPlayer(board, team, (team == whiteTeam) ? blackTeam : whiteTeam);
+				player = new AIPlayer(board, team, (team == whiteTeam) ? blackTeam : whiteTeam, this);
 				break;
 			case Proxy :
 				player = new ProxyPlayer(team);
@@ -272,15 +272,10 @@ public class GameController implements IListener, ICheckChecker {
 		}
 		if (isCheckmate) {
 			boardDisplay.notifyCheckmate(currentPlayer == blackPlayer);
-			whitePlayer.gameIsOver();
-			blackPlayer.gameIsOver();
 		} else if (isStalemate) {
 			boardDisplay.notifyStalemate();
-			whitePlayer.gameIsOver();
-			blackPlayer.gameIsOver();
 		}
 	}
-
 	
 	public void tryMove(Move move) {
 		board.tryMove(move);

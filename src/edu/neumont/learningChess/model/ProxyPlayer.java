@@ -3,8 +3,6 @@ package edu.neumont.learningChess.model;
 import edu.neumont.learningChess.api.ExtendedMove;
 import edu.neumont.learningChess.api.MoveHistory;
 import edu.neumont.learningChess.api.PieceType;
-import edu.neumont.learningChess.controller.GameController;
-import edu.neumont.learningChess.model.Pawn.IPromotionListener;
 
 public class ProxyPlayer extends Player {
 
