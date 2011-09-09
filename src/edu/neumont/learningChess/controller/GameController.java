@@ -79,13 +79,13 @@ public class GameController implements IListener, ICheckChecker {
 		
 		board = new ChessBoard();
 		board.AddListener(this);
-		if (showDisplay) {
-			boardDisplay = new BoardDisplay();
-		} else {
-			boardDisplay = new NullDisplay();
-		}
-//		boardDisplay = new BoardDisplay();
-//		showDisplay = true;
+//		if (showDisplay) {
+//			boardDisplay = new BoardDisplay();
+//		} else {
+//			boardDisplay = new NullDisplay();
+//		}
+		boardDisplay = new BoardDisplay();
+		showDisplay = true;
 		// boardDisplay = (showDisplay)? new BoardDisplay(): new NullDisplay();
 
 		whiteTeam = buildTeam(Team.Color.LIGHT);

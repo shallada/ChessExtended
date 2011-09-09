@@ -38,7 +38,7 @@ public class HumanPlayer extends Player implements IDisplay.IMoveHandler {
 	public synchronized boolean handleMove(Move move) {
 		boolean canHandleMove = true;
 		if (awaitingMove) {
-			if (isLegalMove(move,board,checkChecker)) {
+			if (isLegalMove(team, move,board,checkChecker)) {
 				canHandleMove = true;
 				awaitedMove = move;
 				notify();
