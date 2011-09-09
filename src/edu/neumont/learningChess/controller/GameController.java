@@ -74,16 +74,16 @@ public class GameController implements IListener, ICheckChecker {
 	}
 	public GameController(PlayerType whiteType, PlayerType blackType) {
 		
-		showDisplay = (whiteType == PlayerType.Human) || (blackType == PlayerType.Human);
-		// showDisplay = true;
+		//showDisplay = (whiteType == PlayerType.Human) || (blackType == PlayerType.Human);
+		 showDisplay = true;
 		
 		board = new ChessBoard();
 		board.AddListener(this);
-		if (showDisplay) {
-			boardDisplay = new BoardDisplay();
-		} else {
-			boardDisplay = new NullDisplay();
-		}
+//		if (showDisplay) {
+//			boardDisplay = new BoardDisplay();
+//		} else {
+//			boardDisplay = new NullDisplay();
+//		}
 		boardDisplay = new BoardDisplay();
 		showDisplay = true;
 		// boardDisplay = (showDisplay)? new BoardDisplay(): new NullDisplay();
@@ -272,8 +272,10 @@ public class GameController implements IListener, ICheckChecker {
 		}
 		if (isCheckmate) {
 			boardDisplay.notifyCheckmate(currentPlayer == blackPlayer);
+		//	System.out.println(currentPlayer.getTeam().isWhite()?"White wins":"Black wins");
 		} else if (isStalemate) {
 			boardDisplay.notifyStalemate();
+		//	System.out.println("Stalemate");
 		}
 	}
 
