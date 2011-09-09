@@ -13,6 +13,7 @@ import edu.neumont.learningChess.api.MoveHistory;
 import edu.neumont.learningChess.api.PieceDescription;
 import edu.neumont.learningChess.api.PieceType;
 import edu.neumont.learningChess.api.TeamColor;
+import edu.neumont.learningChess.dev.DevTools;
 import edu.neumont.learningChess.model.AIPlayer;
 import edu.neumont.learningChess.model.Bishop;
 import edu.neumont.learningChess.model.ChessBoard;
@@ -60,6 +61,10 @@ public class GameController implements IListener, ICheckChecker {
 	
 	private List<ChessGameState> history = new ArrayList<ChessGameState>();
 
+	
+	// TODO: for development only. remove before deployment
+	private DevTools devTools = null;
+	
 	public GameController(HistoryAnalyzer analyzer, MoveHistory history) {
 		this(PlayerType.Proxy, PlayerType.Proxy);
 		((ProxyPlayer) whitePlayer).setMoveHistory(history);
@@ -96,6 +101,9 @@ public class GameController implements IListener, ICheckChecker {
 		history.add(getCurrentGameState());
 
 		boardDisplay.setVisible(true);
+		
+		//TODO: for development only. remove before deployment
+		devTools = new DevTools(this);
 	}
 
 	public GameController(ChessGameState gameState, HistoryAnalyzer learningEngine) {
