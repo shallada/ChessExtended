@@ -44,6 +44,7 @@ public class ServerPlayer extends Player {
 		} else {
 			getMoveEndpoint = "http://chess.neumont.edu:8081/ChessGame/getmove";
 		}
+		promotionListener = new PromotionListener(null);
 	}
 	
 	List<ExtendedMove> moveHistory = new ArrayList<ExtendedMove>();
@@ -152,7 +153,7 @@ public class ServerPlayer extends Player {
 				break;
 			}
 		}
-		promotionListener = new PromotionListener(piece);
+		promotionListener.setPromotionPiece(piece);
 	}
 
 	@Override
