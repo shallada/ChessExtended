@@ -1,6 +1,19 @@
-import java.util.Scanner;
 
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
+import edu.neumont.learningChess.api.ExtendedMove;
+import edu.neumont.learningChess.api.MoveHistory;
 import edu.neumont.learningChess.controller.GameController;
+import edu.neumont.learningChess.controller.ServerPlayer;
+import edu.neumont.learningChess.json.Jsonizer;
 import edu.neumont.learningChess.model.TextCommandProcessor;
 import edu.neumont.learningChess.model.TextCommandProcessorOutput;
 
@@ -11,30 +24,65 @@ public class Main {
 		GameController.PlayerType white;
 		GameController.PlayerType black;
 		if ((args.length == 0) || (args[0].equalsIgnoreCase("white"))) {
-			white = GameController.PlayerType.AI;
-			black = GameController.PlayerType.AI;
+			white = GameController.PlayerType.Human;
+			black = GameController.PlayerType.Human;
 		} else {
 			white = GameController.PlayerType.Human;
 			black = GameController.PlayerType.AI;
 		}
-//		Scanner scan = new Scanner(System.in);
-//		System.out.println("submit any input to end");
-//		System.out.println(scan.hasNext());
-		//while (true)
-		//{
-			GameController game = new GameController(white, black);
-			try
-			{
-			game.play();
+		GameController game = new GameController(white, black);
+		game.play();
+		if(game.isCheckmate() || game.isStalemate())
+			tellTheServer(game.getGameHistory());
+		game.close();
+	}
+	
+	private static void tellTheServer(Iterator<ExtendedMove> moveHistoryIterator) {
+		List<ExtendedMove> moves = new ArrayList<ExtendedMove>();
+		while(moveHistoryIterator.hasNext())
+			moves.add(moveHistoryIterator.next());
+		
+		MoveHistory moveHistory = new MoveHistory(moves);
+		String endpoint;
+		if(ServerPlayer.IS_LOCAL) {
+			endpoint = "http://localhost:8080/LearningChessWebServer/analyzehistory";
+		}
+		else {
+			endpoint = "http://chess.neumont.edu:8081/ChessGame/analyzehistory";
+		}
+
+		try {
+			URL url = new URL(endpoint);
+			URLConnection connection = url.openConnection();
+			connection.setDoOutput(true);
+			OutputStreamWriter writer = new OutputStreamWriter(connection.getOutputStream());
+			String jsonOut = Jsonizer.jsonize(moveHistory);
+			writer.write(jsonOut);
+			writer.flush();
+			int lengthFromClient = moveHistory.getMoves().size();
+			InputStreamReader in = new InputStreamReader(connection.getInputStream());
+			StringBuilder jsonStringBuilder = new StringBuilder();
+			int bytesRead;
+			while ((bytesRead = in.read()) > -1) {
+				jsonStringBuilder.append((char)bytesRead);
 			}
-			catch (Exception e) {
-				System.out.println("Crashed");
+			int lengthFromServer = 0;
+			try {
+				lengthFromServer = Integer.parseInt(jsonStringBuilder.toString());
+			} catch(NumberFormatException e) {
 				e.printStackTrace();
 			}
-			Scanner scan = new Scanner(System.in);
-			scan.next();
-			game.close();
-		//}
+			if(lengthFromClient != lengthFromServer)
+				throw new RuntimeException("Lengths are different!");
+			else
+				System.out.println("Lengths are the same");
+			
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
 	}
 
 	public static void old_main(String[] args) {

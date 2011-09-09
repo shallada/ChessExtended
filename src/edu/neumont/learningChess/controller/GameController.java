@@ -64,7 +64,7 @@ public class GameController implements IListener, ICheckChecker {
 	
 	// TODO: for development only. remove before deployment
 	private DevTools devTools = null;
-	
+
 	public GameController(HistoryAnalyzer analyzer, MoveHistory history) {
 		this(PlayerType.Proxy, PlayerType.Proxy);
 		((ProxyPlayer) whitePlayer).setMoveHistory(history);
@@ -79,13 +79,13 @@ public class GameController implements IListener, ICheckChecker {
 		
 		board = new ChessBoard();
 		board.AddListener(this);
-//		if (showDisplay) {
-//			boardDisplay = new BoardDisplay();
-//		} else {
-//			boardDisplay = new NullDisplay();
-//		}
-		boardDisplay = new BoardDisplay();
-		showDisplay = true;
+		if (showDisplay) {
+			boardDisplay = new BoardDisplay();
+		} else {
+			boardDisplay = new NullDisplay();
+		}
+//		boardDisplay = new BoardDisplay();
+//		showDisplay = true;
 		// boardDisplay = (showDisplay)? new BoardDisplay(): new NullDisplay();
 
 		whiteTeam = buildTeam(Team.Color.LIGHT);
@@ -242,7 +242,7 @@ public class GameController implements IListener, ICheckChecker {
 				player = new RemotePlayer(team, board, this);
 				break;
 			case AI :
-				player = new AIPlayer(board, team, (team == whiteTeam) ? blackTeam : whiteTeam);
+				player = new AIPlayer(board, team, (team == whiteTeam) ? blackTeam : whiteTeam, this);
 				break;
 			case Proxy :
 				player = new ProxyPlayer(team);
@@ -278,7 +278,6 @@ public class GameController implements IListener, ICheckChecker {
 		//	System.out.println("Stalemate");
 		}
 	}
-
 	
 	public void tryMove(Move move) {
 		board.tryMove(move);

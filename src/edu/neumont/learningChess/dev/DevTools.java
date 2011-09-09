@@ -3,6 +3,7 @@ package edu.neumont.learningChess.dev;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 import edu.neumont.learningChess.api.ChessGameState;
@@ -18,14 +19,17 @@ public class DevTools {
 	
 	public static void saveCurrentGameState() {
 		if(gameController != null){
-			Calendar cal = Calendar.getInstance();
-			StringBuilder sb = new StringBuilder();
-			sb.append(cal.get(Calendar.MONTH +1));
-			sb.append("-");
-			sb.append(cal.get(Calendar.DATE));
-			sb.append("-");
-			sb.append(cal.getTime());
-			File file = new File(sb.toString());
+			String pattern = "MM_dd_yyyy_HHmmssSSS";
+			SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
+			String directoryName = "GameStates";			
+			String fileName = simpleDateFormat.format(Calendar.getInstance().getTime());
+			
+			File directory = new File(directoryName);
+			if(!directory.exists()){
+				directory.mkdir();
+			}
+			
+			File file = new File(directoryName, fileName);		
 	
 			ChessGameState currentState = DevTools.gameController.getCurrentGameState();
 			String jsonizedState = Jsonizer.jsonize(currentState);

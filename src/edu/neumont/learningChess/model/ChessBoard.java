@@ -4,9 +4,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Stack;
 
-import edu.neumont.learningChess.api.ExtendedMove;
 import edu.neumont.learningChess.api.Location;
-import edu.neumont.learningChess.controller.GameController;
 
 
 public class ChessBoard {
