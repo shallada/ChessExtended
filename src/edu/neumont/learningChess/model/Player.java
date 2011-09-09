@@ -19,15 +19,15 @@ public abstract class Player {
 	
 	public abstract Pawn.IPromotionListener getPromotionListener();
 	
-	protected boolean isLegalMove(Move move, ChessBoard board, ICheckChecker checkChecker) {
+	protected boolean isLegalMove(Team us, Move move, ChessBoard board, ICheckChecker checkChecker) {
 		ChessPiece movingPiece = board.getPiece(move.getFrom());
 		Team movingTeam = movingPiece.getTeam();
-		return (movingTeam == team) && movingPiece.isLegalMove(board, move) && !causesCheckmate(move, board, checkChecker);
+		return (movingTeam == us) && movingPiece.isLegalMove(board, move) && !causesCheckmate(us, move, board, checkChecker);
 	}
 	
-	private boolean causesCheckmate(Move move, ChessBoard board, ICheckChecker checkChecker) {
+	private boolean causesCheckmate(Team us, Move move, ChessBoard board, ICheckChecker checkChecker) {
 		board.tryMove(move);
-		boolean result = checkChecker.isInCheck(team);
+		boolean result = checkChecker.isInCheck(us);
 		board.undoTriedMove();
 		
 		return result;

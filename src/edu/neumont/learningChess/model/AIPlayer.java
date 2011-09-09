@@ -49,7 +49,7 @@ public class AIPlayer extends Player {
 			// For each move on the team...
 			for (Iterator<Move> i = us.getMoves(board); i.hasNext(); ) {
 				Move move = i.next();
-				if(isLegalMove(move, board, checkChecker)) {
+				if(isLegalMove(us, move, board, checkChecker)) {
 					// try the move
 					board.tryMove(move);
 					// find the best counter move
