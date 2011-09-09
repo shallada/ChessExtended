@@ -58,10 +58,11 @@ public class GameController implements IListener, ICheckChecker {
 	private Player currentPlayer;
 
 	private boolean showDisplay;
-	
+
+	private static final boolean ALWAYS_SHOW_BOARD = false;
+
 	private List<ChessGameState> history = new ArrayList<ChessGameState>();
 
-	
 	// TODO: for development only. remove before deployment
 	private DevTools devTools = null;
 
@@ -73,19 +74,23 @@ public class GameController implements IListener, ICheckChecker {
 		boardDisplay = new ServerDisplay(this, analyzer);
 	}
 	public GameController(PlayerType whiteType, PlayerType blackType) {
-		
-		showDisplay = (whiteType == PlayerType.Human) || (blackType == PlayerType.Human);
-//		 showDisplay = true;
-		
+		if (ALWAYS_SHOW_BOARD)
+			showDisplay = true;
+		else
+			showDisplay = (whiteType == PlayerType.Human) || (blackType == PlayerType.Human);
+
 		board = new ChessBoard();
 		board.AddListener(this);
-//		if (showDisplay) {
-//			boardDisplay = new BoardDisplay();
-//		} else {
-//			boardDisplay = new NullDisplay();
-//		}
-		boardDisplay = new BoardDisplay();
-		showDisplay = true;
+		if (ALWAYS_SHOW_BOARD) {
+			boardDisplay = new BoardDisplay();
+			showDisplay = true;
+		} else {
+			if (showDisplay) {
+				boardDisplay = new BoardDisplay();
+			} else {
+				boardDisplay = new NullDisplay();
+			}
+		}
 		// boardDisplay = (showDisplay)? new BoardDisplay(): new NullDisplay();
 
 		whiteTeam = buildTeam(Team.Color.LIGHT);
@@ -101,8 +106,8 @@ public class GameController implements IListener, ICheckChecker {
 		history.add(getCurrentGameState());
 
 		boardDisplay.setVisible(true);
-		
-		//TODO: for development only. remove before deployment
+
+		// TODO: for development only. remove before deployment
 		devTools = new DevTools(this);
 	}
 
@@ -272,13 +277,13 @@ public class GameController implements IListener, ICheckChecker {
 		}
 		if (isCheckmate) {
 			boardDisplay.notifyCheckmate(currentPlayer == blackPlayer);
-		//	System.out.println(currentPlayer.getTeam().isWhite()?"White wins":"Black wins");
+			// System.out.println(currentPlayer.getTeam().isWhite()?"White wins":"Black wins");
 		} else if (isStalemate) {
 			boardDisplay.notifyStalemate();
-		//	System.out.println("Stalemate");
+			// System.out.println("Stalemate");
 		}
 	}
-	
+
 	public void tryMove(Move move) {
 		board.tryMove(move);
 		togglePlayers();
