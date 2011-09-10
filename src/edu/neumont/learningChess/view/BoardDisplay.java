@@ -40,6 +40,10 @@ public class BoardDisplay extends JFrame implements KeyListener, MouseListener, 
 		layeredPane.addMouseListener(this);
 		layeredPane.addMouseMotionListener(this);
 		this.addKeyListener(this);
+		// The client automatically sends the server the game history when the game is over,
+		// and then the window closes itself. This is so the user doesn't inadvertently close
+		// the window before the data is sent and a response is sent back.
+		this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 
 		chessBoard = new JPanel();
 		layeredPane.add(chessBoard, JLayeredPane.DEFAULT_LAYER);
