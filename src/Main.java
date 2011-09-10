@@ -1,4 +1,3 @@
-
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
@@ -20,34 +19,32 @@ import edu.neumont.learningChess.model.TextCommandProcessorOutput;
 public class Main {
 
 	public static void main(String[] args) {
-
 		GameController.PlayerType white;
 		GameController.PlayerType black;
 		if ((args.length == 0) || (args[0].equalsIgnoreCase("white"))) {
-			white = GameController.PlayerType.Human;//human for check in
-			black = GameController.PlayerType.Human;//human for check in
+			white = GameController.PlayerType.Human;// human for check in
+			black = GameController.PlayerType.Human;// human for check in
 		} else {
 			white = GameController.PlayerType.Human;
 			black = GameController.PlayerType.AI;
 		}
 		GameController game = new GameController(white, black);
 		game.play();
-		if(game.isCheckmate() || game.isStalemate())
+		if (game.isCheckmate() || game.isStalemate())
 			tellTheServer(game.getGameHistory());
 		game.close();
 	}
-	
+
 	private static void tellTheServer(Iterator<ExtendedMove> moveHistoryIterator) {
 		List<ExtendedMove> moves = new ArrayList<ExtendedMove>();
-		while(moveHistoryIterator.hasNext())
+		while (moveHistoryIterator.hasNext())
 			moves.add(moveHistoryIterator.next());
-		
+
 		MoveHistory moveHistory = new MoveHistory(moves);
 		String endpoint;
-		if(ServerPlayer.IS_LOCAL) {
+		if (ServerPlayer.IS_LOCAL) {
 			endpoint = "http://localhost:8080/LearningChessWebServer/analyzehistory";
-		}
-		else {
+		} else {
 			endpoint = "http://chess.neumont.edu:8081/ChessGame/analyzehistory";
 		}
 
@@ -64,21 +61,21 @@ public class Main {
 			StringBuilder jsonStringBuilder = new StringBuilder();
 			int bytesRead;
 			while ((bytesRead = in.read()) > -1) {
-				if((char)bytesRead != '\n' && (char)bytesRead != '\r')
-				jsonStringBuilder.append((char)bytesRead);
+				if ((char) bytesRead != '\n' && (char) bytesRead != '\r')
+					jsonStringBuilder.append((char) bytesRead);
 			}
 			int lengthFromServer = 0;
 			try {
 				String jsonString = jsonStringBuilder.toString();
 				lengthFromServer = Integer.parseInt(jsonString);
-			} catch(NumberFormatException e) {
+			} catch (NumberFormatException e) {
 				e.printStackTrace();
 			}
-			if(lengthFromClient != lengthFromServer)
+			if (lengthFromClient != lengthFromServer)
 				throw new RuntimeException("Lengths are different!");
 			else
 				System.out.println("Lengths are the same");
-			
+
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
