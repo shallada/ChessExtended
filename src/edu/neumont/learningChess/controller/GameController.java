@@ -268,6 +268,7 @@ public class GameController implements IListener, ICheckChecker {
 			Move move = currentPlayer.getMove();
 			board.makeMove(move);
 			togglePlayers();
+			//DevTools.saveCurrentGameState(); //TODO Development use only
 			history.add(getCurrentGameState());
 			isCheckmate = isCheckmate();
 			isStalemate = isStalemate();
@@ -289,7 +290,7 @@ public class GameController implements IListener, ICheckChecker {
 		togglePlayers();
 	}
 
-	private void togglePlayers() {
+	public void togglePlayers() {
 		currentPlayer = (currentPlayer == whitePlayer) ? blackPlayer : whitePlayer;
 	}
 

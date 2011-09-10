@@ -64,11 +64,13 @@ public class Main {
 			StringBuilder jsonStringBuilder = new StringBuilder();
 			int bytesRead;
 			while ((bytesRead = in.read()) > -1) {
+				if((char)bytesRead != '\n' && (char)bytesRead != '\r')
 				jsonStringBuilder.append((char)bytesRead);
 			}
 			int lengthFromServer = 0;
 			try {
-				lengthFromServer = Integer.parseInt(jsonStringBuilder.toString());
+				String jsonString = jsonStringBuilder.toString();
+				lengthFromServer = Integer.parseInt(jsonString);
 			} catch(NumberFormatException e) {
 				e.printStackTrace();
 			}
