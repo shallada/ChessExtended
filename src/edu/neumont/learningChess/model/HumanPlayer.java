@@ -38,7 +38,7 @@ public class HumanPlayer extends Player implements IDisplay.IMoveHandler {
 	public synchronized boolean handleMove(Move move) {
 		boolean canHandleMove = true;
 		if (awaitingMove) {
-			if (isLegalMove(move)) {
+			if (isLegalMove(team, move,board,checkChecker)) {
 				canHandleMove = true;
 				awaitedMove = move;
 				notify();
@@ -49,20 +49,7 @@ public class HumanPlayer extends Player implements IDisplay.IMoveHandler {
 		return canHandleMove;
 	}
 
-	public boolean isLegalMove(Move move) {
-		ChessPiece movingPiece = board.getPiece(move.getFrom());
-		Team movingTeam = movingPiece.getTeam();
-		return (movingTeam == team) && movingPiece.isLegalMove(board, move) && !causesCheckmate(move);
-	}
 	
-	private boolean causesCheckmate(Move move) {
-		board.tryMove(move);
-		boolean result = checkChecker.isInCheck(team);
-		board.undoTriedMove();
-		
-		return result;
-	}
-
 	@Override
 	public Pawn.IPromotionListener getPromotionListener() {
 		return promotionListener;

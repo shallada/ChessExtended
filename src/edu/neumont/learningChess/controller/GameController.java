@@ -58,13 +58,14 @@ public class GameController implements IListener, ICheckChecker {
 	private Player currentPlayer;
 
 	private boolean showDisplay;
-	
+
+	private static final boolean ALWAYS_SHOW_BOARD = false;//false for check in
+
 	private List<ChessGameState> history = new ArrayList<ChessGameState>();
 
-	
 	// TODO: for development only. remove before deployment
 	private DevTools devTools = null;
-	
+
 	public GameController(HistoryAnalyzer analyzer, MoveHistory history) {
 		this(PlayerType.Proxy, PlayerType.Proxy);
 		((ProxyPlayer) whitePlayer).setMoveHistory(history);
@@ -73,19 +74,23 @@ public class GameController implements IListener, ICheckChecker {
 		boardDisplay = new ServerDisplay(this, analyzer);
 	}
 	public GameController(PlayerType whiteType, PlayerType blackType) {
-		
-		showDisplay = (whiteType == PlayerType.Human) || (blackType == PlayerType.Human);
-		// showDisplay = true;
-		
+		if (ALWAYS_SHOW_BOARD)
+			showDisplay = true;
+		else
+			showDisplay = (whiteType == PlayerType.Human) || (blackType == PlayerType.Human);
+
 		board = new ChessBoard();
 		board.AddListener(this);
-		if (showDisplay) {
+		if (ALWAYS_SHOW_BOARD) {
 			boardDisplay = new BoardDisplay();
+			showDisplay = true;
 		} else {
-			boardDisplay = new NullDisplay();
+			if (showDisplay) {
+				boardDisplay = new BoardDisplay();
+			} else {
+				boardDisplay = new NullDisplay();
+			}
 		}
-		boardDisplay = new BoardDisplay();
-		showDisplay = true;
 		// boardDisplay = (showDisplay)? new BoardDisplay(): new NullDisplay();
 
 		whiteTeam = buildTeam(Team.Color.LIGHT);
@@ -101,8 +106,8 @@ public class GameController implements IListener, ICheckChecker {
 		history.add(getCurrentGameState());
 
 		boardDisplay.setVisible(true);
-		
-		//TODO: for development only. remove before deployment
+
+		// TODO: for development only. remove before deployment
 		devTools = new DevTools(this);
 	}
 
@@ -242,7 +247,7 @@ public class GameController implements IListener, ICheckChecker {
 				player = new RemotePlayer(team, board, this);
 				break;
 			case AI :
-				player = new AIPlayer(board, team, (team == whiteTeam) ? blackTeam : whiteTeam);
+				player = new AIPlayer(board, team, (team == whiteTeam) ? blackTeam : whiteTeam, this);
 				break;
 			case Proxy :
 				player = new ProxyPlayer(team);
@@ -273,12 +278,13 @@ public class GameController implements IListener, ICheckChecker {
 		}
 		if (isCheckmate) {
 			boardDisplay.notifyCheckmate(currentPlayer == blackPlayer);
+			// System.out.println(currentPlayer.getTeam().isWhite()?"White wins":"Black wins");
 		} else if (isStalemate) {
 			boardDisplay.notifyStalemate();
+			// System.out.println("Stalemate");
 		}
 	}
 
-	
 	public void tryMove(Move move) {
 		board.tryMove(move);
 		togglePlayers();

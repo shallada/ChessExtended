@@ -12,11 +12,13 @@ public class AIPlayer extends Player {
 	private static final int LOOK_AHEAD_DEPTH = 4;
 	private ChessBoard board;
 	private Team otherTeam;
+	private ICheckChecker checkChecker;
 	
-	public AIPlayer(ChessBoard board, Team team, Team otherTeam) {
+	public AIPlayer(ChessBoard board, Team team, Team otherTeam, ICheckChecker checkChecker) {
 		super(team);
 		this.board = board;
 		this.otherTeam = otherTeam;
+		this.checkChecker = checkChecker;
 	}
 
 	public class SearchResult {
@@ -47,24 +49,26 @@ public class AIPlayer extends Player {
 			// For each move on the team...
 			for (Iterator<Move> i = us.getMoves(board); i.hasNext(); ) {
 				Move move = i.next();
-				// try the move
-				board.tryMove(move);
-				// find the best counter move
-				SearchResult counter = findBestMove(them, us, depth-1);
-				// undo the move
-				board.undoTriedMove();
-				// calculate the value of the move
-				int moveValue = getValueOfLocation(move.getTo()) - ((counter == null)? 0: counter.getValue());
-				// If the value is the best value,
-				if ((results == null) || (moveValue > bestValue)) {
-					// Save the move and update the best value
-					SearchResult result = new SearchResult(move, moveValue);
-					results = new ArrayList<SearchResult>();
-					results.add(result);
-					bestValue = moveValue;
-				} else if (moveValue == bestValue) {
-					SearchResult result = new SearchResult(move, moveValue);
-					results.add(result);
+				if(isLegalMove(us, move, board, checkChecker)) {
+					// try the move
+					board.tryMove(move);
+					// find the best counter move
+					SearchResult counter = findBestMove(them, us, depth-1);
+					// undo the move
+					board.undoTriedMove();
+					// calculate the value of the move
+					int moveValue = getValueOfLocation(move.getTo()) - ((counter == null)? 0: counter.getValue());
+					// If the value is the best value,
+					if ((results == null) || (moveValue > bestValue)) {
+						// Save the move and update the best value
+						SearchResult result = new SearchResult(move, moveValue);
+						results = new ArrayList<SearchResult>();
+						results.add(result);
+						bestValue = moveValue;
+					} else if (moveValue == bestValue) {
+						SearchResult result = new SearchResult(move, moveValue);
+						results.add(result);
+					}
 				}
 			}
 		}
