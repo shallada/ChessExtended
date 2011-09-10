@@ -27,6 +27,7 @@ public class BoardDisplay extends JFrame implements KeyListener, MouseListener, 
 	BoardDisplayPiece chessPiece;
 	int xAdjustment;
 	int yAdjustment;
+	private static final boolean SHOW_ALERT = true;
 	
 	private ArrayList<IDisplay.IMoveHandler> moveHandlers = new ArrayList<IDisplay.IMoveHandler>();
 
@@ -126,13 +127,17 @@ public class BoardDisplay extends JFrame implements KeyListener, MouseListener, 
 	public void notifyCheckmate(boolean isWhite) {
 		this.setTitle("Checkmate!  "+((isWhite)?"White":"Black")+" wins");
 		//DevTools.saveMoveHistory(); //TODO Development use only
-		JOptionPane.showMessageDialog(this.getParent(), "Checkmate!  "+((isWhite)?"White":"Black")+" wins");
+		if(SHOW_ALERT) {
+			JOptionPane.showMessageDialog(this.getParent(), "Checkmate!  "+((isWhite)?"White":"Black")+" wins");
+		}
 	}
 	
 	public void notifyStalemate() {
 		this.setTitle("Stalemate");
 		//DevTools.saveMoveHistory(); //TODO Development use only
-		JOptionPane.showMessageDialog(this.getParent(), "Stalemate");
+		if(SHOW_ALERT) {
+			JOptionPane.showMessageDialog(this.getParent(), "Stalemate");
+		}
 	}
 	
 	public void promptForMove(boolean isWhite) {
