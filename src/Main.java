@@ -24,8 +24,8 @@ public class Main {
 		GameController.PlayerType white;
 		GameController.PlayerType black;
 		if ((args.length == 0) || (args[0].equalsIgnoreCase("white"))) {
-			white = GameController.PlayerType.Human;//human for check in
-			black = GameController.PlayerType.Human;//human for check in
+			white = GameController.PlayerType.AI;//human for check in
+			black = GameController.PlayerType.AI;//human for check in
 		} else {
 			white = GameController.PlayerType.Human;
 			black = GameController.PlayerType.AI;
