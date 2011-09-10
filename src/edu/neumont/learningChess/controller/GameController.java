@@ -289,7 +289,7 @@ public class GameController implements IListener, ICheckChecker {
 		togglePlayers();
 	}
 
-	private void togglePlayers() {
+	public void togglePlayers() {
 		currentPlayer = (currentPlayer == whitePlayer) ? blackPlayer : whitePlayer;
 	}
 
