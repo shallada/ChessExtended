@@ -299,7 +299,7 @@ public class GameController implements IListener, ICheckChecker {
 	}
 
 	public void close() {
-		boardDisplay.dispose();
+		boardDisplay.disableClosing();
 	}
 
 	private Team buildTeam(Team.Color color) {
@@ -501,5 +501,8 @@ public class GameController implements IListener, ICheckChecker {
 
 	public Player getCurrentPlayer() {
 		return currentPlayer;
+	}
+	public void disableClosing() {
+		boardDisplay.disableClosing();
 	}
 }

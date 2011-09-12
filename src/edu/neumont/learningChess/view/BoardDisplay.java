@@ -63,10 +63,7 @@ public class BoardDisplay extends JFrame implements KeyListener, MouseListener, 
 			}
 		}
 			
-		// The client automatically sends the server the game history when the game is over,
-		// and then the window closes itself. This is so the user doesn't inadvertently close
-		// the window before the data is sent and a response is sent back.
-		this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		pack();
 		setResizable(true);
 		setLocationRelativeTo(null);
@@ -241,5 +238,10 @@ public class BoardDisplay extends JFrame implements KeyListener, MouseListener, 
 
 	@Override
 	public void keyReleased(KeyEvent e) {
+	}
+	
+	@Override
+	public void disableClosing() {
+		this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 	}
 }

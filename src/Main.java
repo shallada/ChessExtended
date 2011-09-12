@@ -30,8 +30,10 @@ public class Main {
 		}
 		GameController game = new GameController(white, black);
 		game.play();
-		if (game.isCheckmate() || game.isStalemate())
+		if (game.isCheckmate() || game.isStalemate()) {
+			game.disableClosing();
 			tellTheServer(game.getGameHistory());
+		}
 		game.close();
 	}
 
