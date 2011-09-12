@@ -226,6 +226,7 @@ public class ChessBoard {
 			pawnsTeam.add(replacement);
 			putPiece(replacement, move.getTo());
 			moveDescription.setPromotionPiece(replacement);
+			
 		}
 		return moveDescription;
 	}

@@ -11,8 +11,8 @@ import java.util.List;
 import edu.neumont.learningChess.api.ExtendedMove;
 import edu.neumont.learningChess.api.MoveHistory;
 import edu.neumont.learningChess.controller.GameController;
-import edu.neumont.learningChess.controller.ServerPlayer;
 import edu.neumont.learningChess.json.Jsonizer;
+import edu.neumont.learningChess.model.ServerPlayer;
 import edu.neumont.learningChess.model.TextCommandProcessor;
 import edu.neumont.learningChess.model.TextCommandProcessorOutput;
 

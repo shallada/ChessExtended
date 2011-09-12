@@ -3,9 +3,8 @@ package edu.neumont.learningChess.model;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-
 import edu.neumont.learningChess.api.Location;
-
+import edu.neumont.learningChess.model.Pawn.IPromotionListener;
 
 public class AIPlayer extends Player {
 
@@ -13,8 +12,9 @@ public class AIPlayer extends Player {
 	private ChessBoard board;
 	private Team otherTeam;
 	private ICheckChecker checkChecker;
-	
-	public AIPlayer(ChessBoard board, Team team, Team otherTeam, ICheckChecker checkChecker) {
+
+	public AIPlayer(ChessBoard board, Team team, Team otherTeam,
+			ICheckChecker checkChecker) {
 		super(team);
 		this.board = board;
 		this.otherTeam = otherTeam;
@@ -24,40 +24,47 @@ public class AIPlayer extends Player {
 	public class SearchResult {
 		private Move move;
 		private int value;
+
 		public SearchResult(Move move, int value) {
 			this.move = move;
 			this.value = value;
 		}
+
 		public Move getMove() {
 			return move;
 		}
+
 		public int getValue() {
 			return value;
 		}
 	}
-	
+
 	@Override
 	public Move getMove() {
 		SearchResult result = findBestMove(team, otherTeam, LOOK_AHEAD_DEPTH);
 		return result.getMove();
 	}
-	
+
 	private SearchResult findBestMove(Team us, Team them, int depth) {
 		ArrayList<SearchResult> results = null;
 		if (depth > 0) {
 			int bestValue = 0;
 			// For each move on the team...
-			for (Iterator<Move> i = us.getMoves(board); i.hasNext(); ) {
+			for (Iterator<Move> i = us.getMoves(board); i.hasNext();) {
 				Move move = i.next();
-				if(isLegalMove(us, move, board, checkChecker)) {
+				if (isLegalMove(us, move, board, checkChecker)) {
+					IPromotionListener pawnsListener = replacePawnPromotionListener(move
+							.getFrom());
 					// try the move
 					board.tryMove(move);
 					// find the best counter move
-					SearchResult counter = findBestMove(them, us, depth-1);
+					SearchResult counter = findBestMove(them, us, depth - 1);
 					// undo the move
 					board.undoTriedMove();
+					restorePawnPromotionListener(move.getFrom(), pawnsListener);
 					// calculate the value of the move
-					int moveValue = getValueOfLocation(move.getTo()) - ((counter == null)? 0: counter.getValue());
+					int moveValue = getValueOfLocation(move.getTo())
+							- ((counter == null) ? 0 : counter.getValue());
 					// If the value is the best value,
 					if ((results == null) || (moveValue > bestValue)) {
 						// Save the move and update the best value
@@ -72,11 +79,32 @@ public class AIPlayer extends Player {
 				}
 			}
 		}
-		return ((results == null) || (results.size() == 0))? null: results.get(SingletonRandom.nextInt(results.size()));
+		return ((results == null) || (results.size() == 0)) ? null : results
+				.get(SingletonRandom.nextInt(results.size()));
+	}
+
+	private IPromotionListener replacePawnPromotionListener(Location location) {
+		IPromotionListener listener = null;
+		ChessPiece piece = board.getPiece(location);
+		if (piece != null && piece instanceof Pawn) {
+			Pawn pawn = (Pawn) piece;
+			listener = pawn.getPromotionListener();
+			pawn.setPromotionListener(this.getPromotionListener());
+		}
+		return listener;
+	}
+
+	private void restorePawnPromotionListener(Location location,
+			IPromotionListener pawnsListener) {
+		if (pawnsListener != null) {
+			Pawn pawn = (Pawn) board.getPiece(location);
+			pawn.setPromotionListener(pawnsListener);
+		}
 	}
 
 	private int getValueOfLocation(Location location) {
-		int pieceValue = board.hasPiece(location)? board.getPiece(location).getValue(): 0;
+		int pieceValue = board.hasPiece(location) ? board.getPiece(location)
+				.getValue() : 0;
 		return pieceValue;
 	}
 
@@ -84,7 +112,7 @@ public class AIPlayer extends Player {
 	public Pawn.IPromotionListener getPromotionListener() {
 		return new QueenPromoter();
 	}
-	
+
 	public class QueenPromoter implements Pawn.IPromotionListener {
 
 		@Override

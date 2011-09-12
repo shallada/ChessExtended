@@ -19,7 +19,7 @@ public class Pawn extends ChessPiece {
 	
 	public Pawn(IPromotionListener promotionListener) {
 		super(WORTH);
-		this.promotionListener = promotionListener;
+		this.setPromotionListener(promotionListener);
 	}
 	
 	public String getName() {
@@ -28,7 +28,7 @@ public class Pawn extends ChessPiece {
 	
 	public ChessPiece getPromotionPiece(Location location) {
 		if (promotionPiece == null) {
-			promotionPiece = promotionListener.getPromotionPiece(location);
+			promotionPiece = getPromotionListener().getPromotionPiece(location);
 		}
 		return promotionPiece;
 	}
@@ -73,6 +73,14 @@ public class Pawn extends ChessPiece {
 		return new PawnMoves(board, this);
 	}
 	
+	public void setPromotionListener(IPromotionListener promotionListener) {
+		this.promotionListener = promotionListener;
+	}
+
+	public IPromotionListener getPromotionListener() {
+		return promotionListener;
+	}
+
 	public class PawnMoves implements Iterator<Location> {
 
 		private Iterator<Location> iter;
