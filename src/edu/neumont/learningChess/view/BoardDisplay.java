@@ -145,20 +145,22 @@ public class BoardDisplay extends JFrame implements KeyListener, MouseListener, 
 	}
 	
 	public void mousePressed(MouseEvent e) {
-		chessPiece = null;
-		Component component = chessBoard.findComponentAt(e.getX(), e.getY());
-
-		if (component instanceof BoardDisplayPiece) {
-
-			Container parent = component.getParent();
-			Point parentLocation = parent.getLocation();
-			xAdjustment = parentLocation.x - e.getX();
-			yAdjustment = parentLocation.y - e.getY();
-			chessPiece = (BoardDisplayPiece) component;
-			chessPiece.setLocation(e.getX() + xAdjustment, e.getY()+ yAdjustment);
-			chessPiece.setSize(chessPiece.getWidth(), chessPiece.getHeight());
-			parent.remove(0);
-			layeredPane.add(chessPiece, JLayeredPane.DRAG_LAYER);
+		if(e.getButton() == MouseEvent.BUTTON1){
+			chessPiece = null;
+			Component component = chessBoard.findComponentAt(e.getX(), e.getY());
+			
+			if (component instanceof BoardDisplayPiece) {
+	
+				Container parent = component.getParent();
+				Point parentLocation = parent.getLocation();
+				xAdjustment = parentLocation.x - e.getX();
+				yAdjustment = parentLocation.y - e.getY();
+				chessPiece = (BoardDisplayPiece) component;
+				chessPiece.setLocation(e.getX() + xAdjustment, e.getY()+ yAdjustment);
+				chessPiece.setSize(chessPiece.getWidth(), chessPiece.getHeight());
+				parent.remove(0);
+				layeredPane.add(chessPiece, JLayeredPane.DRAG_LAYER);
+			}
 		}
 	}
 
