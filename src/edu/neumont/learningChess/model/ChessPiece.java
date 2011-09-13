@@ -11,7 +11,6 @@ public abstract class ChessPiece {
 	protected Location location = null;
 	protected Team team;
 	protected int moveCount = 0;
-	protected boolean hasMoved = false;
 	protected int worth;
 	
 	public ChessPiece(int worth) {
@@ -73,5 +72,21 @@ public abstract class ChessPiece {
 	
 	public int getValue() {
 		return worth;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("ChessPiece [location=");
+		builder.append(location);
+		builder.append(", team=");
+		builder.append(team);
+		builder.append(", moveCount=");
+		builder.append(moveCount);
+		builder.append("]");
+		return builder.toString();
 	}
 }

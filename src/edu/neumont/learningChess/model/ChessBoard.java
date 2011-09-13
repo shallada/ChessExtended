@@ -1,33 +1,28 @@
 package edu.neumont.learningChess.model;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Stack;
 
 import edu.neumont.learningChess.api.Location;
 
-
 public class ChessBoard {
 
 	public static final int NUMBER_OF_ROWS = 8;
 	public static final int NUMBER_OF_COLUMNS = 8;
-	
+
 	private static final int WHITE_PROMOTION_ROW = 7;
 	private static final int BLACK_PROMOTION_ROW = 0;
-	
-	
-	
-	
-	
-	
+
 	public static boolean isInBounds(Location location) {
 		return (location.getRow() >= 0) && (location.getRow() < NUMBER_OF_ROWS) && (location.getColumn() >= 0) && (location.getColumn() < NUMBER_OF_COLUMNS);
 	}
-	
+
 	private BoardSquare grid[][] = new BoardSquare[NUMBER_OF_ROWS][NUMBER_OF_COLUMNS];
 	private Stack<MoveDescription> tryingMoves = new Stack<MoveDescription>();
 	private ArrayList<IListener> listeners = new ArrayList<IListener>();
-	
+
 	public ChessBoard() {
 		for (int i = 0; i < NUMBER_OF_ROWS; i++) {
 			for (int j = 0; j < NUMBER_OF_COLUMNS; j++) {
@@ -35,36 +30,36 @@ public class ChessBoard {
 			}
 		}
 	}
-	
+
 	public void AddListener(IListener listener) {
 		listeners.add(listener);
 	}
-	
+
 	public void RemoveListener(IListener listener) {
 		listeners.remove(listener);
 	}
-	
+
 	private void notifyListenersOfMove(Move move, boolean capturePiece) {
-		for (Iterator<IListener> i = listeners.iterator(); i.hasNext(); ) {
+		for (Iterator<IListener> i = listeners.iterator(); i.hasNext();) {
 			IListener listener = i.next();
 			listener.movePiece(move, capturePiece);
 		}
 	}
-	
+
 	private void notifyListenersOfPlacement(ChessPiece piece, Location location) {
-		for (Iterator<IListener> i = listeners.iterator(); i.hasNext(); ) {
+		for (Iterator<IListener> i = listeners.iterator(); i.hasNext();) {
 			IListener listener = i.next();
 			listener.placePiece(piece, location);
 		}
 	}
-	
+
 	private void notifyListenersOfRemoval(Location location) {
-		for (Iterator<IListener> i = listeners.iterator(); i.hasNext(); ) {
+		for (Iterator<IListener> i = listeners.iterator(); i.hasNext();) {
 			IListener listener = i.next();
 			listener.removePiece(location);
 		}
 	}
-	
+
 	private void putPiece(ChessPiece piece, Location location) {
 		if (!grid[location.getRow()][location.getColumn()].isEmpty()) {
 			throw new RuntimeException("Cannot place piece at a non-empty space");
@@ -72,32 +67,32 @@ public class ChessBoard {
 		grid[location.getRow()][location.getColumn()].putPiece(piece);
 		piece.setLocation(location);
 	}
-	
+
 	public void placePiece(ChessPiece piece, Location location) {
 		putPiece(piece, location);
 		notifyListenersOfPlacement(piece, location);
 	}
-	
+
 	public ChessPiece getPiece(Location location) {
 		return grid[location.getRow()][location.getColumn()].getPiece();
 	}
-	
+
 	public boolean hasPiece(Location location) {
 		return getPiece(location) != null;
 	}
-	
+
 	public boolean hasPiece(Location location, boolean isWhite) {
 		ChessPiece piece = getPiece(location);
 		return (piece != null) && (piece.getTeam().isWhite() == isWhite);
 	}
-	
+
 	private ChessPiece removePiece(Location location) {
-		
+
 		ChessPiece piece = grid[location.getRow()][location.getColumn()].removePiece();
 		piece.setLocation(null);
 		return piece;
 	}
-	
+
 	private MoveDescription makeBasicMove(Move move) {
 		ChessPiece capturedPiece = null;
 		Team capturedTeam = null;
@@ -119,7 +114,7 @@ public class ChessBoard {
 			makeBasicMove(castlingMove);
 			notifyListenersOfMove(castlingMove, false);
 		}
-		
+
 		MoveDescription description = null;
 		if (isEnPassantMove(move)) {
 			description = makeBasicMove(move);
@@ -149,18 +144,16 @@ public class ChessBoard {
 			placePiece(replacement, move.getTo());
 		}
 	}
-	
+
 	private boolean requiresPromotion(Move move) {
 		ChessPiece movingPiece = getPiece(move.getTo());
-		return (movingPiece instanceof Pawn) && 
-			((movingPiece.getTeam().isWhite() && (move.getTo().getRow() == WHITE_PROMOTION_ROW)) || 
-			(!movingPiece.getTeam().isWhite() && (move.getTo().getRow() == BLACK_PROMOTION_ROW)));
+		return (movingPiece instanceof Pawn) && ((movingPiece.getTeam().isWhite() && (move.getTo().getRow() == WHITE_PROMOTION_ROW)) || (!movingPiece.getTeam().isWhite() && (move.getTo().getRow() == BLACK_PROMOTION_ROW)));
 	}
-	
+
 	public MoveDescription getMostRecentMoveDescription() {
-		return tryingMoves.size() > 0? tryingMoves.peek(): null;
+		return tryingMoves.size() > 0 ? tryingMoves.peek() : null;
 	}
-	
+
 	private boolean isEnPassantMove(Move move) {
 		boolean isEnPassant = false;
 		ChessPiece piece = getPiece(move.getFrom());
@@ -168,19 +161,16 @@ public class ChessBoard {
 			MoveDescription lastMove = getMostRecentMoveDescription();
 			if (lastMove != null) {
 				int lastMoveDistance = Math.abs(lastMove.getMove().getFrom().getRow() - lastMove.getMove().getTo().getRow());
-				isEnPassant = ((lastMove.getMovingPiece() instanceof Pawn) && (lastMoveDistance == 2) &&
-						(Math.abs(move.getFrom().getColumn() - move.getTo().getColumn()) == 1) &&
-						(Math.abs(move.getFrom().getRow() - move.getTo().getRow()) == 1) &&
-						(getEnPassantTarget(move).equals(lastMove.getMove().getTo())));
+				isEnPassant = ((lastMove.getMovingPiece() instanceof Pawn) && (lastMoveDistance == 2) && (Math.abs(move.getFrom().getColumn() - move.getTo().getColumn()) == 1) && (Math.abs(move.getFrom().getRow() - move.getTo().getRow()) == 1) && (getEnPassantTarget(move).equals(lastMove.getMove().getTo())));
 			}
 		}
 		return isEnPassant;
 	}
-	
+
 	private Location getEnPassantTarget(Move move) {
 		return new Location(move.getFrom().getRow(), move.getTo().getColumn());
 	}
-	
+
 	private boolean isCastlingMove(Move move) {
 		boolean castlingMove = false;
 		ChessPiece piece = getPiece(move.getFrom());
@@ -190,10 +180,10 @@ public class ChessBoard {
 		}
 		return castlingMove;
 	}
-	
+
 	private Move getCastlingRookMove(Move move) {
 		ChessPiece piece = getPiece(move.getFrom());
-		Location rookDestination = new Location(move.getFrom().getRow(), (move.getFrom().getColumn() + move.getTo().getColumn())/2);
+		Location rookDestination = new Location(move.getFrom().getRow(), (move.getFrom().getColumn() + move.getTo().getColumn()) / 2);
 		King king = (King) piece;
 		Location rookOrigin = king.getCastlingRookLocation(move);
 		Move rookMove = new Move(rookOrigin, rookDestination);
@@ -226,7 +216,7 @@ public class ChessBoard {
 			pawnsTeam.add(replacement);
 			putPiece(replacement, move.getTo());
 			moveDescription.setPromotionPiece(replacement);
-			
+
 		}
 		return moveDescription;
 	}
@@ -245,7 +235,7 @@ public class ChessBoard {
 		ChessPiece movingPiece = removePiece(move.getTo());
 		putPiece(movingPiece, move.getFrom());
 		movingPiece.decrementMoveCount();
-		Location enPassantTarget = isEnPassantMove(move)? getEnPassantTarget(move): null;
+		Location enPassantTarget = isEnPassantMove(move) ? getEnPassantTarget(move) : null;
 		// Undo the capture
 		if (moveDescription.getTakenPiece() != null) {
 			putPiece(moveDescription.getTakenPiece(), move.getTo());
@@ -264,21 +254,21 @@ public class ChessBoard {
 			rook.decrementMoveCount();
 		}
 	}
-	
+
 	public static boolean isDarkSquare(Location location) {
 		return (location.getRow() + location.getColumn()) % 2 == 0;
 	}
 
 	public boolean hasFiftyMovesWithNoCapturesOrPawnMoves() {
 		boolean fiftyMovesWithNoCapturesOrPawnMoves = (tryingMoves.size() >= 50);
-		
+
 		for (int i = 0; fiftyMovesWithNoCapturesOrPawnMoves && (i < 50); i++) {
 			MoveDescription description = tryingMoves.get(tryingMoves.size() - i - 1);
 			fiftyMovesWithNoCapturesOrPawnMoves = (description.getTakenPiece() == null) && (description.getMovingPiece().getClass() != Pawn.class);
 		}
 		return fiftyMovesWithNoCapturesOrPawnMoves;
 	}
-	
+
 	public Iterator<MoveDescription> getTryingMovesIterator() {
 		return tryingMoves.iterator();
 	}
@@ -286,5 +276,33 @@ public class ChessBoard {
 	public void addMoveToHistory(MoveDescription moveDescription) {
 		tryingMoves.push(moveDescription);
 	}
-	
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		for (int i = 0; i < NUMBER_OF_ROWS; i++) {
+			for (int j = 0; j < NUMBER_OF_COLUMNS; j++) {
+				ChessPiece piece = grid[i][j].getPiece();
+				builder.append("(");
+				builder.append(i);
+				builder.append(",");
+				builder.append(j);
+				builder.append(")");
+				if (piece != null) {
+					builder.append(piece.toString());
+				}
+				else{
+					builder.append("null");
+				}
+				builder.append("\r\n");
+			}
+		}
+		return builder.toString();
+	}
+
 }
