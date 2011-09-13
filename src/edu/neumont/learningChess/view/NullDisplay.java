@@ -56,4 +56,9 @@ public class NullDisplay implements IDisplay {
 	@Override
 	public void setVisible(boolean visible) {
 	}
+
+	@Override
+	public void dispose() {
+		
+	}
 }

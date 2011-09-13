@@ -26,4 +26,5 @@ public interface IDisplay {
 	public void notifyCheckmate(boolean isWhite);
 	public void notifyStalemate();
 	public void disableClosing();
+	public void dispose();
 }
