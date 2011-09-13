@@ -8,8 +8,10 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.swing.BoxLayout;
 import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 
 import edu.neumont.learningChess.api.ExtendedMove;
 import edu.neumont.learningChess.api.MoveHistory;
@@ -26,9 +28,14 @@ public class Main {
 		GameController.PlayerType black;
 		JComboBox whiteComboBox = new JComboBox(GameController.PlayerType.values());
 		JComboBox blackComboBox = new JComboBox(GameController.PlayerType.values());
+		JPanel comboBoxes = new JPanel();
+		BoxLayout boxLayout = new BoxLayout(comboBoxes,BoxLayout.Y_AXIS);
+		comboBoxes.setLayout(boxLayout);
 		
-		JOptionPane.showMessageDialog(null, whiteComboBox,"Select White Player",JOptionPane.INFORMATION_MESSAGE);
-		JOptionPane.showMessageDialog(null, blackComboBox,"Select Black Player",JOptionPane.INFORMATION_MESSAGE);
+		comboBoxes.add(whiteComboBox);
+		comboBoxes.add(blackComboBox);
+		
+		JOptionPane.showMessageDialog(null, comboBoxes,"Select Players",JOptionPane.INFORMATION_MESSAGE);
 		
 //		if ((args.length == 0) || (args[0].equalsIgnoreCase("white"))) {
 			white = GameController.PlayerType.valueOf(whiteComboBox.getSelectedItem().toString());// human for check in
