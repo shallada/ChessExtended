@@ -31,16 +31,19 @@ public class BoardDisplay extends JFrame implements KeyListener, MouseListener, 
 	
 	private ArrayList<IDisplay.IMoveHandler> moveHandlers = new ArrayList<IDisplay.IMoveHandler>();
 
-	public BoardDisplay() {
+	public BoardDisplay(boolean allowListeners) {
 		this.setTitle("Chess");
 		Dimension boardSize = new Dimension(600, 600);
 
 		layeredPane = new JLayeredPane();
 		getContentPane().add(layeredPane);
 		layeredPane.setPreferredSize(boardSize);
-		layeredPane.addMouseListener(this);
-		layeredPane.addMouseMotionListener(this);
-		this.addKeyListener(this);
+		
+		if(allowListeners){
+			layeredPane.addMouseListener(this);
+			layeredPane.addMouseMotionListener(this);
+			this.addKeyListener(this);
+		}
 		
 		chessBoard = new JPanel();
 		layeredPane.add(chessBoard, JLayeredPane.DEFAULT_LAYER);

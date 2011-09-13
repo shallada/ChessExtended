@@ -61,6 +61,7 @@ public class GameController implements IListener, ICheckChecker {
 	private boolean showDisplay;
 
 	private static boolean ALWAYS_SHOW_BOARD = false;// false for check in
+	private boolean ALLOW_LISTENERS = false;
 
 	private List<ChessGameState> history = new ArrayList<ChessGameState>();
 
@@ -81,15 +82,17 @@ public class GameController implements IListener, ICheckChecker {
 		else
 			showDisplay = (whiteType == PlayerType.Human)
 					|| (blackType == PlayerType.Human);
+		
+		ALLOW_LISTENERS = (whiteType == PlayerType.Human) || (blackType == PlayerType.Human);
 
 		board = new ChessBoard();
 		board.AddListener(this);
 		if (ALWAYS_SHOW_BOARD) {
-			boardDisplay = new BoardDisplay();
+			boardDisplay = new BoardDisplay(ALLOW_LISTENERS);
 			showDisplay = true;
 		} else {
 			if (showDisplay) {
-				boardDisplay = new BoardDisplay();
+				boardDisplay = new BoardDisplay(ALLOW_LISTENERS);
 			} else {
 				boardDisplay = new NullDisplay();
 			}
