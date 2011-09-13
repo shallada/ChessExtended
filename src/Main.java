@@ -1,3 +1,4 @@
+import java.awt.GridLayout;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
@@ -10,6 +11,7 @@ import java.util.List;
 
 import javax.swing.BoxLayout;
 import javax.swing.JComboBox;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
@@ -26,13 +28,14 @@ public class Main {
 	public static void main(String[] args) {
 		GameController.PlayerType white;
 		GameController.PlayerType black;
-		JComboBox whiteComboBox = new JComboBox(GameController.PlayerType.values());
-		JComboBox blackComboBox = new JComboBox(GameController.PlayerType.values());
+		JComboBox whiteComboBox = new JComboBox(new Object[]{GameController.PlayerType.Human, GameController.PlayerType.LearningServer});
+		JComboBox blackComboBox = new JComboBox(new Object[]{GameController.PlayerType.Human, GameController.PlayerType.LearningServer});
+		blackComboBox.setSelectedIndex(1);
 		JPanel comboBoxes = new JPanel();
-		BoxLayout boxLayout = new BoxLayout(comboBoxes,BoxLayout.Y_AXIS);
-		comboBoxes.setLayout(boxLayout);
-		
+		comboBoxes.setLayout(new GridLayout(2, 2, 0, 15));
+		comboBoxes.add(new JLabel("White:"));
 		comboBoxes.add(whiteComboBox);
+		comboBoxes.add(new JLabel("Black:"));
 		comboBoxes.add(blackComboBox);
 		
 		JOptionPane.showMessageDialog(null, comboBoxes,"Select Players",JOptionPane.INFORMATION_MESSAGE);
