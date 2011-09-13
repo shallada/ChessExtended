@@ -143,6 +143,8 @@ public class ChessBoard {
 			pawnsTeam.remove(pawn);
 			notifyListenersOfRemoval(move.getTo());
 			ChessPiece replacement = pawn.getPromotionPiece(move.getTo());
+			MoveDescription mostRecentMoveDescription = tryingMoves.peek();
+			mostRecentMoveDescription.setPromotionPiece(replacement);
 			pawnsTeam.add(replacement);
 			placePiece(replacement, move.getTo());
 		}
@@ -224,6 +226,7 @@ public class ChessBoard {
 			pawnsTeam.add(replacement);
 			putPiece(replacement, move.getTo());
 			moveDescription.setPromotionPiece(replacement);
+			
 		}
 		return moveDescription;
 	}

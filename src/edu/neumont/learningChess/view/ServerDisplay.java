@@ -90,7 +90,7 @@ public class ServerDisplay implements IDisplay {
 	}
 
 	@Override
-	public void dispose() {
+	public void disableClosing() {
 		
 	}
 

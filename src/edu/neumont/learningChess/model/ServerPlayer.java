@@ -1,4 +1,4 @@
-package edu.neumont.learningChess.controller;
+package edu.neumont.learningChess.model;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -9,17 +9,9 @@ import java.net.URLConnection;
 
 import edu.neumont.learningChess.api.ExtendedMove;
 import edu.neumont.learningChess.api.PieceType;
+import edu.neumont.learningChess.controller.GameController;
 import edu.neumont.learningChess.json.Jsonizer;
-import edu.neumont.learningChess.model.Bishop;
-import edu.neumont.learningChess.model.ChessPiece;
-import edu.neumont.learningChess.model.Knight;
-import edu.neumont.learningChess.model.Move;
 import edu.neumont.learningChess.model.Pawn.IPromotionListener;
-import edu.neumont.learningChess.model.Player;
-import edu.neumont.learningChess.model.PromotionListener;
-import edu.neumont.learningChess.model.Queen;
-import edu.neumont.learningChess.model.Rook;
-import edu.neumont.learningChess.model.Team;
 
 public class ServerPlayer extends Player {
 	

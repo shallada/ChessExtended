@@ -25,7 +25,7 @@ public class NullDisplay implements IDisplay {
 	}
 
 	@Override
-	public void dispose() {
+	public void disableClosing() {
 	}
 
 	@Override
