@@ -107,7 +107,11 @@ public class Team {
 		StringBuilder builder = new StringBuilder();
 		builder.append("Team [color=");
 		builder.append(color);
+		builder.append(", workingPieces=");
+		builder.append(workingPieces);
 		builder.append("]");
 		return builder.toString();
 	}
+
+	
 }

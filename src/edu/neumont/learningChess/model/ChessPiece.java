@@ -79,11 +79,15 @@ public abstract class ChessPiece {
 	 */
 	@Override
 	public String toString() {
+		String className = getClass().toString();
+		className = className.substring(className.lastIndexOf("."));
 		StringBuilder builder = new StringBuilder();
 		builder.append("ChessPiece [location=");
 		builder.append(location);
+		builder.append(", Piece=");
+		builder.append(className);
 		builder.append(", team=");
-		builder.append(team);
+		builder.append(team.isWhite() ? "white" : "black");
 		builder.append(", moveCount=");
 		builder.append(moveCount);
 		builder.append("]");
