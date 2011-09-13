@@ -37,16 +37,13 @@ public class Main {
 		comboBoxes.add(whiteComboBox);
 		comboBoxes.add(new JLabel("Black:"));
 		comboBoxes.add(blackComboBox);
-		
-		JOptionPane.showMessageDialog(null, comboBoxes,"Select Players",JOptionPane.INFORMATION_MESSAGE);
-		
-//		if ((args.length == 0) || (args[0].equalsIgnoreCase("white"))) {
-			white = GameController.PlayerType.valueOf(whiteComboBox.getSelectedItem().toString());// human for check in
-			black = GameController.PlayerType.valueOf(blackComboBox.getSelectedItem().toString());// human for check in
-//		} else {
-//			white = GameController.PlayerType.Human;
-//			black = GameController.PlayerType.AI;
-//		}
+
+		JOptionPane.showMessageDialog(null, comboBoxes, "Select Players", JOptionPane.INFORMATION_MESSAGE);
+
+		white = GameController.PlayerType.valueOf(whiteComboBox.getSelectedItem().toString());// human for check in
+		black = GameController.PlayerType.valueOf(blackComboBox.getSelectedItem().toString());// human for check in
+
+		GameController.setShowBoard(true);
 		GameController game = new GameController(white, black);
 		game.play();
 		if (game.isCheckmate() || game.isStalemate()) {

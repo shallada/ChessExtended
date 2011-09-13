@@ -11,7 +11,7 @@ public class ProxyPlayer extends Player {
 
 	public ProxyPlayer(Team team) {
 		super(team);
-		promotionListener = new PromotionListener(null);
+		promotionListener = new PromotionListener(new Queen());
 	}
 	
 	@Override
