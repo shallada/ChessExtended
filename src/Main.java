@@ -8,6 +8,9 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.swing.JComboBox;
+import javax.swing.JOptionPane;
+
 import edu.neumont.learningChess.api.ExtendedMove;
 import edu.neumont.learningChess.api.MoveHistory;
 import edu.neumont.learningChess.controller.GameController;
@@ -21,13 +24,19 @@ public class Main {
 	public static void main(String[] args) {
 		GameController.PlayerType white;
 		GameController.PlayerType black;
-		if ((args.length == 0) || (args[0].equalsIgnoreCase("white"))) {
-			white = GameController.PlayerType.Human;// human for check in
-			black = GameController.PlayerType.LearningServer;// human for check in
-		} else {
-			white = GameController.PlayerType.Human;
-			black = GameController.PlayerType.AI;
-		}
+		JComboBox whiteComboBox = new JComboBox(GameController.PlayerType.values());
+		JComboBox blackComboBox = new JComboBox(GameController.PlayerType.values());
+		
+		JOptionPane.showMessageDialog(null, whiteComboBox,"Select White Player",JOptionPane.INFORMATION_MESSAGE);
+		JOptionPane.showMessageDialog(null, blackComboBox,"Select Black Player",JOptionPane.INFORMATION_MESSAGE);
+		
+//		if ((args.length == 0) || (args[0].equalsIgnoreCase("white"))) {
+			white = GameController.PlayerType.valueOf(whiteComboBox.getSelectedItem().toString());// human for check in
+			black = GameController.PlayerType.valueOf(blackComboBox.getSelectedItem().toString());// human for check in
+//		} else {
+//			white = GameController.PlayerType.Human;
+//			black = GameController.PlayerType.AI;
+//		}
 		GameController game = new GameController(white, black);
 		game.play();
 		if (game.isCheckmate() || game.isStalemate()) {
