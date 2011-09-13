@@ -23,7 +23,7 @@ public class Main {
 		GameController.PlayerType black;
 		if ((args.length == 0) || (args[0].equalsIgnoreCase("white"))) {
 			white = GameController.PlayerType.Human;// human for check in
-			black = GameController.PlayerType.Human;// human for check in
+			black = GameController.PlayerType.LearningServer;// human for check in
 		} else {
 			white = GameController.PlayerType.Human;
 			black = GameController.PlayerType.AI;
