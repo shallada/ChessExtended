@@ -28,8 +28,8 @@ public class Main {
 	public static void main(String[] args) {
 		GameController.PlayerType white;
 		GameController.PlayerType black;
-		JComboBox whiteComboBox = new JComboBox(new Object[]{GameController.PlayerType.Human, GameController.PlayerType.LearningServer});
-		JComboBox blackComboBox = new JComboBox(new Object[]{GameController.PlayerType.Human, GameController.PlayerType.LearningServer});
+		JComboBox whiteComboBox = new JComboBox(new Object[]{GameController.PlayerType.Human, GameController.PlayerType.LearningServer, GameController.PlayerType.AI});
+		JComboBox blackComboBox = new JComboBox(new Object[]{GameController.PlayerType.Human, GameController.PlayerType.LearningServer, GameController.PlayerType.AI});
 		blackComboBox.setSelectedIndex(1);
 		JPanel comboBoxes = new JPanel();
 		comboBoxes.setLayout(new GridLayout(2, 2, 0, 15));
