@@ -60,7 +60,7 @@ public class GameController implements IListener, ICheckChecker {
 
 	private boolean showDisplay;
 
-	private static final boolean ALWAYS_SHOW_BOARD = false;// false for check in
+	private static final boolean ALWAYS_SHOW_BOARD = true;// false for check in
 
 	private List<ChessGameState> history = new ArrayList<ChessGameState>();
 
@@ -322,7 +322,7 @@ public class GameController implements IListener, ICheckChecker {
 	}
 
 	public void close() {
-		boardDisplay.disableClosing();
+		boardDisplay.dispose();
 	}
 
 	private Team buildTeam(Team.Color color) {
