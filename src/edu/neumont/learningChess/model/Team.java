@@ -17,7 +17,7 @@ public class Team {
 
 	private Color color;
 	private King king;
-	private ArrayList<ChessPiece> workingPieces = new ArrayList<ChessPiece>();
+	private List<ChessPiece> workingPieces = new ArrayList<ChessPiece>();
 	
 	public Team(Color color) {
 		this.color = color;
@@ -54,18 +54,17 @@ public class Team {
 	}
 	
 	public Iterator<ChessPiece> getPieces() {
-		return workingPieces.iterator();
+		List<ChessPiece> workingPiecesClone = new ArrayList<ChessPiece>(workingPieces);
+		return workingPiecesClone.iterator();
 	}
 	
 	public int getPieceCount() {
 		return workingPieces.size();
 	}
 	
-	@SuppressWarnings("unchecked")
 	public Iterator<Move> getMoves(ChessBoard board) {
 		ArrayList<Move> moves = new ArrayList<Move>();
-		ArrayList<ChessPiece> pieces = (ArrayList<ChessPiece>) workingPieces.clone();
-		for (Iterator<ChessPiece> i = pieces.iterator(); i.hasNext();  ) {
+		for (Iterator<ChessPiece> i = getPieces(); i.hasNext();  ) {
 			ChessPiece piece = i.next();
 			for (Iterator<Location> e = piece.getLegalMoves(board); e.hasNext(); ) {
 				Location to = e.next();
