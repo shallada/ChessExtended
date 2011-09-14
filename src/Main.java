@@ -25,10 +25,10 @@ import edu.neumont.learningChess.model.TextCommandProcessorOutput;
 public class Main {
 
 	public static void main(String[] args) {
-		GameController.PlayerType white;
-		GameController.PlayerType black;
-		JComboBox whiteComboBox = new JComboBox(new Object[]{GameController.PlayerType.Human, GameController.PlayerType.LearningServer, GameController.PlayerType.AI});
-		JComboBox blackComboBox = new JComboBox(new Object[]{GameController.PlayerType.Human, GameController.PlayerType.LearningServer, GameController.PlayerType.AI});
+		final GameController.PlayerType white;
+		final GameController.PlayerType black;
+		JComboBox whiteComboBox = new JComboBox(new Object[] { GameController.PlayerType.Human, GameController.PlayerType.LearningServer, GameController.PlayerType.AI });
+		JComboBox blackComboBox = new JComboBox(new Object[] { GameController.PlayerType.Human, GameController.PlayerType.LearningServer, GameController.PlayerType.AI });
 		blackComboBox.setSelectedIndex(1);
 		JPanel comboBoxes = new JPanel();
 		comboBoxes.setLayout(new GridLayout(2, 2, 0, 15));
@@ -39,17 +39,32 @@ public class Main {
 
 		JOptionPane.showMessageDialog(null, comboBoxes, "Select Players", JOptionPane.INFORMATION_MESSAGE);
 
-		white = GameController.PlayerType.valueOf(whiteComboBox.getSelectedItem().toString());// human for check in
-		black = GameController.PlayerType.valueOf(blackComboBox.getSelectedItem().toString());// human for check in
+		white = GameController.PlayerType.valueOf(whiteComboBox.getSelectedItem().toString());// human
+																								// for
+																								// check
+																								// in
+		black = GameController.PlayerType.valueOf(blackComboBox.getSelectedItem().toString());// human
+																								// for
+																								// check
+																								// in
 
 		GameController.setShowBoard(true);
-		GameController game = new GameController(white, black);
-		game.play();
-		if (game.isCheckmate() || game.isStalemate()) {
-			game.disableClosing();
-			tellTheServer(game.getGameHistory());
+
+		for (int i = 0; i < 30; i++) {
+			new Thread() {
+				@Override
+				public void run() {
+					GameController game = new GameController(white, black);
+					game.play();
+					if (game.isCheckmate() || game.isStalemate()) {
+						game.disableClosing();
+						tellTheServer(game.getGameHistory());
+					}
+					game.close();
+				}
+			}.start();
 		}
-		game.close();
+
 	}
 
 	private static void tellTheServer(Iterator<ExtendedMove> moveHistoryIterator) {

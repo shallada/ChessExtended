@@ -32,7 +32,7 @@ public class ServerPlayer extends Player {
 		} else {
 			getMoveEndpoint = "http://chess.neumont.edu:8081/ChessGame/getmove";
 		}
-		promotionListener = new PromotionListener(null);
+		promotionListener = new PromotionListener(new Queen());
 	}
 	
 	

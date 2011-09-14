@@ -82,7 +82,7 @@ public class GameController implements IListener, ICheckChecker {
 		else
 			showDisplay = (whiteType == PlayerType.Human)
 					|| (blackType == PlayerType.Human);
-		
+
 		ALLOW_LISTENERS = (whiteType == PlayerType.Human) || (blackType == PlayerType.Human);
 
 		board = new ChessBoard();
@@ -263,8 +263,7 @@ public class GameController implements IListener, ICheckChecker {
 		Player player = null;
 		switch (playerType) {
 		case Human:
-			player = new HumanPlayer(team, board, this,
-					(BoardDisplay) boardDisplay);
+			player = new HumanPlayer(team, board, this, (BoardDisplay) boardDisplay);
 			boardDisplay.addMoveHandler((HumanPlayer) player);
 			break;
 		case Remote:
@@ -554,7 +553,7 @@ public class GameController implements IListener, ICheckChecker {
 	public void disableClosing() {
 		boardDisplay.disableClosing();
 	}
-	
+
 	public static void setShowBoard(boolean showBoard) {
 		GameController.ALWAYS_SHOW_BOARD = showBoard;
 	}

@@ -8,7 +8,7 @@ import edu.neumont.learningChess.model.Pawn.IPromotionListener;
 
 public class AIPlayer extends Player {
 
-	private static final int LOOK_AHEAD_DEPTH = 4;
+	private static int LOOK_AHEAD_DEPTH = 4;
 	private ChessBoard board;
 	private Team otherTeam;
 	private ICheckChecker checkChecker;
@@ -53,8 +53,7 @@ public class AIPlayer extends Player {
 			for (Iterator<Move> i = us.getMoves(board); i.hasNext();) {
 				Move move = i.next();
 				if (isLegalMove(us, move, board, checkChecker)) {
-					IPromotionListener pawnsListener = replacePawnPromotionListener(move
-							.getFrom());
+					IPromotionListener pawnsListener = replacePawnPromotionListener(move.getFrom());
 					// try the move
 					board.tryMove(move);
 					// find the best counter move
@@ -119,5 +118,9 @@ public class AIPlayer extends Player {
 		public ChessPiece getPromotionPiece(Location location) {
 			return new Queen();
 		}
+	}
+
+	public static void setDifficulty(int difficulty) {
+		LOOK_AHEAD_DEPTH = difficulty;
 	}
 }
