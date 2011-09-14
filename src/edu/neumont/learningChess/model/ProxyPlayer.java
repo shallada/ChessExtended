@@ -8,23 +8,31 @@ public class ProxyPlayer extends Player {
 
 	private PromotionListener promotionListener;
 	private MoveHistory history;
+	private ICheckChecker checkChecker;
 
-	public ProxyPlayer(Team team) {
+	public ProxyPlayer(Team team, ICheckChecker checkChecker) {
 		super(team);
+		this.checkChecker = checkChecker;
 		promotionListener = new PromotionListener(new Queen());
 	}
 	
 	@Override
 	public Move getMove() {
 		ExtendedMove move = history.getMoves().remove(0);
-		promotionListener.setPromotionPiece(convertToChessPiece(move.getPromotionPieceType()));
+		setPromotionPiece(move.getPromotionPieceType());
 		return move;
 	}
 
-	private ChessPiece convertToChessPiece(PieceType promotionPieceType) {
-		return (promotionPieceType == PieceType.QUEEN) ? new Queen() : new Knight();
+	private ChessPiece getPromotionPiece(PieceType pieceType){
+		if(pieceType == PieceType.KING || pieceType == PieceType.PAWN)
+			throw new RuntimeException("Can't promote to king or pawn");
+		ChessPiece piece = new Queen();
+		if (pieceType != null) {
+			piece = ChessPiece.getChessPieceFromPieceType(pieceType, null, checkChecker);
+		}
+		return piece;
 	}
-
+	
 	public PromotionListener getPromotionListener() {
 		return promotionListener;
 	}
@@ -34,6 +42,6 @@ public class ProxyPlayer extends Player {
 	}
 
 	public void setPromotionPiece(PieceType promotionPieceType) {
-		getPromotionListener().setPromotionPiece(this.convertToChessPiece(promotionPieceType));
+		getPromotionListener().setPromotionPiece(this.getPromotionPiece(promotionPieceType));
 	}
 }

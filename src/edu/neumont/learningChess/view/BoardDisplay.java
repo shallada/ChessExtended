@@ -27,7 +27,7 @@ public class BoardDisplay extends JFrame implements KeyListener, MouseListener, 
 	BoardDisplayPiece chessPiece;
 	int xAdjustment;
 	int yAdjustment;
-	private static final boolean SHOW_ALERT = true;
+	private static final boolean SHOW_ALERT = false;
 	
 	private ArrayList<IDisplay.IMoveHandler> moveHandlers = new ArrayList<IDisplay.IMoveHandler>();
 

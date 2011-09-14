@@ -68,22 +68,11 @@ public class ServerPlayer extends Player {
 	}
 	
 	private void setPromotionPiece(PieceType pieceType){
-		ChessPiece piece = null;
+		if(pieceType == PieceType.KING || pieceType == PieceType.PAWN)
+			throw new RuntimeException("Can't promote to king or pawn");
+		ChessPiece piece = new Queen();
 		if (pieceType != null) {
-			switch (pieceType) {
-			case QUEEN:
-				piece = new Queen();
-				break;
-			case ROOK:
-				piece = new Rook();
-				break;
-			case KNIGHT:
-				piece = new Knight();
-				break;
-			case BISHOP:
-				piece = new Bishop();
-				break;
-			}
+			piece = ChessPiece.getChessPieceFromPieceType(pieceType, null, gameController);
 		}
 		promotionListener.setPromotionPiece(piece);
 	}

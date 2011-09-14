@@ -143,8 +143,8 @@ public class GameController implements IListener, ICheckChecker {
 				IPromotionListener promotionListener = player
 						.getPromotionListener();
 
-				ChessPiece chessPieceFromPieceType = getChessPieceFromPieceType(
-						pieceDescription.getPieceType(), promotionListener);
+				ChessPiece chessPieceFromPieceType = ChessPiece.getChessPieceFromPieceType(
+						pieceDescription.getPieceType(), promotionListener,this);
 				if (pieceDescription.hasMoved())
 					chessPieceFromPieceType.incrementMoveCount();
 				Team team = player.getTeam();
@@ -189,34 +189,6 @@ public class GameController implements IListener, ICheckChecker {
 		}
 
 		return pieceType;
-	}
-
-	public ChessPiece getChessPieceFromPieceType(PieceType pieceType,
-			IPromotionListener promotionListener) {
-		ChessPiece chessPiece = null;
-
-		switch (pieceType) {
-		case KING:
-			chessPiece = new King(this);
-			break;
-		case QUEEN:
-			chessPiece = new Queen();
-			break;
-		case BISHOP:
-			chessPiece = new Bishop();
-			break;
-		case KNIGHT:
-			chessPiece = new Knight();
-			break;
-		case ROOK:
-			chessPiece = new Rook();
-			break;
-		case PAWN:
-			chessPiece = new Pawn(promotionListener);
-			break;
-		}
-
-		return chessPiece;
 	}
 
 	public ChessGameState getCurrentGameState() {
@@ -269,7 +241,7 @@ public class GameController implements IListener, ICheckChecker {
 					: whiteTeam, this);
 			break;
 		case Proxy:
-			player = new ProxyPlayer(team);
+			player = new ProxyPlayer(team,this);
 			break;
 		case LearningServer:
 			player = new ServerPlayer(team, this);
