@@ -24,9 +24,10 @@ import edu.neumont.learningChess.model.TextCommandProcessorOutput;
 
 public class Main {
 
+	private static final int N_THREADS = 1;
+
 	public static void main(String[] args) {
-		final GameController.PlayerType white;
-		final GameController.PlayerType black;
+
 		JComboBox whiteComboBox = new JComboBox(new Object[] { GameController.PlayerType.Human, GameController.PlayerType.LearningServer, GameController.PlayerType.AI });
 		JComboBox blackComboBox = new JComboBox(new Object[] { GameController.PlayerType.Human, GameController.PlayerType.LearningServer, GameController.PlayerType.AI });
 		blackComboBox.setSelectedIndex(1);
@@ -39,18 +40,11 @@ public class Main {
 
 		JOptionPane.showMessageDialog(null, comboBoxes, "Select Players", JOptionPane.INFORMATION_MESSAGE);
 
-		white = GameController.PlayerType.valueOf(whiteComboBox.getSelectedItem().toString());// human
-																								// for
-																								// check
-																								// in
-		black = GameController.PlayerType.valueOf(blackComboBox.getSelectedItem().toString());// human
-																								// for
-																								// check
-																								// in
+		final GameController.PlayerType white = GameController.PlayerType.valueOf(whiteComboBox.getSelectedItem().toString());
+		final GameController.PlayerType black = GameController.PlayerType.valueOf(blackComboBox.getSelectedItem().toString());
 
 		GameController.setShowBoard(true);
-
-		for (int i = 0; i < 30; i++) {
+		for (int j = 0; j < N_THREADS; j++) {
 			new Thread() {
 				@Override
 				public void run() {
@@ -64,7 +58,6 @@ public class Main {
 				}
 			}.start();
 		}
-
 	}
 
 	private static void tellTheServer(Iterator<ExtendedMove> moveHistoryIterator) {

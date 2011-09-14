@@ -222,20 +222,15 @@ public class GameController implements IListener, ICheckChecker {
 	public ChessGameState getCurrentGameState() {
 		ChessGameState chessGameState = new ChessGameState();
 		LocationIterator locations = new LocationIterator();
-		chessGameState
-				.setMovingTeamColor(currentPlayer == whitePlayer ? TeamColor.LIGHT
-						: TeamColor.DARK);
+		chessGameState.setMovingTeamColor(currentPlayer == whitePlayer ? TeamColor.LIGHT : TeamColor.DARK);
 		while (locations.hasNext()) {
 			Location location = locations.next();
 			ChessPiece chessPiece = getPiece(location);
 
 			if (chessPiece != null) {
-				TeamColor teamColor = chessPiece.getTeam().isWhite() ? TeamColor.LIGHT
-						: TeamColor.DARK;
+				TeamColor teamColor = chessPiece.getTeam().isWhite() ? TeamColor.LIGHT : TeamColor.DARK;
 				PieceType pieceType = getPieceTypeFromChessPiece(chessPiece);
-				PieceDescription pieceDescription = new PieceDescription(
-						teamColor, chessPiece.hasMoved(), pieceType);
-
+				PieceDescription pieceDescription = new PieceDescription(teamColor, chessPiece.hasMoved(), pieceType);
 				chessGameState.setPieceDescription(location, pieceDescription);
 			}
 		}
