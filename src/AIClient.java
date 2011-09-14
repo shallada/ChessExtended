@@ -14,6 +14,7 @@ import edu.neumont.learningChess.controller.GameController;
 import edu.neumont.learningChess.json.Jsonizer;
 import edu.neumont.learningChess.model.AIPlayer;
 import edu.neumont.learningChess.model.ServerPlayer;
+import edu.neumont.learningChess.view.BoardDisplay;
 
 public class AIClient {
 
@@ -21,6 +22,7 @@ public class AIClient {
 	static GameController.PlayerType black = null;
 
 	public static void main(String[] args) {
+		BoardDisplay.setSHOW_ALERT(false);
 		final int argumentsLength = args.length;
 		boolean giveInfo = true;
 

@@ -7,7 +7,6 @@ import java.util.Iterator;
 
 import javax.swing.*;
 
-
 import edu.neumont.learningChess.api.Location;
 import edu.neumont.learningChess.dev.DevTools;
 import edu.neumont.learningChess.model.ChessBoard;
@@ -18,17 +17,21 @@ import edu.neumont.learningChess.model.Queen;
 
 @SuppressWarnings("serial")
 public class BoardDisplay extends JFrame implements KeyListener, MouseListener, MouseMotionListener, IDisplay, Pawn.IPromotionListener {
-	
+
 	public static final int N_ROWS = ChessBoard.NUMBER_OF_ROWS;
 	public static final int N_COLS = ChessBoard.NUMBER_OF_COLUMNS;
-	
+
 	JLayeredPane layeredPane;
 	JPanel chessBoard;
 	BoardDisplayPiece chessPiece;
 	int xAdjustment;
 	int yAdjustment;
-	private static final boolean SHOW_ALERT = true;
-	
+	private static boolean SHOW_ALERT = true;
+
+	public static void setSHOW_ALERT(boolean bool) {
+		SHOW_ALERT = bool;
+	}
+
 	private ArrayList<IDisplay.IMoveHandler> moveHandlers = new ArrayList<IDisplay.IMoveHandler>();
 
 	public BoardDisplay(boolean allowListeners) {
@@ -38,13 +41,13 @@ public class BoardDisplay extends JFrame implements KeyListener, MouseListener, 
 		layeredPane = new JLayeredPane();
 		getContentPane().add(layeredPane);
 		layeredPane.setPreferredSize(boardSize);
-		
-		if(allowListeners){
+
+		if (allowListeners) {
 			layeredPane.addMouseListener(this);
 			layeredPane.addMouseMotionListener(this);
 			this.addKeyListener(this);
 		}
-		
+
 		chessBoard = new JPanel();
 		layeredPane.add(chessBoard, JLayeredPane.DEFAULT_LAYER);
 		chessBoard.setLayout(new GridLayout(N_ROWS, N_COLS));
@@ -52,12 +55,12 @@ public class BoardDisplay extends JFrame implements KeyListener, MouseListener, 
 		chessBoard.setBounds(0, 0, boardSize.width, boardSize.height);
 
 		Color squareColor = Color.blue;
-		
+
 		for (int row = 0; row < N_ROWS; row++) {
-			
+
 			squareColor = getOtherColor(squareColor);
-			
-			for (int col = 0; col < N_COLS; col++) {				
+
+			for (int col = 0; col < N_COLS; col++) {
 				JPanel square = new JPanel(new BorderLayout());
 				square.setBackground(squareColor);
 				chessBoard.add(square);
@@ -65,98 +68,96 @@ public class BoardDisplay extends JFrame implements KeyListener, MouseListener, 
 				squareColor = getOtherColor(squareColor);
 			}
 		}
-			
+
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		pack();
 		setResizable(true);
 		setLocationRelativeTo(null);
 		setVisible(true);
 	}
-	
+
 	public void addMoveHandler(IDisplay.IMoveHandler handler) {
 		moveHandlers.add(handler);
 	}
-	
+
 	public void removeMoveHandler(IDisplay.IMoveHandler handler) {
 		moveHandlers.remove(handler);
 	}
-	
+
 	private boolean notifyHandlers(Move move) {
 		boolean canHandle = true;
-		for (Iterator<IDisplay.IMoveHandler> i = moveHandlers.iterator(); canHandle && i.hasNext(); ) {
+		for (Iterator<IDisplay.IMoveHandler> i = moveHandlers.iterator(); canHandle && i.hasNext();) {
 			IDisplay.IMoveHandler handler = i.next();
 			canHandle = handler.handleMove(move);
 		}
 		return canHandle;
 	}
-	
-	
-	
+
 	public void placePiece(IDisplay.Piece piece, Location location) {
 		piece.setVisible(false);
 		JPanel panel = (JPanel) chessBoard.getComponent(getIndexFromLocation(location));
 		piece.setPieceLocation(location);
-		panel.add((Component) piece);		
+		panel.add((Component) piece);
 		piece.setVisible(true);
 	}
-	
+
 	public IDisplay.Piece removePiece(Location location) {
 		JPanel panel = (JPanel) chessBoard.getComponent(getIndexFromLocation(location));
 		IDisplay.Piece piece = (IDisplay.Piece) panel.getComponent(0);
 		piece.setVisible(false);
-		panel.remove(0);		
+		panel.remove(0);
 		piece.setPieceLocation(null);
 		piece.setVisible(true);
 		return piece;
 	}
-	
+
 	private int getIndexFromLocation(Location location) {
 		return ((N_ROWS - 1 - location.getRow()) * N_COLS) + location.getColumn();
 	}
-	
+
 	private Color getOtherColor(Color squareColor) {
-		return (squareColor == Color.white)? Color.blue: Color.white;
+		return (squareColor == Color.white) ? Color.blue : Color.white;
 	}
-	
-	
+
 	public void notifyCheck(boolean isWhite) {
-		this.setTitle((isWhite?"White's move":"Black's move")+" check");
-		//JOptionPane.showMessageDialog(this.getParent(), ((isWhite)?"White":"Black") + " is in check");
+		this.setTitle((isWhite ? "White's move" : "Black's move") + " check");
+		// JOptionPane.showMessageDialog(this.getParent(),
+		// ((isWhite)?"White":"Black") + " is in check");
 	}
-	
+
 	public void notifyCheckmate(boolean isWhite) {
-		this.setTitle("Checkmate!  "+((isWhite)?"White":"Black")+" wins");
-		//DevTools.saveMoveHistory(); //TODO Development use only
-		if(SHOW_ALERT) {
-			JOptionPane.showMessageDialog(this.getParent(), "Checkmate!  "+((isWhite)?"White":"Black")+" wins");
+		this.setTitle("Checkmate!  " + ((isWhite) ? "White" : "Black") + " wins");
+		// DevTools.saveMoveHistory(); //TODO Development use only
+		if (SHOW_ALERT) {
+			JOptionPane.showMessageDialog(this.getParent(), "Checkmate!  " + ((isWhite) ? "White" : "Black") + " wins");
 		}
 	}
-	
+
 	public void notifyStalemate() {
 		this.setTitle("Stalemate");
-		//DevTools.saveMoveHistory(); //TODO Development use only
-		if(SHOW_ALERT) {
+		// DevTools.saveMoveHistory(); //TODO Development use only
+		if (SHOW_ALERT) {
 			JOptionPane.showMessageDialog(this.getParent(), "Stalemate");
 		}
 	}
-	
+
 	public void promptForMove(boolean isWhite) {
-		this.setTitle(isWhite?"White's move":"Black's move");
+		this.setTitle(isWhite ? "White's move" : "Black's move");
 	}
-	
+
 	public void mousePressed(MouseEvent e) {
-		if(e.getButton() == MouseEvent.BUTTON1){
+		if (e.getButton() == MouseEvent.BUTTON1) {
 			chessPiece = null;
 			Component component = chessBoard.findComponentAt(e.getX(), e.getY());
-			
+
 			if (component instanceof BoardDisplayPiece) {
-	
+
 				Container parent = component.getParent();
 				Point parentLocation = parent.getLocation();
 				xAdjustment = parentLocation.x - e.getX();
 				yAdjustment = parentLocation.y - e.getY();
 				chessPiece = (BoardDisplayPiece) component;
-				chessPiece.setLocation(e.getX() + xAdjustment, e.getY()+ yAdjustment);
+				chessPiece.setLocation(e.getX() + xAdjustment, e.getY() + yAdjustment);
 				chessPiece.setSize(chessPiece.getWidth(), chessPiece.getHeight());
 				parent.remove(0);
 				layeredPane.add(chessPiece, JLayeredPane.DRAG_LAYER);
@@ -176,20 +177,20 @@ public class BoardDisplay extends JFrame implements KeyListener, MouseListener, 
 
 				chessPiece.setVisible(false);
 				Component component = chessBoard.findComponentAt(e.getX(), e.getY());
-				Container parent = (component instanceof BoardDisplayPiece)?component.getParent(): (Container) component;
-				
-				int row = (parent == null)? -1: N_ROWS-1 - (e.getY() / parent.getHeight());
-				int col = (parent == null)? -1: e.getX() / parent.getWidth();
+				Container parent = (component instanceof BoardDisplayPiece) ? component.getParent() : (Container) component;
+
+				int row = (parent == null) ? -1 : N_ROWS - 1 - (e.getY() / parent.getHeight());
+				int col = (parent == null) ? -1 : e.getX() / parent.getWidth();
 				Location targetLocation = new Location(row, col);
-				
+
 				Move move = new Move(chessPiece.getPieceLocation(), targetLocation);
-				
+
 				chessPiece.getParent().remove(chessPiece);
 				replacePiece();
-				
+
 				boolean canHandle = notifyHandlers(move);
 				if (!canHandle) {
-//					replacePiece();
+					// replacePiece();
 				}
 			} else { // release was out of bounds
 				replacePiece();
@@ -199,16 +200,16 @@ public class BoardDisplay extends JFrame implements KeyListener, MouseListener, 
 			chessPiece = null;
 		}
 	}
-	
+
 	private void replacePiece() {
 		JPanel panel = (JPanel) chessBoard.getComponent(getIndexFromLocation(chessPiece.getPieceLocation()));
-		panel.add(chessPiece);		
+		panel.add(chessPiece);
 	}
-	
+
 	private boolean releaseIsInBounds(MouseEvent e) {
 		int x = e.getX();
 		int y = e.getY();
-		return (x>=0) && (x<getWidth()) && (y>=0) && (y<getHeight());
+		return (x >= 0) && (x < getWidth()) && (y >= 0) && (y < getHeight());
 	}
 
 	public void mouseClicked(MouseEvent e) {
@@ -232,7 +233,7 @@ public class BoardDisplay extends JFrame implements KeyListener, MouseListener, 
 	// for debugging - saves current gamestate to a file
 	@Override
 	public void keyTyped(KeyEvent e) {
-		if(e.getKeyChar() == 's' && e.isAltDown()){
+		if (e.getKeyChar() == 's' && e.isAltDown()) {
 			DevTools.saveCurrentGameState();
 		}
 	}
@@ -244,7 +245,7 @@ public class BoardDisplay extends JFrame implements KeyListener, MouseListener, 
 	@Override
 	public void keyReleased(KeyEvent e) {
 	}
-	
+
 	@Override
 	public void disableClosing() {
 		this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
