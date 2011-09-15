@@ -48,7 +48,8 @@ public class Main {
 		comboBoxes.add(theamBox);
 
 		JOptionPane.showMessageDialog(null, comboBoxes, "Select Players", JOptionPane.INFORMATION_MESSAGE);
-
+		GameController.setTheam(theamBox.getSelectedItem().toString());
+		
 		final GameController.PlayerType white = GameController.PlayerType.valueOf(whiteComboBox.getSelectedItem().toString());
 		final GameController.PlayerType black = GameController.PlayerType.valueOf(blackComboBox.getSelectedItem().toString());
 

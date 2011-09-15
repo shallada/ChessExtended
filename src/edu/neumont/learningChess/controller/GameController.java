@@ -173,7 +173,7 @@ public class GameController implements IListener, ICheckChecker {
 		return new Move(from, pawnMovedTwoLocation);
 	}
 
-	public void setTheam(String theamName) {
+	public static void setTheam(String theamName) {
 		theam = theamName;
 	}
 	
@@ -337,6 +337,7 @@ public class GameController implements IListener, ICheckChecker {
 		Team team = piece.getTeam();
 		String imageLetter = team.isWhite() ? "w" : "b";
 		String imagePath = "/Images/" + theam + piece.getName() + imageLetter + ".gif";
+		System.out.println(imagePath);
 		URL imageUrl = getClass().getResource(imagePath);
 		return imageUrl;
 	}
