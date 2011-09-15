@@ -259,7 +259,7 @@ public class GameController implements IListener, ICheckChecker {
 			Move move = currentPlayer.getMove();
 			board.makeMove(move);
 			togglePlayers();
-			// DevTools.saveCurrentGameState(); //TODO Development use only
+			// DevTools.saveCurrentGameState(); //TODO: for development only. remove before deployment
 			history.add(getCurrentGameState());
 			isCheckmate = isCheckmate();
 			isStalemate = isStalemate();

@@ -127,7 +127,7 @@ public class BoardDisplay extends JFrame implements KeyListener, MouseListener, 
 
 	public void notifyCheckmate(boolean isWhite) {
 		this.setTitle("Checkmate!  " + ((isWhite) ? "White" : "Black") + " wins");
-		// DevTools.saveMoveHistory(); //TODO Development use only
+		// DevTools.saveMoveHistory(); //TODO: for development only. remove before deployment
 		if (SHOW_ALERT) {
 			JOptionPane.showMessageDialog(this.getParent(), "Checkmate!  " + ((isWhite) ? "White" : "Black") + " wins");
 		}
@@ -135,7 +135,7 @@ public class BoardDisplay extends JFrame implements KeyListener, MouseListener, 
 
 	public void notifyStalemate() {
 		this.setTitle("Stalemate");
-		// DevTools.saveMoveHistory(); //TODO Development use only
+		// DevTools.saveMoveHistory(); //TODO: for development only. remove before deployment
 		if (SHOW_ALERT) {
 			JOptionPane.showMessageDialog(this.getParent(), "Stalemate");
 		}
@@ -226,7 +226,7 @@ public class BoardDisplay extends JFrame implements KeyListener, MouseListener, 
 
 	@Override
 	public ChessPiece getPromotionPiece(Location location) {
-		// TODO Auto-generated method stub
+		// TODO let the user choose what they want
 		return new Queen();
 	}
 

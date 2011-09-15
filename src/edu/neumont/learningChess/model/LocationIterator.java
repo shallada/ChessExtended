@@ -27,6 +27,6 @@ public class LocationIterator implements Iterator<Location> {
 
 	@Override
 	public void remove() {
-		// TODO Auto-generated method stub
+		throw new RuntimeException("Can't remove from the location iterator");
 	}
 }

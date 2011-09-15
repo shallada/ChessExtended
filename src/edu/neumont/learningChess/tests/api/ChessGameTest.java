@@ -1,9 +1,10 @@
 package edu.neumont.learningChess.tests.api;
 
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import org.junit.Test;
 
-import edu.neumont.learningChess.api.ChessGame;
-import edu.neumont.learningChess.api.ChessGameState;
 import edu.neumont.learningChess.api.Location;
 import edu.neumont.learningChess.api.PieceDescription;
 import edu.neumont.learningChess.api.PieceType;
@@ -11,13 +12,6 @@ import edu.neumont.learningChess.api.TeamColor;
 import edu.neumont.learningChess.model.ChessPiece;
 import edu.neumont.learningChess.model.Move;
 import edu.neumont.learningChess.model.Pawn.IPromotionListener;
-
-
-import junit.framework.TestCase;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 public class ChessGameTest {
 
