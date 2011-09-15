@@ -68,6 +68,8 @@ public class GameController implements IListener, ICheckChecker {
 	// TODO: for development only. remove before deployment
 	private DevTools devTools = null;
 
+	private static String theam;
+
 	public GameController(HistoryAnalyzer analyzer, MoveHistory history) {
 		this(PlayerType.Proxy, PlayerType.Proxy);
 		((ProxyPlayer) whitePlayer).setMoveHistory(history);
@@ -144,7 +146,7 @@ public class GameController implements IListener, ICheckChecker {
 						.getPromotionListener();
 
 				ChessPiece chessPieceFromPieceType = ChessPiece.getChessPieceFromPieceType(
-						pieceDescription.getPieceType(), promotionListener,this);
+						pieceDescription.getPieceType(), promotionListener, this);
 				if (pieceDescription.hasMoved())
 					chessPieceFromPieceType.incrementMoveCount();
 				Team team = player.getTeam();
@@ -171,6 +173,10 @@ public class GameController implements IListener, ICheckChecker {
 		return new Move(from, pawnMovedTwoLocation);
 	}
 
+	public void setTheam(String theamName) {
+		theam = theamName;
+	}
+	
 	public static PieceType getPieceTypeFromChessPiece(ChessPiece chessPiece) {
 		PieceType pieceType = null;
 
@@ -241,7 +247,7 @@ public class GameController implements IListener, ICheckChecker {
 					: whiteTeam, this);
 			break;
 		case Proxy:
-			player = new ProxyPlayer(team,this);
+			player = new ProxyPlayer(team, this);
 			break;
 		case LearningServer:
 			player = new ServerPlayer(team, this);
@@ -259,7 +265,8 @@ public class GameController implements IListener, ICheckChecker {
 			Move move = currentPlayer.getMove();
 			board.makeMove(move);
 			togglePlayers();
-			// DevTools.saveCurrentGameState(); //TODO: for development only. remove before deployment
+			// DevTools.saveCurrentGameState(); //TODO: for development only.
+			// remove before deployment
 			history.add(getCurrentGameState());
 			isCheckmate = isCheckmate();
 			isStalemate = isStalemate();
@@ -329,7 +336,7 @@ public class GameController implements IListener, ICheckChecker {
 	private URL getImageURL(ChessPiece piece) {
 		Team team = piece.getTeam();
 		String imageLetter = team.isWhite() ? "w" : "b";
-		String imagePath = "/Images/" + piece.getName() + imageLetter + ".gif";
+		String imagePath = "/Images/" + piece.getName() + imageLetter + theam + ".gif";
 		URL imageUrl = getClass().getResource(imagePath);
 		return imageUrl;
 	}

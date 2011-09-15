@@ -211,7 +211,7 @@ public class ChessBoard {
 			Pawn pawn = (Pawn) removePiece(move.getTo());
 			Team pawnsTeam = pawn.getTeam();
 			pawnsTeam.remove(pawn);
-			ChessPiece replacement = pawn.getPromotionPiece(move.getTo());
+			ChessPiece replacement = new Queen();
 			pawnsTeam.add(replacement);
 			putPiece(replacement, move.getTo());
 			moveDescription.setPromotionPiece(replacement);

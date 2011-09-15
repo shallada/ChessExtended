@@ -13,9 +13,11 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.text.StyledEditorKit.ForegroundAction;
 
 import edu.neumont.learningChess.api.ExtendedMove;
 import edu.neumont.learningChess.api.MoveHistory;
+import edu.neumont.learningChess.api.TheamNames;
 import edu.neumont.learningChess.controller.GameController;
 import edu.neumont.learningChess.json.Jsonizer;
 import edu.neumont.learningChess.model.ServerPlayer;
@@ -27,16 +29,23 @@ public class Main {
 	private static final int N_THREADS = 1;
 
 	public static void main(String[] args) {
-
+		TheamNames[] values = TheamNames.values();
+		String[] theamNames = new String[values.length];
+		for (int i = 0; i <  values.length; i++) {
+			theamNames[i] = values[i].toString();
+		}
+		JComboBox theamBox = new JComboBox(theamNames);
 		JComboBox whiteComboBox = new JComboBox(new Object[] { GameController.PlayerType.Human, GameController.PlayerType.LearningServer, GameController.PlayerType.AI });
 		JComboBox blackComboBox = new JComboBox(new Object[] { GameController.PlayerType.Human, GameController.PlayerType.LearningServer, GameController.PlayerType.AI });
 		blackComboBox.setSelectedIndex(1);
 		JPanel comboBoxes = new JPanel();
-		comboBoxes.setLayout(new GridLayout(2, 2, 0, 15));
+		comboBoxes.setLayout(new GridLayout(3, 3, 0, 15));
 		comboBoxes.add(new JLabel("White:"));
 		comboBoxes.add(whiteComboBox);
 		comboBoxes.add(new JLabel("Black:"));
 		comboBoxes.add(blackComboBox);
+		comboBoxes.add(new JLabel("Piece theme:"));
+		comboBoxes.add(theamBox);
 
 		JOptionPane.showMessageDialog(null, comboBoxes, "Select Players", JOptionPane.INFORMATION_MESSAGE);
 

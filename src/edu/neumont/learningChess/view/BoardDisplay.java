@@ -1,19 +1,34 @@
 package edu.neumont.learningChess.view;
 
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.GridLayout;
+import java.awt.Point;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import javax.swing.*;
+import javax.swing.JComboBox;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JLayeredPane;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 
 import edu.neumont.learningChess.api.Location;
+import edu.neumont.learningChess.api.PieceType;
 import edu.neumont.learningChess.dev.DevTools;
 import edu.neumont.learningChess.model.ChessBoard;
 import edu.neumont.learningChess.model.ChessPiece;
 import edu.neumont.learningChess.model.Move;
 import edu.neumont.learningChess.model.Pawn;
-import edu.neumont.learningChess.model.Queen;
 
 @SuppressWarnings("serial")
 public class BoardDisplay extends JFrame implements KeyListener, MouseListener, MouseMotionListener, IDisplay, Pawn.IPromotionListener {
@@ -226,8 +241,15 @@ public class BoardDisplay extends JFrame implements KeyListener, MouseListener, 
 
 	@Override
 	public ChessPiece getPromotionPiece(Location location) {
-		// TODO let the user choose what they want
-		return new Queen();
+		JComboBox pieceTypeComboBox = new JComboBox(new Object[] { PieceType.QUEEN, PieceType.BISHOP, PieceType.ROOK, PieceType.KNIGHT });
+		pieceTypeComboBox.setSelectedIndex(0);
+		JPanel pieceSelectionPanel = new JPanel();
+		pieceSelectionPanel.setLayout(new GridLayout(2, 1, 0, 15));
+		pieceSelectionPanel.add(new JLabel("Promote pawn to :"));
+		pieceSelectionPanel.add(pieceTypeComboBox);
+		JOptionPane.showMessageDialog(null, pieceSelectionPanel, "Select Prmotion piece at location "+location, JOptionPane.INFORMATION_MESSAGE);
+		PieceType type = PieceType.valueOf(pieceTypeComboBox.getSelectedItem().toString());
+		return ChessPiece.getChessPieceFromPieceType(type, this, null);
 	}
 
 	// for debugging - saves current gamestate to a file
