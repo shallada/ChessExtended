@@ -36,7 +36,7 @@ public class Main {
 		JComboBox themeBox = new JComboBox(themeNames);
 		JComboBox whiteComboBox = new JComboBox(new Object[] { GameController.PlayerType.Human, GameController.PlayerType.LearningServer, GameController.PlayerType.AI });
 		JComboBox blackComboBox = new JComboBox(new Object[] { GameController.PlayerType.Human, GameController.PlayerType.LearningServer, GameController.PlayerType.AI });
-		blackComboBox.setSelectedIndex(1);
+		blackComboBox.setSelectedIndex(2);
 		JPanel comboBoxes = new JPanel();
 		comboBoxes.setLayout(new GridLayout(3, 3, 0, 15));
 		comboBoxes.add(new JLabel("White:"));
