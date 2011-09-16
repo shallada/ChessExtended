@@ -372,7 +372,7 @@ public class GameController implements IListener, ICheckChecker {
 	private URL getImageURL(ChessPiece piece) {
 		Team team = piece.getTeam();
 		String imageLetter = team.isWhite() ? "w" : "b";
-		String imagePath = "/Images/" + theme + piece.getName() + imageLetter + ".gif";
+		String imagePath = "/Images/" + theme +"/"+ piece.getName() + imageLetter + ".gif";
 		URL imageUrl = getClass().getResource(imagePath);
 		return imageUrl;
 	}
