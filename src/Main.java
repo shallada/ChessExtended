@@ -13,11 +13,10 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.text.StyledEditorKit.ForegroundAction;
 
 import edu.neumont.learningChess.api.ExtendedMove;
 import edu.neumont.learningChess.api.MoveHistory;
-import edu.neumont.learningChess.api.TheamNames;
+import edu.neumont.learningChess.api.ThemeNames;
 import edu.neumont.learningChess.controller.GameController;
 import edu.neumont.learningChess.json.Jsonizer;
 import edu.neumont.learningChess.model.ServerPlayer;
@@ -29,7 +28,7 @@ public class Main {
 	private static final int N_THREADS = 1;
 
 	public static void main(String[] args) {
-		TheamNames[] values = TheamNames.values();
+		ThemeNames[] values = ThemeNames.values();
 		String[] theamNames = new String[values.length];
 		for (int i = 0; i <  values.length; i++) {
 			theamNames[i] = values[i].toString();

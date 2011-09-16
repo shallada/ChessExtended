@@ -43,8 +43,8 @@ public class BoardDisplay extends JFrame implements KeyListener, MouseListener, 
 	int yAdjustment;
 	private static boolean SHOW_ALERT = true;
 
-	public static void setSHOW_ALERT(boolean bool) {
-		SHOW_ALERT = bool;
+	public static void setSHOW_ALERT(boolean showAlert) {
+		SHOW_ALERT = showAlert;
 	}
 
 	private ArrayList<IDisplay.IMoveHandler> moveHandlers = new ArrayList<IDisplay.IMoveHandler>();
