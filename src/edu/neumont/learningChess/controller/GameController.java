@@ -67,8 +67,7 @@ public class GameController implements IListener, ICheckChecker {
 
 	// TODO: for development only. remove before deployment
 	private DevTools devTools = null;
-
-	private static String theam;
+	private String theme;
 
 	public GameController(HistoryAnalyzer analyzer, MoveHistory history) {
 		this(PlayerType.Proxy, PlayerType.Proxy);
@@ -79,6 +78,48 @@ public class GameController implements IListener, ICheckChecker {
 	}
 
 	public GameController(PlayerType whiteType, PlayerType blackType) {
+		if (ALWAYS_SHOW_BOARD)
+			showDisplay = true;
+		else
+			showDisplay = (whiteType == PlayerType.Human)
+					|| (blackType == PlayerType.Human);
+
+		ALLOW_LISTENERS = (whiteType == PlayerType.Human) || (blackType == PlayerType.Human);
+
+		board = new ChessBoard();
+		board.AddListener(this);
+		if (ALWAYS_SHOW_BOARD) {
+			boardDisplay = new BoardDisplay(ALLOW_LISTENERS);
+			showDisplay = true;
+		} else {
+			if (showDisplay) {
+				boardDisplay = new BoardDisplay(ALLOW_LISTENERS);
+			} else {
+				boardDisplay = new NullDisplay();
+			}
+		}
+		// boardDisplay = (showDisplay)? new BoardDisplay(): new NullDisplay();
+
+		whiteTeam = buildTeam(Team.Color.LIGHT);
+		blackTeam = buildTeam(Team.Color.DARK);
+
+		// Determine the player types here
+		whitePlayer = createPlayer(whiteType, whiteTeam);
+		blackPlayer = createPlayer(blackType, blackTeam);
+
+		buildTeamPawns(whiteTeam, whitePlayer.getPromotionListener());
+		buildTeamPawns(blackTeam, blackPlayer.getPromotionListener());
+
+		history.add(getCurrentGameState());
+
+		boardDisplay.setVisible(true);
+
+		// TODO: for development only. remove before deployment
+		devTools = new DevTools(this);
+	}
+
+	public GameController(PlayerType whiteType, PlayerType blackType, String theme) {
+		this.theme = theme;
 		if (ALWAYS_SHOW_BOARD)
 			showDisplay = true;
 		else
@@ -173,10 +214,6 @@ public class GameController implements IListener, ICheckChecker {
 		return new Move(from, pawnMovedTwoLocation);
 	}
 
-	public static void setTheam(String theamName) {
-		theam = theamName;
-	}
-	
 	public static PieceType getPieceTypeFromChessPiece(ChessPiece chessPiece) {
 		PieceType pieceType = null;
 
@@ -265,8 +302,7 @@ public class GameController implements IListener, ICheckChecker {
 			Move move = currentPlayer.getMove();
 			board.makeMove(move);
 			togglePlayers();
-			// DevTools.saveCurrentGameState(); //TODO: for development only.
-			// remove before deployment
+			// DevTools.saveCurrentGameState(); //TODO Development use only
 			history.add(getCurrentGameState());
 			isCheckmate = isCheckmate();
 			isStalemate = isStalemate();
@@ -336,8 +372,7 @@ public class GameController implements IListener, ICheckChecker {
 	private URL getImageURL(ChessPiece piece) {
 		Team team = piece.getTeam();
 		String imageLetter = team.isWhite() ? "w" : "b";
-		String imagePath = "/Images/" + theam + piece.getName() + imageLetter + ".gif";
-		System.out.println(imagePath);
+		String imagePath = "/Images/" + theme + piece.getName() + imageLetter + ".gif";
 		URL imageUrl = getClass().getResource(imagePath);
 		return imageUrl;
 	}
@@ -531,5 +566,9 @@ public class GameController implements IListener, ICheckChecker {
 
 	public static void setShowBoard(boolean showBoard) {
 		GameController.ALWAYS_SHOW_BOARD = showBoard;
+	}
+
+	public void setTheme(String theme) {
+		this.theme = theme;
 	}
 }
