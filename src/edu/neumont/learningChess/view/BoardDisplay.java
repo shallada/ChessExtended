@@ -144,7 +144,7 @@ public class BoardDisplay extends JFrame implements KeyListener, MouseListener, 
 		this.setTitle("Checkmate!  " + ((isWhite) ? "White" : "Black") + " wins");
 		// DevTools.saveMoveHistory(); //TODO: for development only. remove before deployment
 		if (SHOW_ALERT) {
-			JOptionPane.showMessageDialog(this.getParent(), "Checkmate!  " + ((isWhite) ? "White" : "Black") + " wins");
+			JOptionPane.showMessageDialog(this, "Checkmate!  " + ((isWhite) ? "White" : "Black") + " wins");
 		}
 	}
 
@@ -152,7 +152,7 @@ public class BoardDisplay extends JFrame implements KeyListener, MouseListener, 
 		this.setTitle("Stalemate");
 		// DevTools.saveMoveHistory(); //TODO: for development only. remove before deployment
 		if (SHOW_ALERT) {
-			JOptionPane.showMessageDialog(this.getParent(), "Stalemate");
+			JOptionPane.showMessageDialog(this, "Stalemate");
 		}
 	}
 
