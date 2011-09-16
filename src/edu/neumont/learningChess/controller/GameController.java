@@ -68,7 +68,7 @@ public class GameController implements IListener, ICheckChecker {
 	// TODO: for development only. remove before deployment
 	private DevTools devTools = null;
 
-	private static String theam;
+	private static String theme;
 
 	public GameController(HistoryAnalyzer analyzer, MoveHistory history) {
 		this(PlayerType.Proxy, PlayerType.Proxy);
@@ -173,8 +173,8 @@ public class GameController implements IListener, ICheckChecker {
 		return new Move(from, pawnMovedTwoLocation);
 	}
 
-	public static void setTheam(String theamName) {
-		theam = theamName;
+	public static void setTheme(String themeName) {
+		theme = themeName;
 	}
 	
 	public static PieceType getPieceTypeFromChessPiece(ChessPiece chessPiece) {
@@ -336,8 +336,7 @@ public class GameController implements IListener, ICheckChecker {
 	private URL getImageURL(ChessPiece piece) {
 		Team team = piece.getTeam();
 		String imageLetter = team.isWhite() ? "w" : "b";
-		String imagePath = "/Images/" + theam + piece.getName() + imageLetter + ".gif";
-		System.out.println(imagePath);
+		String imagePath = "/Images/" + theme + piece.getName() + imageLetter + ".gif";
 		URL imageUrl = getClass().getResource(imagePath);
 		return imageUrl;
 	}

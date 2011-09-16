@@ -142,7 +142,8 @@ public class BoardDisplay extends JFrame implements KeyListener, MouseListener, 
 
 	public void notifyCheckmate(boolean isWhite) {
 		this.setTitle("Checkmate!  " + ((isWhite) ? "White" : "Black") + " wins");
-		// DevTools.saveMoveHistory(); //TODO: for development only. remove before deployment
+		// DevTools.saveMoveHistory(); //TODO: for development only. remove
+		// before deployment
 		if (SHOW_ALERT) {
 			JOptionPane.showMessageDialog(this.getParent(), "Checkmate!  " + ((isWhite) ? "White" : "Black") + " wins");
 		}
@@ -150,7 +151,8 @@ public class BoardDisplay extends JFrame implements KeyListener, MouseListener, 
 
 	public void notifyStalemate() {
 		this.setTitle("Stalemate");
-		// DevTools.saveMoveHistory(); //TODO: for development only. remove before deployment
+		// DevTools.saveMoveHistory(); //TODO: for development only. remove
+		// before deployment
 		if (SHOW_ALERT) {
 			JOptionPane.showMessageDialog(this.getParent(), "Stalemate");
 		}
@@ -247,7 +249,7 @@ public class BoardDisplay extends JFrame implements KeyListener, MouseListener, 
 		pieceSelectionPanel.setLayout(new GridLayout(2, 1, 0, 15));
 		pieceSelectionPanel.add(new JLabel("Promote pawn to :"));
 		pieceSelectionPanel.add(pieceTypeComboBox);
-		JOptionPane.showMessageDialog(null, pieceSelectionPanel, "Select Prmotion piece at location "+location, JOptionPane.INFORMATION_MESSAGE);
+		JOptionPane.showMessageDialog(null, pieceSelectionPanel, "Select Prmotion piece at location " + location, JOptionPane.INFORMATION_MESSAGE);
 		PieceType type = PieceType.valueOf(pieceTypeComboBox.getSelectedItem().toString());
 		return ChessPiece.getChessPieceFromPieceType(type, this, null);
 	}

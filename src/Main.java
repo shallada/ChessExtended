@@ -29,11 +29,11 @@ public class Main {
 
 	public static void main(String[] args) {
 		ThemeNames[] values = ThemeNames.values();
-		String[] theamNames = new String[values.length];
+		String[] themeNames = new String[values.length];
 		for (int i = 0; i <  values.length; i++) {
-			theamNames[i] = values[i].toString();
+			themeNames[i] = values[i].toString();
 		}
-		JComboBox theamBox = new JComboBox(theamNames);
+		JComboBox themeBox = new JComboBox(themeNames);
 		JComboBox whiteComboBox = new JComboBox(new Object[] { GameController.PlayerType.Human, GameController.PlayerType.LearningServer, GameController.PlayerType.AI });
 		JComboBox blackComboBox = new JComboBox(new Object[] { GameController.PlayerType.Human, GameController.PlayerType.LearningServer, GameController.PlayerType.AI });
 		blackComboBox.setSelectedIndex(1);
@@ -44,10 +44,10 @@ public class Main {
 		comboBoxes.add(new JLabel("Black:"));
 		comboBoxes.add(blackComboBox);
 		comboBoxes.add(new JLabel("Piece theme:"));
-		comboBoxes.add(theamBox);
+		comboBoxes.add(themeBox);
 
 		JOptionPane.showMessageDialog(null, comboBoxes, "Select Players", JOptionPane.INFORMATION_MESSAGE);
-		GameController.setTheam(theamBox.getSelectedItem().toString());
+		GameController.setTheme(themeBox.getSelectedItem().toString());
 		
 		final GameController.PlayerType white = GameController.PlayerType.valueOf(whiteComboBox.getSelectedItem().toString());
 		final GameController.PlayerType black = GameController.PlayerType.valueOf(blackComboBox.getSelectedItem().toString());
