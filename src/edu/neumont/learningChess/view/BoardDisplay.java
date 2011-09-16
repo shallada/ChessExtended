@@ -142,8 +142,7 @@ public class BoardDisplay extends JFrame implements KeyListener, MouseListener, 
 
 	public void notifyCheckmate(boolean isWhite) {
 		this.setTitle("Checkmate!  " + ((isWhite) ? "White" : "Black") + " wins");
-		// DevTools.saveMoveHistory(); //TODO: for development only. remove
-		// before deployment
+		// DevTools.saveMoveHistory(); //TODO: for development only. remove before deployment
 		if (SHOW_ALERT) {
 			JOptionPane.showMessageDialog(this.getParent(), "Checkmate!  " + ((isWhite) ? "White" : "Black") + " wins");
 		}
@@ -151,8 +150,7 @@ public class BoardDisplay extends JFrame implements KeyListener, MouseListener, 
 
 	public void notifyStalemate() {
 		this.setTitle("Stalemate");
-		// DevTools.saveMoveHistory(); //TODO: for development only. remove
-		// before deployment
+		// DevTools.saveMoveHistory(); //TODO: for development only. remove before deployment
 		if (SHOW_ALERT) {
 			JOptionPane.showMessageDialog(this.getParent(), "Stalemate");
 		}
