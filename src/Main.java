@@ -13,11 +13,10 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.text.StyledEditorKit.ForegroundAction;
 
 import edu.neumont.learningChess.api.ExtendedMove;
 import edu.neumont.learningChess.api.MoveHistory;
-import edu.neumont.learningChess.api.TheamNames;
+import edu.neumont.learningChess.api.ThemeNames;
 import edu.neumont.learningChess.controller.GameController;
 import edu.neumont.learningChess.json.Jsonizer;
 import edu.neumont.learningChess.model.ServerPlayer;
@@ -29,12 +28,12 @@ public class Main {
 	private static final int N_THREADS = 1;
 
 	public static void main(String[] args) {
-		TheamNames[] values = TheamNames.values();
-		String[] theamNames = new String[values.length];
+		ThemeNames[] values = ThemeNames.values();
+		String[] themeNames = new String[values.length];
 		for (int i = 0; i <  values.length; i++) {
-			theamNames[i] = values[i].toString();
+			themeNames[i] = values[i].toString();
 		}
-		JComboBox theamBox = new JComboBox(theamNames);
+		JComboBox themeBox = new JComboBox(themeNames);
 		JComboBox whiteComboBox = new JComboBox(new Object[] { GameController.PlayerType.Human, GameController.PlayerType.LearningServer, GameController.PlayerType.AI });
 		JComboBox blackComboBox = new JComboBox(new Object[] { GameController.PlayerType.Human, GameController.PlayerType.LearningServer, GameController.PlayerType.AI });
 		blackComboBox.setSelectedIndex(1);
@@ -45,11 +44,10 @@ public class Main {
 		comboBoxes.add(new JLabel("Black:"));
 		comboBoxes.add(blackComboBox);
 		comboBoxes.add(new JLabel("Piece theme:"));
-		comboBoxes.add(theamBox);
+		comboBoxes.add(themeBox);
 
 		JOptionPane.showMessageDialog(null, comboBoxes, "Select Players", JOptionPane.INFORMATION_MESSAGE);
-		GameController.setTheam(theamBox.getSelectedItem().toString());
-		
+		final String theme = themeBox.getSelectedItem().toString();
 		final GameController.PlayerType white = GameController.PlayerType.valueOf(whiteComboBox.getSelectedItem().toString());
 		final GameController.PlayerType black = GameController.PlayerType.valueOf(blackComboBox.getSelectedItem().toString());
 
@@ -58,7 +56,7 @@ public class Main {
 			new Thread() {
 				@Override
 				public void run() {
-					GameController game = new GameController(white, black);
+					GameController game = new GameController(white, black, theme);
 					game.play();
 					if (game.isCheckmate() || game.isStalemate()) {
 						game.disableClosing();
