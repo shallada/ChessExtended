@@ -29,11 +29,11 @@ public class Main {
 
 	public static void main(String[] args) {
 		ThemeNames[] values = ThemeNames.values();
-		String[] theamNames = new String[values.length];
+		String[] themeNames = new String[values.length];
 		for (int i = 0; i <  values.length; i++) {
-			theamNames[i] = values[i].toString();
+			themeNames[i] = values[i].toString();
 		}
-		JComboBox themeBox = new JComboBox(theamNames);
+		JComboBox themeBox = new JComboBox(themeNames);
 		JComboBox whiteComboBox = new JComboBox(new Object[] { GameController.PlayerType.Human, GameController.PlayerType.LearningServer, GameController.PlayerType.AI });
 		JComboBox blackComboBox = new JComboBox(new Object[] { GameController.PlayerType.Human, GameController.PlayerType.LearningServer, GameController.PlayerType.AI });
 		blackComboBox.setSelectedIndex(1);
