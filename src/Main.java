@@ -18,55 +18,64 @@ import edu.neumont.learningChess.api.ExtendedMove;
 import edu.neumont.learningChess.api.MoveHistory;
 import edu.neumont.learningChess.api.ThemeNames;
 import edu.neumont.learningChess.controller.GameController;
+import edu.neumont.learningChess.controller.GameController.PlayerType;
+import edu.neumont.learningChess.controller.GameOverType;
 import edu.neumont.learningChess.json.Jsonizer;
 import edu.neumont.learningChess.model.ServerPlayer;
 import edu.neumont.learningChess.model.TextCommandProcessor;
 import edu.neumont.learningChess.model.TextCommandProcessorOutput;
+import edu.neumont.learningChess.model.WinnerType;
 
 public class Main {
 
 	public static void main(String[] args) {
-		do{
-		ThemeNames[] values = ThemeNames.values();
-		String[] themeNames = new String[values.length];
-		for (int i = 0; i < values.length; i++) {
-			themeNames[i] = values[i].toString();
-		}
-		JComboBox themeBox = new JComboBox(themeNames);
-		JComboBox whiteComboBox = new JComboBox(new Object[] { GameController.PlayerType.Human, GameController.PlayerType.LearningServer, GameController.PlayerType.AI });
-		JComboBox blackComboBox = new JComboBox(new Object[] { GameController.PlayerType.Human, GameController.PlayerType.LearningServer, GameController.PlayerType.AI });
-		blackComboBox.setSelectedIndex(1);
-		JPanel comboBoxes = new JPanel();
-		comboBoxes.setLayout(new GridLayout(3, 3, 0, 15));
-		comboBoxes.add(new JLabel("White:"));
-		comboBoxes.add(whiteComboBox);
-		comboBoxes.add(new JLabel("Black:"));
-		comboBoxes.add(blackComboBox);
-		comboBoxes.add(new JLabel("Piece theme:"));
-		comboBoxes.add(themeBox);
+		do {
+			ThemeNames[] values = ThemeNames.values();
+			String[] themeNames = new String[values.length];
+			for (int i = 0; i < values.length; i++) {
+				themeNames[i] = values[i].toString();
+			}
+			JComboBox themeBox = new JComboBox(themeNames);
+			JComboBox whiteComboBox = new JComboBox(new Object[] { GameController.PlayerType.Human, GameController.PlayerType.LearningServer, GameController.PlayerType.AI });
+			JComboBox blackComboBox = new JComboBox(new Object[] { GameController.PlayerType.Human, GameController.PlayerType.LearningServer, GameController.PlayerType.AI });
+			blackComboBox.setSelectedIndex(1);
+			JPanel comboBoxes = new JPanel();
+			comboBoxes.setLayout(new GridLayout(3, 3, 0, 15));
+			comboBoxes.add(new JLabel("White:"));
+			comboBoxes.add(whiteComboBox);
+			comboBoxes.add(new JLabel("Black:"));
+			comboBoxes.add(blackComboBox);
+			comboBoxes.add(new JLabel("Piece theme:"));
+			comboBoxes.add(themeBox);
 
-		JOptionPane.showMessageDialog(null, comboBoxes, "Select Players", JOptionPane.INFORMATION_MESSAGE);
-		final String theme = themeBox.getSelectedItem().toString();
-		final GameController.PlayerType white = GameController.PlayerType.valueOf(whiteComboBox.getSelectedItem().toString());
-		final GameController.PlayerType black = GameController.PlayerType.valueOf(blackComboBox.getSelectedItem().toString());
+			JOptionPane.showMessageDialog(null, comboBoxes, "Select Players", JOptionPane.INFORMATION_MESSAGE);
+			final String theme = themeBox.getSelectedItem().toString();
+			final GameController.PlayerType white = GameController.PlayerType.valueOf(whiteComboBox.getSelectedItem().toString());
+			final GameController.PlayerType black = GameController.PlayerType.valueOf(blackComboBox.getSelectedItem().toString());
 
-		GameController.setShowBoard(true);
-		GameController game = new GameController(white, black, theme);
-		game.play();
-		if (game.isCheckmate() || game.isStalemate()) {
-			game.disableClosing();
-			tellTheServer(game.getGameHistory());
-		}
-		game.close();
-		}while(JOptionPane.showConfirmDialog(null, "do you want to play again?", "play again?", JOptionPane.YES_NO_OPTION)==0);
+			GameController.setShowBoard(true);
+			GameController game = new GameController(white, black, theme);
+			GameOverType gameOverType = game.play();
+			if (game.isCheckmate() || game.isStalemate()) {
+				game.disableClosing();
+				PlayerType winnerType = null;
+				if (gameOverType == GameOverType.checkmate)
+					winnerType = game.getCurrentTeam().isWhite() ? black : white;
+				tellTheServer(game.getGameHistory(), white.toString(), black.toString(), winnerType);
+				game.close();
+			}
+		} while (JOptionPane.showConfirmDialog(null, "do you want to play again?", "play again?", JOptionPane.YES_NO_OPTION) == 0);
 	}
 
-	private static void tellTheServer(Iterator<ExtendedMove> moveHistoryIterator) {
+	private static void tellTheServer(Iterator<ExtendedMove> moveHistoryIterator, String whiteName, String blackName, PlayerType winnerType) {
 		List<ExtendedMove> moves = new ArrayList<ExtendedMove>();
 		while (moveHistoryIterator.hasNext())
 			moves.add(moveHistoryIterator.next());
 
 		MoveHistory moveHistory = new MoveHistory(moves);
+		moveHistory.setWhitePlayerName(whiteName);
+		moveHistory.setBlackPlayerName(blackName);
+		moveHistory.setWinnerType(winnerType);
 		String endpoint;
 		if (ServerPlayer.IS_LOCAL) {
 			endpoint = "http://localhost:8080/LearningChessWebServer/analyzehistory";
