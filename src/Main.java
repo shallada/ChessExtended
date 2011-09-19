@@ -31,6 +31,8 @@ import edu.neumont.learningChess.model.TextCommandProcessorOutput;
 public class Main {
 
 	public static void main(String[] args) {
+		System.out.println(MD5("1234"));
+		System.exit(0);
 		do {
 			ThemeNames[] values = ThemeNames.values();
 			String[] themeNames = new String[values.length];
@@ -122,19 +124,36 @@ public class Main {
 	}
 	
 	public static String MD5(String str) {
-		String s = null;
-		try {
-			byte[] bytesOfMessage = str.getBytes("UTF-8");
-			MessageDigest md = MessageDigest.getInstance("MD5");
-			byte[] thedigest = md.digest(bytesOfMessage);
-			s = new String(thedigest, "UTF-8");
+		MessageDigest md;
+		byte[] md5hash = new byte[32];
+        try {
+        	md = MessageDigest.getInstance("MD5");
+	        md.update(str.getBytes("iso-8859-1"), 0, str.length());
+	        md5hash = md.digest();
 		} catch (NoSuchAlgorithmException e) {
 			e.printStackTrace();
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
 		}
-		return s;
+        return convertToHex(md5hash);
+        
 	}
+	
+	private static String convertToHex(byte[] data) { 
+        StringBuffer buf = new StringBuffer();
+        for (int i = 0; i < data.length; i++) { 
+            int halfbyte = (data[i] >>> 4) & 0x0F;
+            int two_halfs = 0;
+            do { 
+                if ((0 <= halfbyte) && (halfbyte <= 9)) 
+                    buf.append((char) ('0' + halfbyte));
+                else 
+                    buf.append((char) ('a' + (halfbyte - 10)));
+                halfbyte = data[i] & 0x0F;
+            } while(two_halfs++ < 1);
+        } 
+        return buf.toString();
+    } 
 
 	public static void old_main(String[] args) {
 
