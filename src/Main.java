@@ -24,7 +24,6 @@ import edu.neumont.learningChess.json.Jsonizer;
 import edu.neumont.learningChess.model.ServerPlayer;
 import edu.neumont.learningChess.model.TextCommandProcessor;
 import edu.neumont.learningChess.model.TextCommandProcessorOutput;
-import edu.neumont.learningChess.model.WinnerType;
 
 public class Main {
 
