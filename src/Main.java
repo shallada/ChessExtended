@@ -33,6 +33,10 @@ import edu.neumont.learningChess.model.TextCommandProcessorOutput;
 import edu.neumont.learningChess.model.User;
 
 public class Main {
+	
+	private static String theme = null;
+	private static GameController.PlayerType white = null;
+	private static GameController.PlayerType black = null;
 
 	public static void main(String[] args) {
 //		int count = 0;
@@ -40,6 +44,7 @@ public class Main {
 //			System.out.println(MD5("1234"));
 //			
 //		}
+		
 		boolean logedIn = false;
 		while (!logedIn) {
 		JPanel LoginOptionMenu = new JPanel();
@@ -126,7 +131,16 @@ public class Main {
 			JComboBox themeBox = new JComboBox(themeNames);
 			JComboBox whiteComboBox = new JComboBox(new Object[] { GameController.PlayerType.Human, GameController.PlayerType.LearningServer, GameController.PlayerType.AI });
 			JComboBox blackComboBox = new JComboBox(new Object[] { GameController.PlayerType.Human, GameController.PlayerType.LearningServer, GameController.PlayerType.AI });
-			blackComboBox.setSelectedIndex(1);
+			
+			if(white != null && black != null && theme != null){
+				whiteComboBox.setSelectedItem(white);
+				blackComboBox.setSelectedItem(black);
+				themeBox.setSelectedItem(theme);
+			}
+			else{
+				blackComboBox.setSelectedIndex(1);
+			}
+			
 			JPanel comboBoxes = new JPanel();
 			comboBoxes.setLayout(new GridLayout(3, 3, 0, 15));
 			comboBoxes.add(new JLabel("White:"));
@@ -137,9 +151,9 @@ public class Main {
 			comboBoxes.add(themeBox);
 
 			JOptionPane.showMessageDialog(null, comboBoxes, "Select Players", JOptionPane.INFORMATION_MESSAGE);
-			final String theme = themeBox.getSelectedItem().toString();
-			final GameController.PlayerType white = GameController.PlayerType.valueOf(whiteComboBox.getSelectedItem().toString());
-			final GameController.PlayerType black = GameController.PlayerType.valueOf(blackComboBox.getSelectedItem().toString());
+			theme = themeBox.getSelectedItem().toString();
+			white = GameController.PlayerType.valueOf(whiteComboBox.getSelectedItem().toString());
+			black = GameController.PlayerType.valueOf(blackComboBox.getSelectedItem().toString());
 
 			GameController.setShowBoard(true);
 			GameController game = new GameController(white, black, theme);
