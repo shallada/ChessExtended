@@ -1,3 +1,4 @@
+import java.awt.Component;
 import java.awt.GridLayout;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -13,12 +14,10 @@ import java.util.Iterator;
 import java.util.List;
 
 import javax.swing.JComboBox;
-import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
-import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
 import edu.neumont.learningChess.api.ExtendedMove;
@@ -31,22 +30,32 @@ import edu.neumont.learningChess.json.Jsonizer;
 import edu.neumont.learningChess.model.ServerPlayer;
 import edu.neumont.learningChess.model.TextCommandProcessor;
 import edu.neumont.learningChess.model.TextCommandProcessorOutput;
+import edu.neumont.learningChess.model.User;
 
 public class Main {
 
 	public static void main(String[] args) {
+//		int count = 0;
+//		while (count < 100){
+//			System.out.println(MD5("1234"));
+//			
+//		}
+		boolean logedIn = false;
+		while (!logedIn) {
 		JPanel LoginOptionMenu = new JPanel();
 		String title = "";
 		switch (JOptionPane.showConfirmDialog(null, "Do you have an account?", "Login", JOptionPane.YES_NO_OPTION)) {
 		case 0:
-			LoginOptionMenu.add(new JTextArea("User Name"));
-			LoginOptionMenu.add(new JTextArea("Password"));
+			LoginOptionMenu.add(new JLabel("User Name"));
+			LoginOptionMenu.add(new JTextField());
+			LoginOptionMenu.add(new JLabel("Password"));
+			LoginOptionMenu.add(new JPasswordField());
 			LoginOptionMenu.setLayout(new GridLayout(2, 1, 0, 15));
 			title = "Login";
 			break;
 		case 1:
 			LoginOptionMenu.add(new JLabel("User Name"));
-			LoginOptionMenu.add(new JTextField());
+			LoginOptionMenu.add(new JTextField(10));
 			LoginOptionMenu.add(new JLabel("Password"));
 			LoginOptionMenu.add(new JPasswordField());
 			LoginOptionMenu.add(new JLabel("Password confirm"));
@@ -55,7 +64,59 @@ public class Main {
 			title = "Register";
 			break;
 		}
-		JOptionPane.showMessageDialog(null, LoginOptionMenu, title, JOptionPane.INFORMATION_MESSAGE);
+		StringBuilder jsonStringBuilder;
+			jsonStringBuilder = new StringBuilder();
+			JOptionPane.showMessageDialog(null, LoginOptionMenu, title, JOptionPane.INFORMATION_MESSAGE);
+
+			Component[] components = LoginOptionMenu.getComponents();
+			String endpoint = "";
+			switch (components.length) {
+			case 6:
+				System.out.println(new String(((JPasswordField) components[3]).getPassword())+"\nand\n"+new String(((JPasswordField) components[5]).getPassword()));
+				if (!new String(((JPasswordField) components[3]).getPassword()).equals(new String(((JPasswordField) components[5]).getPassword()))) {
+					JOptionPane.showMessageDialog(null, "Passwords dont match");
+					continue;
+				}
+				endpoint = "http://chess.neumont.edu:8081/ChessGame/register";
+				break;
+			case 4:
+
+				endpoint = "http://chess.neumont.edu:8081/ChessGame/login";
+				break;
+			}
+			String username = ((JTextField) components[1]).getText();
+			String MD5Passweord = MD5(((JPasswordField) components[3]).getPassword().toString());
+			User user = new User();
+			user.setPassword(MD5Passweord);
+			user.setUsername(username);
+			Jsonizer.jsonize(user);
+			try {
+				URL url = new URL(endpoint);
+			URLConnection connection = url.openConnection();
+			connection.setDoOutput(true);
+			OutputStreamWriter writer = new OutputStreamWriter(connection.getOutputStream());
+			String jsonOut = Jsonizer.jsonize(user);
+			writer.write(jsonOut);
+			writer.flush();
+			
+			InputStreamReader in = new InputStreamReader(connection.getInputStream());
+			jsonStringBuilder = new StringBuilder();
+			int bytesRead;
+			while ((bytesRead = in.read()) > -1) {
+				if ((char) bytesRead != '\n' && (char) bytesRead != '\r')
+					jsonStringBuilder.append((char) bytesRead);
+			}
+			System.out.println(jsonStringBuilder.toString());
+			logedIn = Jsonizer.dejsonize(jsonStringBuilder.toString(), boolean.class);
+			}catch (MalformedURLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		System.out.println("Here");
 		do {
 			ThemeNames[] values = ThemeNames.values();
 			String[] themeNames = new String[values.length];
@@ -145,7 +206,7 @@ public class Main {
 		}
 
 	}
-	
+
 	public static String MD5(String str) {
 		String s = null;
 		try {
