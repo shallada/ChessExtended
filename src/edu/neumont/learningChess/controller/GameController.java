@@ -80,7 +80,7 @@ public class GameController implements IListener, ICheckChecker {
 
 	// TODO: for development only. remove before deployment
 	private DevTools devTools = null;
-	private String theme;
+	private String theme = "Black_and_White";
 
 	public GameController(HistoryAnalyzer analyzer, MoveHistory history) {
 		this(PlayerType.Proxy, PlayerType.Proxy);

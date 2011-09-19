@@ -28,50 +28,43 @@ import edu.neumont.learningChess.model.WinnerType;
 
 public class Main {
 
-	private static final int N_THREADS = 1;
-
 	public static void main(String[] args) {
-		ThemeNames[] values = ThemeNames.values();
-		String[] themeNames = new String[values.length];
-		for (int i = 0; i <  values.length; i++) {
-			themeNames[i] = values[i].toString();
-		}
-		JComboBox themeBox = new JComboBox(themeNames);
-		JComboBox whiteComboBox = new JComboBox(new Object[] { GameController.PlayerType.Human, GameController.PlayerType.LearningServer, GameController.PlayerType.AI });
-		JComboBox blackComboBox = new JComboBox(new Object[] { GameController.PlayerType.Human, GameController.PlayerType.LearningServer, GameController.PlayerType.AI });
-		blackComboBox.setSelectedIndex(1);
-		JPanel comboBoxes = new JPanel();
-		comboBoxes.setLayout(new GridLayout(3, 3, 0, 15));
-		comboBoxes.add(new JLabel("White:"));
-		comboBoxes.add(whiteComboBox);
-		comboBoxes.add(new JLabel("Black:"));
-		comboBoxes.add(blackComboBox);
-		comboBoxes.add(new JLabel("Piece theme:"));
-		comboBoxes.add(themeBox);
+		do {
+			ThemeNames[] values = ThemeNames.values();
+			String[] themeNames = new String[values.length];
+			for (int i = 0; i < values.length; i++) {
+				themeNames[i] = values[i].toString();
+			}
+			JComboBox themeBox = new JComboBox(themeNames);
+			JComboBox whiteComboBox = new JComboBox(new Object[] { GameController.PlayerType.Human, GameController.PlayerType.LearningServer, GameController.PlayerType.AI });
+			JComboBox blackComboBox = new JComboBox(new Object[] { GameController.PlayerType.Human, GameController.PlayerType.LearningServer, GameController.PlayerType.AI });
+			blackComboBox.setSelectedIndex(1);
+			JPanel comboBoxes = new JPanel();
+			comboBoxes.setLayout(new GridLayout(3, 3, 0, 15));
+			comboBoxes.add(new JLabel("White:"));
+			comboBoxes.add(whiteComboBox);
+			comboBoxes.add(new JLabel("Black:"));
+			comboBoxes.add(blackComboBox);
+			comboBoxes.add(new JLabel("Piece theme:"));
+			comboBoxes.add(themeBox);
 
-		JOptionPane.showMessageDialog(null, comboBoxes, "Select Players", JOptionPane.INFORMATION_MESSAGE);
-		final String theme = themeBox.getSelectedItem().toString();
-		final GameController.PlayerType white = GameController.PlayerType.valueOf(whiteComboBox.getSelectedItem().toString());
-		final GameController.PlayerType black = GameController.PlayerType.valueOf(blackComboBox.getSelectedItem().toString());
+			JOptionPane.showMessageDialog(null, comboBoxes, "Select Players", JOptionPane.INFORMATION_MESSAGE);
+			final String theme = themeBox.getSelectedItem().toString();
+			final GameController.PlayerType white = GameController.PlayerType.valueOf(whiteComboBox.getSelectedItem().toString());
+			final GameController.PlayerType black = GameController.PlayerType.valueOf(blackComboBox.getSelectedItem().toString());
 
-		GameController.setShowBoard(true);
-		for (int j = 0; j < N_THREADS; j++) {
-			new Thread() {
-				@Override
-				public void run() {
-					GameController game = new GameController(white, black, theme);
-					GameOverType gameOverType = game.play();
-					if (game.isCheckmate() || game.isStalemate()) {
-						game.disableClosing();
-						PlayerType winnerType = null;
-						if(gameOverType == GameOverType.checkmate)
-							winnerType = game.getCurrentTeam().isWhite() ? black : white;
-						tellTheServer(game.getGameHistory(), white.toString(), black.toString(), winnerType);
-					}
-					game.close();
-				}
-			}.start();
-		}
+			GameController.setShowBoard(true);
+			GameController game = new GameController(white, black, theme);
+			GameOverType gameOverType = game.play();
+			if (game.isCheckmate() || game.isStalemate()) {
+				game.disableClosing();
+				PlayerType winnerType = null;
+				if (gameOverType == GameOverType.checkmate)
+					winnerType = game.getCurrentTeam().isWhite() ? black : white;
+				tellTheServer(game.getGameHistory(), white.toString(), black.toString(), winnerType);
+				game.close();
+			}
+		} while (JOptionPane.showConfirmDialog(null, "do you want to play again?", "play again?", JOptionPane.YES_NO_OPTION) == 0);
 	}
 
 	private static void tellTheServer(Iterator<ExtendedMove> moveHistoryIterator, String whiteName, String blackName, PlayerType winnerType) {
