@@ -10,9 +10,13 @@ import java.util.Iterator;
 import java.util.List;
 
 import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JPasswordField;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
 
 import edu.neumont.learningChess.api.ExtendedMove;
 import edu.neumont.learningChess.api.MoveHistory;
@@ -24,11 +28,31 @@ import edu.neumont.learningChess.json.Jsonizer;
 import edu.neumont.learningChess.model.ServerPlayer;
 import edu.neumont.learningChess.model.TextCommandProcessor;
 import edu.neumont.learningChess.model.TextCommandProcessorOutput;
-import edu.neumont.learningChess.model.WinnerType;
 
 public class Main {
 
 	public static void main(String[] args) {
+		JPanel LoginOptionMenu = new JPanel();
+		String title = "";
+		switch (JOptionPane.showConfirmDialog(null, "Do you have an account?", "Login", JOptionPane.YES_NO_OPTION)) {
+		case 0:
+			LoginOptionMenu.add(new JTextArea("User Name"));
+			LoginOptionMenu.add(new JTextArea("Password"));
+			LoginOptionMenu.setLayout(new GridLayout(2, 1, 0, 15));
+			title = "Login";
+			break;
+		case 1:
+			LoginOptionMenu.add(new JLabel("User Name"));
+			LoginOptionMenu.add(new JTextField());
+			LoginOptionMenu.add(new JLabel("Password"));
+			LoginOptionMenu.add(new JPasswordField());
+			LoginOptionMenu.add(new JLabel("Password confirm"));
+			LoginOptionMenu.add(new JPasswordField());
+			LoginOptionMenu.setLayout(new GridLayout(4, 2, 0, 15));
+			title = "Register";
+			break;
+		}
+		JOptionPane.showMessageDialog(null, LoginOptionMenu, title, JOptionPane.INFORMATION_MESSAGE);
 		do {
 			ThemeNames[] values = ThemeNames.values();
 			String[] themeNames = new String[values.length];
