@@ -44,7 +44,20 @@ import edu.neumont.learningChess.view.ServerDisplay;
 public class GameController implements IListener, ICheckChecker {
 
 	public enum PlayerType {
-		Human, AI, Remote, Proxy, LearningServer
+		Human(1), AI(2), Remote(4), Proxy(5), LearningServer(3);
+		private final int value;
+
+		private PlayerType(int value) {
+			this.value = value;
+			// TODO Auto-generated constructor stub
+		}
+
+		/**
+		 * @return the value
+		 */
+		public int getValue() {
+			return value;
+		}
 	}
 
 	private IDisplay boardDisplay;
@@ -293,7 +306,8 @@ public class GameController implements IListener, ICheckChecker {
 		return player;
 	}
 
-	public void play() {
+	public GameOverType play() {
+		GameOverType type = null;
 		currentPlayer = whitePlayer;
 		boolean isCheckmate = false;
 		boolean isStalemate = false;
@@ -312,11 +326,14 @@ public class GameController implements IListener, ICheckChecker {
 		}
 		if (isCheckmate) {
 			boardDisplay.notifyCheckmate(currentPlayer == blackPlayer);
+			type = GameOverType.checkmate;
 			// System.out.println(currentPlayer.getTeam().isWhite()?"White wins":"Black wins");
 		} else if (isStalemate) {
 			boardDisplay.notifyStalemate();
+			type = GameOverType.stalemate;
 			// System.out.println("Stalemate");
 		}
+		return type;
 	}
 
 	public void tryMove(Move move) {

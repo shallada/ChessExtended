@@ -18,10 +18,13 @@ import edu.neumont.learningChess.api.ExtendedMove;
 import edu.neumont.learningChess.api.MoveHistory;
 import edu.neumont.learningChess.api.ThemeNames;
 import edu.neumont.learningChess.controller.GameController;
+import edu.neumont.learningChess.controller.GameController.PlayerType;
+import edu.neumont.learningChess.controller.GameOverType;
 import edu.neumont.learningChess.json.Jsonizer;
 import edu.neumont.learningChess.model.ServerPlayer;
 import edu.neumont.learningChess.model.TextCommandProcessor;
 import edu.neumont.learningChess.model.TextCommandProcessorOutput;
+import edu.neumont.learningChess.model.WinnerType;
 
 public class Main {
 
@@ -36,7 +39,7 @@ public class Main {
 		JComboBox themeBox = new JComboBox(themeNames);
 		JComboBox whiteComboBox = new JComboBox(new Object[] { GameController.PlayerType.Human, GameController.PlayerType.LearningServer, GameController.PlayerType.AI });
 		JComboBox blackComboBox = new JComboBox(new Object[] { GameController.PlayerType.Human, GameController.PlayerType.LearningServer, GameController.PlayerType.AI });
-		blackComboBox.setSelectedIndex(2);
+		blackComboBox.setSelectedIndex(1);
 		JPanel comboBoxes = new JPanel();
 		comboBoxes.setLayout(new GridLayout(3, 3, 0, 15));
 		comboBoxes.add(new JLabel("White:"));
@@ -57,10 +60,13 @@ public class Main {
 				@Override
 				public void run() {
 					GameController game = new GameController(white, black, theme);
-					game.play();
+					GameOverType gameOverType = game.play();
 					if (game.isCheckmate() || game.isStalemate()) {
 						game.disableClosing();
-						tellTheServer(game.getGameHistory());
+						PlayerType winnerType = null;
+						if(gameOverType == GameOverType.checkmate)
+							winnerType = game.getCurrentTeam().isWhite() ? black : white;
+						tellTheServer(game.getGameHistory(), white.toString(), black.toString(), winnerType);
 					}
 					game.close();
 				}
@@ -68,12 +74,15 @@ public class Main {
 		}
 	}
 
-	private static void tellTheServer(Iterator<ExtendedMove> moveHistoryIterator) {
+	private static void tellTheServer(Iterator<ExtendedMove> moveHistoryIterator, String whiteName, String blackName, PlayerType winnerType) {
 		List<ExtendedMove> moves = new ArrayList<ExtendedMove>();
 		while (moveHistoryIterator.hasNext())
 			moves.add(moveHistoryIterator.next());
 
 		MoveHistory moveHistory = new MoveHistory(moves);
+		moveHistory.setWhitePlayerName(whiteName);
+		moveHistory.setBlackPlayerName(blackName);
+		moveHistory.setWinnerType(winnerType);
 		String endpoint;
 		if (ServerPlayer.IS_LOCAL) {
 			endpoint = "http://localhost:8080/LearningChessWebServer/analyzehistory";
