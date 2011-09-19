@@ -67,7 +67,7 @@ public class GameController implements IListener, ICheckChecker {
 
 	// TODO: for development only. remove before deployment
 	private DevTools devTools = null;
-	private String theme;
+	private String theme = "Black_and_White";
 
 	public GameController(HistoryAnalyzer analyzer, MoveHistory history) {
 		this(PlayerType.Proxy, PlayerType.Proxy);
@@ -373,6 +373,7 @@ public class GameController implements IListener, ICheckChecker {
 		Team team = piece.getTeam();
 		String imageLetter = team.isWhite() ? "w" : "b";
 		String imagePath = "/Images/" + theme +"/"+ piece.getName() + imageLetter + ".gif";
+//		System.out.println(imagePath);
 		URL imageUrl = getClass().getResource(imagePath);
 		return imageUrl;
 	}

@@ -25,12 +25,11 @@ import edu.neumont.learningChess.model.TextCommandProcessorOutput;
 
 public class Main {
 
-	private static final int N_THREADS = 1;
-
 	public static void main(String[] args) {
+		do{
 		ThemeNames[] values = ThemeNames.values();
 		String[] themeNames = new String[values.length];
-		for (int i = 0; i <  values.length; i++) {
+		for (int i = 0; i < values.length; i++) {
 			themeNames[i] = values[i].toString();
 		}
 		JComboBox themeBox = new JComboBox(themeNames);
@@ -52,20 +51,14 @@ public class Main {
 		final GameController.PlayerType black = GameController.PlayerType.valueOf(blackComboBox.getSelectedItem().toString());
 
 		GameController.setShowBoard(true);
-		for (int j = 0; j < N_THREADS; j++) {
-			new Thread() {
-				@Override
-				public void run() {
-					GameController game = new GameController(white, black, theme);
-					game.play();
-					if (game.isCheckmate() || game.isStalemate()) {
-						game.disableClosing();
-						tellTheServer(game.getGameHistory());
-					}
-					game.close();
-				}
-			}.start();
+		GameController game = new GameController(white, black, theme);
+		game.play();
+		if (game.isCheckmate() || game.isStalemate()) {
+			game.disableClosing();
+			tellTheServer(game.getGameHistory());
 		}
+		game.close();
+		}while(JOptionPane.showConfirmDialog(null, "do you want to play again?", "play again?", JOptionPane.YES_NO_OPTION)==0);
 	}
 
 	private static void tellTheServer(Iterator<ExtendedMove> moveHistoryIterator) {
