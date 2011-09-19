@@ -314,14 +314,18 @@ public class GameController implements IListener, ICheckChecker {
 		while (!(isCheckmate || isStalemate)) {
 			boardDisplay.promptForMove((currentPlayer == whitePlayer));
 			Move move = currentPlayer.getMove();
-			board.makeMove(move);
-			togglePlayers();
-			// DevTools.saveCurrentGameState(); //TODO Development use only
-			history.add(getCurrentGameState());
-			isCheckmate = isCheckmate();
-			isStalemate = isStalemate();
-			if (!isCheckmate && isInCheck(currentPlayer.getTeam())) {
-				boardDisplay.notifyCheck(currentPlayer == whitePlayer);
+			if(move == null) {
+				isCheckmate = true;
+				// Player forfeits
+			} else {
+				board.makeMove(move);
+				togglePlayers();
+				history.add(getCurrentGameState());
+				isCheckmate = isCheckmate();
+				isStalemate = isStalemate();
+				if (!isCheckmate && isInCheck(currentPlayer.getTeam())) {
+					boardDisplay.notifyCheck(currentPlayer == whitePlayer);
+				}
 			}
 		}
 		if (isCheckmate) {
