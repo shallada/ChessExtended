@@ -2,9 +2,12 @@ import java.awt.GridLayout;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -116,6 +119,21 @@ public class Main {
 			e.printStackTrace();
 		}
 
+	}
+	
+	public static String MD5(String str) {
+		String s = null;
+		try {
+			byte[] bytesOfMessage = str.getBytes("UTF-8");
+			MessageDigest md = MessageDigest.getInstance("MD5");
+			byte[] thedigest = md.digest(bytesOfMessage);
+			s = new String(thedigest, "UTF-8");
+		} catch (NoSuchAlgorithmException e) {
+			e.printStackTrace();
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
+		return s;
 	}
 
 	public static void old_main(String[] args) {
