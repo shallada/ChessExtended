@@ -44,7 +44,7 @@ import edu.neumont.learningChess.view.ServerDisplay;
 public class GameController implements IListener, ICheckChecker {
 
 	public enum PlayerType {
-		Human(1), AI(2), Remote(4), Proxy(5), LearningServer(3);
+		Human(1), AI(2), LearningServer(3), Remote(4), Proxy(5);
 		private final int value;
 
 		private PlayerType(int value) {
@@ -389,8 +389,7 @@ public class GameController implements IListener, ICheckChecker {
 	private URL getImageURL(ChessPiece piece) {
 		Team team = piece.getTeam();
 		String imageLetter = team.isWhite() ? "w" : "b";
-		String imagePath = "/Images/" + theme +"/"+ piece.getName() + imageLetter + ".gif";
-//		System.out.println(imagePath);
+		String imagePath = "/Images/" + theme + "/" + piece.getName() + imageLetter + ".gif";
 		URL imageUrl = getClass().getResource(imagePath);
 		return imageUrl;
 	}
