@@ -13,14 +13,13 @@ import edu.neumont.learningChess.api.MoveHistory;
 import edu.neumont.learningChess.api.PieceDescription;
 import edu.neumont.learningChess.api.PieceType;
 import edu.neumont.learningChess.api.TeamColor;
-import edu.neumont.learningChess.dev.DevTools;
 import edu.neumont.learningChess.model.AIPlayer;
 import edu.neumont.learningChess.model.Bishop;
 import edu.neumont.learningChess.model.ChessBoard;
 import edu.neumont.learningChess.model.ChessPiece;
 import edu.neumont.learningChess.model.HumanPlayer;
 import edu.neumont.learningChess.model.ICheckChecker;
-import edu.neumont.learningChess.model.IListener;
+import edu.neumont.learningChess.model.IChessBoardListener;
 import edu.neumont.learningChess.model.King;
 import edu.neumont.learningChess.model.Knight;
 import edu.neumont.learningChess.model.LocationIterator;
@@ -41,10 +40,22 @@ import edu.neumont.learningChess.view.IDisplay;
 import edu.neumont.learningChess.view.NullDisplay;
 import edu.neumont.learningChess.view.ServerDisplay;
 
-public class GameController implements IListener, ICheckChecker {
+public class GameController implements IChessBoardListener, ICheckChecker {
 
 	public enum PlayerType {
-		Human, AI, Remote, Proxy, LearningServer
+		Human(1), AI(2), LearningServer(3), Remote(4), Proxy(5);
+		private final int value;
+
+		private PlayerType(int value) {
+			this.value = value;
+		}
+
+		/**
+		 * @return the value
+		 */
+		public int getValue() {
+			return value;
+		}
 	}
 
 	private IDisplay boardDisplay;
@@ -65,9 +76,7 @@ public class GameController implements IListener, ICheckChecker {
 
 	private List<ChessGameState> history = new ArrayList<ChessGameState>();
 
-	// TODO: for development only. remove before deployment
-	private DevTools devTools = null;
-	private String theme;
+	private String theme = "Black_and_White";
 
 	public GameController(HistoryAnalyzer analyzer, MoveHistory history) {
 		this(PlayerType.Proxy, PlayerType.Proxy);
@@ -113,9 +122,6 @@ public class GameController implements IListener, ICheckChecker {
 		history.add(getCurrentGameState());
 
 		boardDisplay.setVisible(true);
-
-		// TODO: for development only. remove before deployment
-		devTools = new DevTools(this);
 	}
 
 	public GameController(PlayerType whiteType, PlayerType blackType, String theme) {
@@ -155,9 +161,6 @@ public class GameController implements IListener, ICheckChecker {
 		history.add(getCurrentGameState());
 
 		boardDisplay.setVisible(true);
-
-		// TODO: for development only. remove before deployment
-		devTools = new DevTools(this);
 	}
 
 	public GameController(ChessGameState gameState,
@@ -293,30 +296,38 @@ public class GameController implements IListener, ICheckChecker {
 		return player;
 	}
 
-	public void play() {
+	public GameOverType play() {
+		GameOverType type = null;
 		currentPlayer = whitePlayer;
 		boolean isCheckmate = false;
 		boolean isStalemate = false;
 		while (!(isCheckmate || isStalemate)) {
 			boardDisplay.promptForMove((currentPlayer == whitePlayer));
 			Move move = currentPlayer.getMove();
-			board.makeMove(move);
-			togglePlayers();
-			// DevTools.saveCurrentGameState(); //TODO Development use only
-			history.add(getCurrentGameState());
-			isCheckmate = isCheckmate();
-			isStalemate = isStalemate();
-			if (!isCheckmate && isInCheck(currentPlayer.getTeam())) {
-				boardDisplay.notifyCheck(currentPlayer == whitePlayer);
+			if(move == null) {
+				isCheckmate = true;
+				// Player forfeits
+			} else {
+				board.makeMove(move);
+				togglePlayers();
+				history.add(getCurrentGameState());
+				isCheckmate = isCheckmate();
+				isStalemate = isStalemate();
+				if (!isCheckmate && isInCheck(currentPlayer.getTeam())) {
+					boardDisplay.notifyCheck(currentPlayer == whitePlayer);
+				}
 			}
 		}
 		if (isCheckmate) {
 			boardDisplay.notifyCheckmate(currentPlayer == blackPlayer);
+			type = GameOverType.checkmate;
 			// System.out.println(currentPlayer.getTeam().isWhite()?"White wins":"Black wins");
 		} else if (isStalemate) {
 			boardDisplay.notifyStalemate();
+			type = GameOverType.stalemate;
 			// System.out.println("Stalemate");
 		}
+		return type;
 	}
 
 	public void tryMove(Move move) {
@@ -372,7 +383,7 @@ public class GameController implements IListener, ICheckChecker {
 	private URL getImageURL(ChessPiece piece) {
 		Team team = piece.getTeam();
 		String imageLetter = team.isWhite() ? "w" : "b";
-		String imagePath = "/Images/" + theme +"/"+ piece.getName() + imageLetter + ".gif";
+		String imagePath = "/Images/" + theme + "/" + piece.getName() + imageLetter + ".gif";
 		URL imageUrl = getClass().getResource(imagePath);
 		return imageUrl;
 	}

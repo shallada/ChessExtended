@@ -30,7 +30,7 @@ public class ServerPlayer extends Player {
 		if(IS_LOCAL) {
 			getMoveEndpoint = "http://localhost:8080/LearningChessWebServer/getmove";
 		} else {
-			getMoveEndpoint = "http://chess.neumont.edu:8081/ChessGame/getmove";
+			getMoveEndpoint = "http://chess.neumont.edu:80/ChessGame/getmove";
 		}
 		promotionListener = new PromotionListener(new Queen());
 	}

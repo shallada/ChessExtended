@@ -7,8 +7,6 @@ import edu.neumont.learningChess.api.Location;
 
 public class King extends ChessPiece {
 
-	public static final String NAME = "King";
-	private static final int WORTH = 10000;
 	private static final int LEFT_ROOK_COLUMN = 0;
 	private static final int RIGHT_ROOK_COLUMN = 7;
 	
@@ -25,14 +23,9 @@ public class King extends ChessPiece {
 	private ICheckChecker checkChecker;
 	
 	public King(ICheckChecker checkChecker) {
-		super(WORTH);
 		this.checkChecker = checkChecker;
 	}
 	
-	public String getName() {
-		return NAME;
-	}
-
 	public Iterator<Location> getLegalMoves(ChessBoard board) {
 		MoveIteration moves = new MoveIteration(board, location);
 		moves.addAdjustments(kingAdjustments);

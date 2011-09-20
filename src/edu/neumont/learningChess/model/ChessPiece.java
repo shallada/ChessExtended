@@ -11,11 +11,6 @@ public abstract class ChessPiece {
 	protected Location location = null;
 	protected Team team;
 	protected int moveCount = 0;
-	protected int worth;
-
-	public ChessPiece(int worth) {
-		this.worth = worth;
-	}
 
 	public void setLocation(Location location) {
 		this.location = location;
@@ -37,8 +32,8 @@ public abstract class ChessPiece {
 		moveCount--;
 	}
 
-	public String getName() {
-		return null;
+	public final String getName() {
+		return this.getClass().getSimpleName();
 	}
 
 	public void setTeam(Team team) {
@@ -96,10 +91,6 @@ public abstract class ChessPiece {
 		}
 
 		return chessPiece;
-	}
-
-	public int getValue() {
-		return worth;
 	}
 
 	/*

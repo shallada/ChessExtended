@@ -109,7 +109,7 @@ public class AIClient {
 		if (ServerPlayer.IS_LOCAL) {
 			endpoint = "http://localhost:8080/LearningChessWebServer/analyzehistory";
 		} else {
-			endpoint = "http://chess.neumont.edu:8081/ChessGame/analyzehistory";
+			endpoint = "http://chess.neumont.edu:80/ChessGame/analyzehistory";
 		}
 
 		try {

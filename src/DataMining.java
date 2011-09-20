@@ -54,13 +54,14 @@ public class DataMining {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		Pattern pattern = Pattern.compile("(?:\\d{1,3}?\\.)\\b(O-O|O-O-O|[PKBQRNa-h]?[a-h1-8]{0,2}?x?[a-h][1-8][+#]?)\\b(O-O|O-O-O|[PKBQRNa-h]?[a-h1-8]{0,2}?x?[a-h][1-8][+#]?|1/2-1/2|1-0|0-1)\\b?(1/2-1/2|1-0|0-1)?");
-		Matcher matcher = pattern.matcher(ChessNotationText);
-		while (matcher.find());
+		Pattern pattern = Pattern.compile("(?:\\d{1,3}?\\.)\\s(O-O|O-O-O|[PKBQRNa-h]?[a-h1-8]{0,2}?x?[a-h][1-8][+#]?)\\s(O-O|O-O-O|[PKBQRNa-h]?[a-h1-8]{0,2}?x?[a-h][1-8][+#]?|1/2-1/2|1-0|0-1)\\s?(1/2-1/2|1-0|0-1)?");
+		Matcher matcher = pattern.matcher(ChessNotationText);		
+		while (matcher.find())
 		{
-			matcher.find();
-			System.out.println(matcher.groupCount());
-			whitePGN.add(matcher.group());
+			System.out.println("Full Group: " + matcher.group());
+			System.out.println("Group 1: " + matcher.group(1));
+			System.out.println("Group 2: " + matcher.group(2));
+			//whitePGN.add(matcher.group(1));
 			//blackPGN.add(matcher.group(2));
 		}
 	}
@@ -76,7 +77,7 @@ public class DataMining {
 		if (ServerPlayer.IS_LOCAL) {
 			endpoint = "http://localhost:8080/LearningChessWebServer/analyzehistory";
 		} else {
-			endpoint = "http://chess.neumont.edu:8081/ChessGame/analyzehistory";
+			endpoint = "http://chess.neumont.edu:80/ChessGame/analyzehistory";
 		}
 
 		try {

@@ -20,7 +20,7 @@ public class ChessBoard {
 
 	private BoardSquare grid[][] = new BoardSquare[NUMBER_OF_ROWS][NUMBER_OF_COLUMNS];
 	private Stack<MoveDescription> tryingMoves = new Stack<MoveDescription>();
-	private ArrayList<IListener> listeners = new ArrayList<IListener>();
+	private ArrayList<IChessBoardListener> listeners = new ArrayList<IChessBoardListener>();
 
 	public ChessBoard() {
 		for (int i = 0; i < NUMBER_OF_ROWS; i++) {
@@ -30,31 +30,31 @@ public class ChessBoard {
 		}
 	}
 
-	public void AddListener(IListener listener) {
+	public void AddListener(IChessBoardListener listener) {
 		listeners.add(listener);
 	}
 
-	public void RemoveListener(IListener listener) {
+	public void RemoveListener(IChessBoardListener listener) {
 		listeners.remove(listener);
 	}
 
 	private void notifyListenersOfMove(Move move, boolean capturePiece) {
-		for (Iterator<IListener> i = listeners.iterator(); i.hasNext();) {
-			IListener listener = i.next();
+		for (Iterator<IChessBoardListener> i = listeners.iterator(); i.hasNext();) {
+			IChessBoardListener listener = i.next();
 			listener.movePiece(move, capturePiece);
 		}
 	}
 
 	private void notifyListenersOfPlacement(ChessPiece piece, Location location) {
-		for (Iterator<IListener> i = listeners.iterator(); i.hasNext();) {
-			IListener listener = i.next();
+		for (Iterator<IChessBoardListener> i = listeners.iterator(); i.hasNext();) {
+			IChessBoardListener listener = i.next();
 			listener.placePiece(piece, location);
 		}
 	}
 
 	private void notifyListenersOfRemoval(Location location) {
-		for (Iterator<IListener> i = listeners.iterator(); i.hasNext();) {
-			IListener listener = i.next();
+		for (Iterator<IChessBoardListener> i = listeners.iterator(); i.hasNext();) {
+			IChessBoardListener listener = i.next();
 			listener.removePiece(location);
 		}
 	}
