@@ -43,10 +43,10 @@ public class DataMining {
 			String temp;
 			while((temp = in.readLine()) != null)
 			{
-				ChessNotationText = ChessNotationText.concat(" " + temp);
-				System.out.println(temp);
+				ChessNotationText = ChessNotationText.concat(temp + " ");
 			}
 			in.close();
+			System.out.println(ChessNotationText);
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -54,12 +54,14 @@ public class DataMining {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		Pattern pattern = Pattern.compile("(?:\\d{1,3}?\\.)\\s(O-O|O-O-O|[PKBQRNa-h]?[a-h1-8]{0,2}?x?[a-h][1-8][+#]?)\\s(O-O|O-O-O|1/2-1/2|1-0|0-1|[PKBQRNa-h]?[a-h1-8]{0,2}?x?[a-h][1-8][+#]?)\\s?(1/2-1/2|1-0|0-1)?");
+		Pattern pattern = Pattern.compile("(?:\\d{1,3}?\\.)\\b(O-O|O-O-O|[PKBQRNa-h]?[a-h1-8]{0,2}?x?[a-h][1-8][+#]?)\\b(O-O|O-O-O|[PKBQRNa-h]?[a-h1-8]{0,2}?x?[a-h][1-8][+#]?|1/2-1/2|1-0|0-1)\\b?(1/2-1/2|1-0|0-1)?");
 		Matcher matcher = pattern.matcher(ChessNotationText);
-		while (matcher.matches());
+		while (matcher.find());
 		{
-			whitePGN.add(matcher.group(1));
-			blackPGN.add(matcher.group(2));
+			matcher.find();
+			System.out.println(matcher.groupCount());
+			whitePGN.add(matcher.group());
+			//blackPGN.add(matcher.group(2));
 		}
 	}
 	
