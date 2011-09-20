@@ -9,12 +9,6 @@ import edu.neumont.learningChess.api.Location;
 
 public class Bishop extends ChessPiece {
 
-	public static final String NAME = "Bishop";	
-
-	public String getName() {
-		return NAME;
-	}
-	
 	public Iterator<Location> getLegalMoves(ChessBoard board) {
 		MoveIteration moves = new MoveIteration(board, location);
 		moves.addDiags();
