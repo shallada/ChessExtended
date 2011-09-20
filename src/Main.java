@@ -108,7 +108,7 @@ public class Main {
 						game.close();
 					}
 				}
-			} while (choice == 0 && JOptionPane.showConfirmDialog(null, "do you want to play again?", "play again?", JOptionPane.YES_NO_OPTION) == 0);
+			} while (choice == 0 && JOptionPane.showConfirmDialog(null, "Do you want to play again?", "Play again?", JOptionPane.YES_NO_OPTION) == 0);
 		}
 	}
 
