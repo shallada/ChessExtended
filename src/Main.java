@@ -43,14 +43,14 @@ public class Main {
 	public static void main(String[] args) {
 		boolean loggedIn = false;
 		while (!loggedIn) {
-			int chioce = JOptionPane.showConfirmDialog(null, "Do you have an account?", "Loggin", JOptionPane.YES_NO_OPTION);
+			int chioce = JOptionPane.showConfirmDialog(null, "Do you have an account?", "Login", JOptionPane.YES_NO_OPTION);
 //			System.out.println(chioce);
 //			boolean doAgain = true;
 //			while (doAgain) {
 //				{
 					switch (chioce) {
 					case 0:
-						loggedIn = Loggin();
+						loggedIn = Login();
 //						doAgain = !loggedIn;
 						break;
 					case 1:
@@ -124,7 +124,7 @@ public class Main {
 		RegisterOptionMenu.add(userConfirmedPasswordField);
 		RegisterOptionMenu.setLayout(new GridLayout(3, 2, 0, 15));
 		
-		JOptionPane.showMessageDialog(null, RegisterOptionMenu, "Loggin", JOptionPane.OK_OPTION);
+		JOptionPane.showMessageDialog(null, RegisterOptionMenu, "Register", JOptionPane.OK_OPTION);
 		
 		if (!new String((userPasswordField).getPassword()).equals(new String(userConfirmedPasswordField.getPassword()))) {
 			JOptionPane.showMessageDialog(null, "Passwords dont match");
@@ -161,7 +161,7 @@ public class Main {
 		return loggedIn;
 	}
 
-	private static boolean Loggin() {
+	private static boolean Login() {
 
 		boolean loggedIn = false;
 
@@ -173,7 +173,7 @@ public class Main {
 		LoginOptionMenu.add(new JLabel("Password"));
 		LoginOptionMenu.add(userPasswordField);
 		LoginOptionMenu.setLayout(new GridLayout(2, 1, 0, 15));
-		JOptionPane.showMessageDialog(null, LoginOptionMenu, "Loggin", JOptionPane.OK_OPTION);
+		JOptionPane.showMessageDialog(null, LoginOptionMenu, "Login", JOptionPane.OK_OPTION);
 
 		User user = new User();
 		user.setPassword(MD5(new String(userPasswordField.getPassword())));
