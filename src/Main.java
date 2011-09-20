@@ -1,4 +1,3 @@
-import java.awt.Component;
 import java.awt.GridLayout;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -19,8 +18,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
-
-import com.sun.xml.internal.ws.api.streaming.XMLStreamReaderFactory.Default;
 
 import edu.neumont.learningChess.api.ExtendedMove;
 import edu.neumont.learningChess.api.MoveHistory;
@@ -43,12 +40,12 @@ public class Main {
 	public static void main(String[] args) {
 		boolean loggedIn = false;
 		while (!loggedIn) {
-			int chioce = JOptionPane.showConfirmDialog(null, "Do you have an account?", "Login", JOptionPane.YES_NO_OPTION);
-//			System.out.println(chioce);
+			int Choice = JOptionPane.showConfirmDialog(null, "Do you have an account?", "Login", JOptionPane.YES_NO_OPTION);
+//			System.out.println(Choice);
 //			boolean doAgain = true;
 //			while (doAgain) {
 //				{
-					switch (chioce) {
+					switch (Choice) {
 					case 0:
 						loggedIn = Login();
 //						doAgain = !loggedIn;
