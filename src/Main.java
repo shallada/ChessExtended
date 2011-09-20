@@ -44,17 +44,15 @@ public class Main {
 		while (!loggedIn && playGame) {
 			int choice = JOptionPane.showConfirmDialog(null, "Do you have an account?", "Login", JOptionPane.YES_NO_CANCEL_OPTION);
 			player = new User();
-			// boolean doAgain = true;
-			// while (doAgain) {
-			// {
 			switch (choice) {
 			case 0:
 				loggedIn = login(player);
-				// doAgain = !loggedIn;
+				if (!loggedIn)
+					JOptionPane.showMessageDialog(null, "Invalid login information", "error", JOptionPane.INFORMATION_MESSAGE);
 				break;
 			case 1:
 				loggedIn = register(player);
-				// doAgain = !loggedIn;
+				JOptionPane.showMessageDialog(null, "Unable to make accout", "error", JOptionPane.INFORMATION_MESSAGE);
 				break;
 			case 2:
 			case -1:
@@ -62,6 +60,7 @@ public class Main {
 			}
 			// }
 		}
+		int choice = 0;
 		if (playGame) {
 			do {
 				ThemeNames[] values = ThemeNames.values();
@@ -90,24 +89,26 @@ public class Main {
 				comboBoxes.add(new JLabel("Piece theme:"));
 				comboBoxes.add(themeBox);
 
-				JOptionPane.showMessageDialog(null, comboBoxes, "Select Players", JOptionPane.INFORMATION_MESSAGE);
-				theme = themeBox.getSelectedItem().toString();
-				white = GameController.PlayerType.valueOf(whiteComboBox.getSelectedItem().toString());
-				black = GameController.PlayerType.valueOf(blackComboBox.getSelectedItem().toString());
+				choice = JOptionPane.showConfirmDialog(null, comboBoxes, "Select Players", JOptionPane.OK_CANCEL_OPTION);
+				if (choice == 0) {
+					theme = themeBox.getSelectedItem().toString();
+					white = GameController.PlayerType.valueOf(whiteComboBox.getSelectedItem().toString());
+					black = GameController.PlayerType.valueOf(blackComboBox.getSelectedItem().toString());
 
-				GameController.setShowBoard(true);
-				GameController game = new GameController(white, black, theme);
-				GameOverType gameOverType = game.play();
-				if (game.isCheckmate() || game.isStalemate()) {
-					game.disableClosing();
-					PlayerType winnerType = null;
-					if (gameOverType == GameOverType.checkmate)
-						winnerType = game.getCurrentTeam().isWhite() ? black : white;
-					tellTheServer(game.getGameHistory(), (white == PlayerType.Human) ? player.getUsername() : white.toString(),
-							(black == PlayerType.Human) ? player.getUsername() : black.toString(), winnerType);
-					game.close();
+					GameController.setShowBoard(true);
+					GameController game = new GameController(white, black, theme);
+					GameOverType gameOverType = game.play();
+					if (game.isCheckmate() || game.isStalemate()) {
+						game.disableClosing();
+						PlayerType winnerType = null;
+						if (gameOverType == GameOverType.checkmate)
+							winnerType = game.getCurrentTeam().isWhite() ? black : white;
+						tellTheServer(game.getGameHistory(), (white == PlayerType.Human) ? player.getUsername() : white.toString(),
+								(black == PlayerType.Human) ? player.getUsername() : black.toString(), winnerType);
+						game.close();
+					}
 				}
-			} while (JOptionPane.showConfirmDialog(null, "do you want to play again?", "play again?", JOptionPane.YES_NO_OPTION) == 0);
+			} while (choice == 0 && JOptionPane.showConfirmDialog(null, "do you want to play again?", "play again?", JOptionPane.YES_NO_OPTION) == 0);
 		}
 	}
 
@@ -172,35 +173,35 @@ public class Main {
 		LoginOptionMenu.add(new JLabel("Password"));
 		LoginOptionMenu.add(userPasswordField);
 		LoginOptionMenu.setLayout(new GridLayout(2, 1, 0, 15));
-		JOptionPane.showMessageDialog(null, LoginOptionMenu, "Login", JOptionPane.OK_OPTION);
+		if (JOptionPane.showConfirmDialog(null, LoginOptionMenu, "Login", JOptionPane.OK_CANCEL_OPTION) == 0) {
+			player.setPassword(MD5(new String(userPasswordField.getPassword())));
+			player.setUsername((userNameField.getText()));
+			Jsonizer.jsonize(player);
 
-		player.setPassword(MD5(new String(userPasswordField.getPassword())));
-		player.setUsername((userNameField.getText()));
-		Jsonizer.jsonize(player);
+			try {
+				URL url = new URL("http://chess.neumont.edu:80/ChessGame/login");
+				URLConnection openConnection = url.openConnection();
+				openConnection.setDoOutput(true);
+				OutputStreamWriter writer = new OutputStreamWriter(openConnection.getOutputStream());
+				writer.write(Jsonizer.jsonize(player));
+				writer.flush();
 
-		try {
-			URL url = new URL("http://chess.neumont.edu:80/ChessGame/login");
-			URLConnection openConnection = url.openConnection();
-			openConnection.setDoOutput(true);
-			OutputStreamWriter writer = new OutputStreamWriter(openConnection.getOutputStream());
-			writer.write(Jsonizer.jsonize(player));
-			writer.flush();
+				StringBuilder jsonStringBuilder = new StringBuilder();
+				InputStreamReader in = new InputStreamReader(openConnection.getInputStream());
+				int bytesRead;
+				while ((bytesRead = in.read()) > 0) {
+					if ((char) bytesRead != '\n' && (char) bytesRead != '\r')
+						jsonStringBuilder.append((char) bytesRead);
+				}
+				loggedIn = Jsonizer.dejsonize(jsonStringBuilder.toString(), boolean.class);
 
-			StringBuilder jsonStringBuilder = new StringBuilder();
-			InputStreamReader in = new InputStreamReader(openConnection.getInputStream());
-			int bytesRead;
-			while ((bytesRead = in.read()) > 0) {
-				if ((char) bytesRead != '\n' && (char) bytesRead != '\r')
-					jsonStringBuilder.append((char) bytesRead);
+			} catch (MalformedURLException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
 			}
-			loggedIn = Jsonizer.dejsonize(jsonStringBuilder.toString(), boolean.class);
 
-		} catch (MalformedURLException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
 		}
-
 		return loggedIn;
 	}
 
