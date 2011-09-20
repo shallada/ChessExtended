@@ -9,6 +9,7 @@ public class MoveHistory {
 	private String whitePlayerName;
 	private String blackPlayerName;
 	private PlayerType winnerType;
+	private String password;
 
 	public MoveHistory(List<ExtendedMove> moves) {
 		this.moves = moves;
@@ -63,5 +64,19 @@ public class MoveHistory {
 	 */
 	public void setBlackPlayerName(String blackPlayerName) {
 		this.blackPlayerName = blackPlayerName;
+	}
+
+	/**
+	 * @return the password
+	 */
+	public String getPassword() {
+		return password;
+	}
+
+	/**
+	 * @param password the password to set
+	 */
+	public void setPassword(String password) {
+		this.password = password;
 	}
 }
