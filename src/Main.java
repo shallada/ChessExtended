@@ -26,7 +26,6 @@ import edu.neumont.learningChess.controller.GameController;
 import edu.neumont.learningChess.controller.GameController.PlayerType;
 import edu.neumont.learningChess.controller.GameOverType;
 import edu.neumont.learningChess.json.Jsonizer;
-import edu.neumont.learningChess.model.HumanPlayer;
 import edu.neumont.learningChess.model.ServerPlayer;
 import edu.neumont.learningChess.model.TextCommandProcessor;
 import edu.neumont.learningChess.model.TextCommandProcessorOutput;
@@ -153,10 +152,8 @@ public class Main {
 				}
 				loggedIn = Jsonizer.dejsonize(jsonStringBuilder.toString(), User.class) != null;
 			} catch (MalformedURLException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -199,10 +196,8 @@ public class Main {
 			loggedIn = Jsonizer.dejsonize(jsonStringBuilder.toString(), boolean.class);
 
 		} catch (MalformedURLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
