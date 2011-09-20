@@ -77,11 +77,11 @@ public class Main {
 					JOptionPane.showMessageDialog(null, "Passwords dont match");
 					continue;
 				}
-				endpoint = "http://chess.neumont.edu:8081/ChessGame/register";
+				endpoint = "http://chess.neumont.edu:80/ChessGame/register";
 				break;
 			case 4:
 
-				endpoint = "http://chess.neumont.edu:8081/ChessGame/login";
+				endpoint = "http://chess.neumont.edu:80/ChessGame/login";
 				break;
 			}
 			String username = ((JTextField) components[1]).getText();
@@ -168,7 +168,7 @@ public class Main {
 		if (ServerPlayer.IS_LOCAL) {
 			endpoint = "http://localhost:8080/LearningChessWebServer/analyzehistory";
 		} else {
-			endpoint = "http://chess.neumont.edu:8081/ChessGame/analyzehistory";
+			endpoint = "http://chess.neumont.edu:80/ChessGame/analyzehistory";
 		}
 
 		try {
