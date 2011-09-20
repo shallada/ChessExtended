@@ -20,6 +20,8 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
+import com.sun.xml.internal.ws.api.streaming.XMLStreamReaderFactory.Default;
+
 import edu.neumont.learningChess.api.ExtendedMove;
 import edu.neumont.learningChess.api.MoveHistory;
 import edu.neumont.learningChess.api.ThemeNames;
@@ -33,7 +35,7 @@ import edu.neumont.learningChess.model.TextCommandProcessorOutput;
 import edu.neumont.learningChess.model.User;
 
 public class Main {
-	
+
 	private static String theme = null;
 	private static GameController.PlayerType white = null;
 	private static GameController.PlayerType black = null;
@@ -41,114 +43,26 @@ public class Main {
 	public static void main(String[] args) {
 		boolean loggedIn = false;
 		while (!loggedIn) {
-		JPanel LoginOptionMenu = new JPanel();
-		String title = "";
-		switch (JOptionPane.showConfirmDialog(null, "Do you have an account?", "Loggin", JOptionPane.YES_NO_OPTION)) {
-		case 0:
-			LoginOptionMenu.add(new JLabel("User Name"));
-			LoginOptionMenu.add(new JTextField());
-			LoginOptionMenu.add(new JLabel("Password"));
-			LoginOptionMenu.add(new JPasswordField());
-			LoginOptionMenu.setLayout(new GridLayout(2, 1, 0, 15));
-			title = "Login";
-			break;
-		case 1:
-			LoginOptionMenu.add(new JLabel("User Name"));
-			LoginOptionMenu.add(new JTextField(10));
-			LoginOptionMenu.add(new JLabel("Password"));
-			LoginOptionMenu.add(new JPasswordField());
-			LoginOptionMenu.add(new JLabel("Password confirm"));
-			LoginOptionMenu.add(new JPasswordField());
-			LoginOptionMenu.setLayout(new GridLayout(4, 2, 0, 15));
-			title = "Register";
-			break;
+			int chioce = JOptionPane.showConfirmDialog(null, "Do you have an account?", "Loggin", JOptionPane.YES_NO_OPTION);
+//			System.out.println(chioce);
+//			boolean doAgain = true;
+//			while (doAgain) {
+//				{
+					switch (chioce) {
+					case 0:
+						loggedIn = Loggin();
+//						doAgain = !loggedIn;
+						break;
+					case 1:
+						loggedIn = Register();
+//						doAgain = !loggedIn;
+						break;
+//					default:
+//						doAgain = false;
+//					}
+				}
+			
 		}
-		StringBuilder jsonStringBuilder;
-			jsonStringBuilder = new StringBuilder();
-			JOptionPane.showMessageDialog(null, LoginOptionMenu, title, JOptionPane.INFORMATION_MESSAGE);
-
-			Component[] components = LoginOptionMenu.getComponents();
-			String endpoint = "";
-			switch (components.length) {
-			case 6:
-				if (!new String(((JPasswordField) components[3]).getPassword()).equals(new String(((JPasswordField) components[5]).getPassword()))) {
-					JOptionPane.showMessageDialog(null, "Passwords dont match");
-					continue;
-				}
-				endpoint = "http://chess.neumont.edu:80/ChessGame/register";
-				String username = ((JTextField) components[1]).getText();
-				String MD5Passweord = MD5(new String(((JPasswordField) components[3]).getPassword()));
-				System.out.println("password: "+ new String(((JPasswordField) components[3]).getPassword()));
-				System.out.println("MD5password: "+ MD5Passweord);
-				System.out.println("username: "+ username);
-				User user = new User();
-				user.setPassword(MD5Passweord);
-				user.setUsername(username);
-				Jsonizer.jsonize(user);
-				try{
-					URL url = new URL(endpoint);
-				URLConnection connection = url.openConnection();
-				connection.setDoOutput(true);
-				OutputStreamWriter writer = new OutputStreamWriter(connection.getOutputStream());
-				String jsonOut = Jsonizer.jsonize(user);
-				writer.write(jsonOut);
-				writer.flush();
-				
-				InputStreamReader in = new InputStreamReader(connection.getInputStream());
-				jsonStringBuilder = new StringBuilder();
-				int bytesRead;
-				while ((bytesRead = in.read()) > -1) {
-					if ((char) bytesRead != '\n' && (char) bytesRead != '\r')
-						jsonStringBuilder.append((char) bytesRead);
-				}
-				System.out.println(jsonStringBuilder.toString());
-				loggedIn = Jsonizer.dejsonize(jsonStringBuilder.toString(), User.class) != null;
-			} catch (MalformedURLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-				break;
-			case 4:
-
-				endpoint = "http://chess.neumont.edu:80/ChessGame/login";
-				username = ((JTextField) components[1]).getText();
-				MD5Passweord = MD5(((JPasswordField) components[3]).getPassword().toString());
-				user = new User();
-				user.setPassword(MD5Passweord);
-				user.setUsername(username);
-				Jsonizer.jsonize(user);
-				try {
-					URL url = new URL(endpoint);
-				URLConnection connection = url.openConnection();
-				connection.setDoOutput(true);
-				OutputStreamWriter writer = new OutputStreamWriter(connection.getOutputStream());
-				String jsonOut = Jsonizer.jsonize(user);
-				writer.write(jsonOut);
-				writer.flush();
-				
-				InputStreamReader in = new InputStreamReader(connection.getInputStream());
-				jsonStringBuilder = new StringBuilder();
-				int bytesRead;
-				while ((bytesRead = in.read()) > -1) {
-					if ((char) bytesRead != '\n' && (char) bytesRead != '\r')
-						jsonStringBuilder.append((char) bytesRead);
-				}
-				System.out.println(jsonStringBuilder.toString());
-				loggedIn = Jsonizer.dejsonize(jsonStringBuilder.toString(), boolean.class);
-				} catch (MalformedURLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				break;
-			}
-		}
-		System.out.println("Here");
 		do {
 			ThemeNames[] values = ThemeNames.values();
 			String[] themeNames = new String[values.length];
@@ -158,16 +72,15 @@ public class Main {
 			JComboBox themeBox = new JComboBox(themeNames);
 			JComboBox whiteComboBox = new JComboBox(new Object[] { GameController.PlayerType.Human, GameController.PlayerType.LearningServer, GameController.PlayerType.AI });
 			JComboBox blackComboBox = new JComboBox(new Object[] { GameController.PlayerType.Human, GameController.PlayerType.LearningServer, GameController.PlayerType.AI });
-			
-			if(white != null && black != null && theme != null){
+
+			if (white != null && black != null && theme != null) {
 				whiteComboBox.setSelectedItem(white);
 				blackComboBox.setSelectedItem(black);
 				themeBox.setSelectedItem(theme);
-			}
-			else{
+			} else {
 				blackComboBox.setSelectedIndex(1);
 			}
-			
+
 			JPanel comboBoxes = new JPanel();
 			comboBoxes.setLayout(new GridLayout(3, 3, 0, 15));
 			comboBoxes.add(new JLabel("White:"));
@@ -194,6 +107,105 @@ public class Main {
 				game.close();
 			}
 		} while (JOptionPane.showConfirmDialog(null, "do you want to play again?", "play again?", JOptionPane.YES_NO_OPTION) == 0);
+	}
+
+	private static boolean Register() {
+		boolean loggedIn = false;
+		JPanel RegisterOptionMenu = new JPanel();
+		JTextField userNameField = new JTextField();
+		JPasswordField userPasswordField = new JPasswordField();
+		JPasswordField userConfirmedPasswordField = new JPasswordField();
+
+		RegisterOptionMenu.add(new JLabel("User Name"));
+		RegisterOptionMenu.add(userNameField);
+		RegisterOptionMenu.add(new JLabel("Password"));
+		RegisterOptionMenu.add(userPasswordField);
+		RegisterOptionMenu.add(new JLabel("Password confirm"));
+		RegisterOptionMenu.add(userConfirmedPasswordField);
+		RegisterOptionMenu.setLayout(new GridLayout(3, 2, 0, 15));
+		
+		JOptionPane.showMessageDialog(null, RegisterOptionMenu, "Loggin", JOptionPane.OK_OPTION);
+		
+		if (!new String((userPasswordField).getPassword()).equals(new String(userConfirmedPasswordField.getPassword()))) {
+			JOptionPane.showMessageDialog(null, "Passwords dont match");
+			loggedIn = false;
+		} else {
+			User user = new User();
+			user.setPassword(MD5(new String(userPasswordField.getPassword())));
+			user.setUsername(userNameField.getText());
+			Jsonizer.jsonize(user);
+			try {
+				URL url = new URL("http://chess.neumont.edu:80/ChessGame/register");
+				URLConnection connection = url.openConnection();
+				connection.setDoOutput(true);
+				OutputStreamWriter writer = new OutputStreamWriter(connection.getOutputStream());
+				writer.write(Jsonizer.jsonize(user));
+				writer.flush();
+
+				InputStreamReader in = new InputStreamReader(connection.getInputStream());
+				StringBuilder jsonStringBuilder = new StringBuilder();
+				int bytesRead;
+				while ((bytesRead = in.read()) > -1) {
+					if ((char) bytesRead != '\n' && (char) bytesRead != '\r')
+						jsonStringBuilder.append((char) bytesRead);
+				}
+				loggedIn = Jsonizer.dejsonize(jsonStringBuilder.toString(), User.class) != null;
+			} catch (MalformedURLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		return loggedIn;
+	}
+
+	private static boolean Loggin() {
+
+		boolean loggedIn = false;
+
+		JPanel LoginOptionMenu = new JPanel();
+		JTextField userNameField = new JTextField();
+		JPasswordField userPasswordField = new JPasswordField();
+		LoginOptionMenu.add(new JLabel("User Name"));
+		LoginOptionMenu.add(userNameField);
+		LoginOptionMenu.add(new JLabel("Password"));
+		LoginOptionMenu.add(userPasswordField);
+		LoginOptionMenu.setLayout(new GridLayout(2, 1, 0, 15));
+		JOptionPane.showMessageDialog(null, LoginOptionMenu, "Loggin", JOptionPane.OK_OPTION);
+
+		User user = new User();
+		user.setPassword(MD5(new String(userPasswordField.getPassword())));
+		user.setUsername((userNameField.getText()));
+		Jsonizer.jsonize(user);
+
+		try {
+			URL url = new URL("http://chess.neumont.edu:80/ChessGame/login");
+			URLConnection openConnection = url.openConnection();
+			openConnection.setDoOutput(true);
+			OutputStreamWriter writer = new OutputStreamWriter(openConnection.getOutputStream());
+			writer.write(Jsonizer.jsonize(user));
+			writer.flush();
+
+			StringBuilder jsonStringBuilder = new StringBuilder();
+			InputStreamReader in = new InputStreamReader(openConnection.getInputStream());
+			int bytesRead;
+			while ((bytesRead = in.read()) > 0) {
+				if ((char) bytesRead != '\n' && (char) bytesRead != '\r')
+					jsonStringBuilder.append((char) bytesRead);
+			}
+			loggedIn = Jsonizer.dejsonize(jsonStringBuilder.toString(), boolean.class);
+			
+		} catch (MalformedURLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return loggedIn;
 	}
 
 	private static void tellTheServer(Iterator<ExtendedMove> moveHistoryIterator, String whiteName, String blackName, PlayerType winnerType) {
