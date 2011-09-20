@@ -38,75 +38,80 @@ public class Main {
 	private static GameController.PlayerType black = null;
 
 	public static void main(String[] args) {
+		User player = null;
 		boolean loggedIn = false;
-		while (!loggedIn) {
-			int choice = JOptionPane.showConfirmDialog(null, "Do you have an account?", "Login", JOptionPane.YES_NO_OPTION);
-//			System.out.println(Choice);
-//			boolean doAgain = true;
-//			while (doAgain) {
-//				{
-					switch (choice) {
-					case 0:
-						loggedIn = login();
-//						doAgain = !loggedIn;
-						break;
-					case 1:
-						loggedIn = register();
-//						doAgain = !loggedIn;
-						break;
-//					default:
-//						doAgain = false;
-//					}
-				}
-			
+		boolean playGame = true;
+		while (!loggedIn && playGame) {
+			int choice = JOptionPane.showConfirmDialog(null, "Do you have an account?", "Login", JOptionPane.YES_NO_CANCEL_OPTION);
+			player = new User();
+			// boolean doAgain = true;
+			// while (doAgain) {
+			// {
+			switch (choice) {
+			case 0:
+				loggedIn = login(player);
+				// doAgain = !loggedIn;
+				break;
+			case 1:
+				loggedIn = register(player);
+				// doAgain = !loggedIn;
+				break;
+			case 2:
+			case -1:
+				playGame = false;
+			}
+			// }
 		}
-		do {
-			ThemeNames[] values = ThemeNames.values();
-			String[] themeNames = new String[values.length];
-			for (int i = 0; i < values.length; i++) {
-				themeNames[i] = values[i].toString();
-			}
-			JComboBox themeBox = new JComboBox(themeNames);
-			JComboBox whiteComboBox = new JComboBox(new Object[] { GameController.PlayerType.Human, GameController.PlayerType.LearningServer, GameController.PlayerType.AI });
-			JComboBox blackComboBox = new JComboBox(new Object[] { GameController.PlayerType.Human, GameController.PlayerType.LearningServer, GameController.PlayerType.AI });
+		if (playGame) {
+			do {
+				ThemeNames[] values = ThemeNames.values();
+				String[] themeNames = new String[values.length];
+				for (int i = 0; i < values.length; i++) {
+					themeNames[i] = values[i].toString();
+				}
+				JComboBox themeBox = new JComboBox(themeNames);
+				JComboBox whiteComboBox = new JComboBox(new Object[] { GameController.PlayerType.Human, GameController.PlayerType.LearningServer, GameController.PlayerType.AI });
+				JComboBox blackComboBox = new JComboBox(new Object[] { GameController.PlayerType.Human, GameController.PlayerType.LearningServer, GameController.PlayerType.AI });
 
-			if (white != null && black != null && theme != null) {
-				whiteComboBox.setSelectedItem(white);
-				blackComboBox.setSelectedItem(black);
-				themeBox.setSelectedItem(theme);
-			} else {
-				blackComboBox.setSelectedIndex(1);
-			}
+				if (white != null && black != null && theme != null) {
+					whiteComboBox.setSelectedItem(white);
+					blackComboBox.setSelectedItem(black);
+					themeBox.setSelectedItem(theme);
+				} else {
+					blackComboBox.setSelectedIndex(1);
+				}
 
-			JPanel comboBoxes = new JPanel();
-			comboBoxes.setLayout(new GridLayout(3, 3, 0, 15));
-			comboBoxes.add(new JLabel("White:"));
-			comboBoxes.add(whiteComboBox);
-			comboBoxes.add(new JLabel("Black:"));
-			comboBoxes.add(blackComboBox);
-			comboBoxes.add(new JLabel("Piece theme:"));
-			comboBoxes.add(themeBox);
+				JPanel comboBoxes = new JPanel();
+				comboBoxes.setLayout(new GridLayout(3, 3, 0, 15));
+				comboBoxes.add(new JLabel("White:"));
+				comboBoxes.add(whiteComboBox);
+				comboBoxes.add(new JLabel("Black:"));
+				comboBoxes.add(blackComboBox);
+				comboBoxes.add(new JLabel("Piece theme:"));
+				comboBoxes.add(themeBox);
 
-			JOptionPane.showMessageDialog(null, comboBoxes, "Select Players", JOptionPane.INFORMATION_MESSAGE);
-			theme = themeBox.getSelectedItem().toString();
-			white = GameController.PlayerType.valueOf(whiteComboBox.getSelectedItem().toString());
-			black = GameController.PlayerType.valueOf(blackComboBox.getSelectedItem().toString());
+				JOptionPane.showMessageDialog(null, comboBoxes, "Select Players", JOptionPane.INFORMATION_MESSAGE);
+				theme = themeBox.getSelectedItem().toString();
+				white = GameController.PlayerType.valueOf(whiteComboBox.getSelectedItem().toString());
+				black = GameController.PlayerType.valueOf(blackComboBox.getSelectedItem().toString());
 
-			GameController.setShowBoard(true);
-			GameController game = new GameController(white, black, theme);
-			GameOverType gameOverType = game.play();
-			if (game.isCheckmate() || game.isStalemate()) {
-				game.disableClosing();
-				PlayerType winnerType = null;
-				if (gameOverType == GameOverType.checkmate)
-					winnerType = game.getCurrentTeam().isWhite() ? black : white;
-				tellTheServer(game.getGameHistory(), white.toString(), black.toString(), winnerType);
-				game.close();
-			}
-		} while (JOptionPane.showConfirmDialog(null, "do you want to play again?", "play again?", JOptionPane.YES_NO_OPTION) == 0);
+				GameController.setShowBoard(true);
+				GameController game = new GameController(white, black, theme);
+				GameOverType gameOverType = game.play();
+				if (game.isCheckmate() || game.isStalemate()) {
+					game.disableClosing();
+					PlayerType winnerType = null;
+					if (gameOverType == GameOverType.checkmate)
+						winnerType = game.getCurrentTeam().isWhite() ? black : white;
+					tellTheServer(game.getGameHistory(), (white == PlayerType.Human) ? player.getUsername() : white.toString(),
+							(black == PlayerType.Human) ? player.getUsername() : black.toString(), winnerType);
+					game.close();
+				}
+			} while (JOptionPane.showConfirmDialog(null, "do you want to play again?", "play again?", JOptionPane.YES_NO_OPTION) == 0);
+		}
 	}
 
-	private static boolean register() {
+	private static boolean register(User player) {
 		boolean loggedIn = false;
 		JPanel RegisterOptionMenu = new JPanel();
 		JTextField userNameField = new JTextField();
@@ -120,23 +125,22 @@ public class Main {
 		RegisterOptionMenu.add(new JLabel("Password confirm"));
 		RegisterOptionMenu.add(userConfirmedPasswordField);
 		RegisterOptionMenu.setLayout(new GridLayout(3, 2, 0, 15));
-		
+
 		JOptionPane.showMessageDialog(null, RegisterOptionMenu, "Register", JOptionPane.OK_OPTION);
-		
+
 		if (!new String((userPasswordField).getPassword()).equals(new String(userConfirmedPasswordField.getPassword()))) {
 			JOptionPane.showMessageDialog(null, "Passwords dont match");
 			loggedIn = false;
 		} else {
-			User user = new User();
-			user.setPassword(MD5(new String(userPasswordField.getPassword())));
-			user.setUsername(userNameField.getText());
-			Jsonizer.jsonize(user);
+			player.setPassword(MD5(new String(userPasswordField.getPassword())));
+			player.setUsername(userNameField.getText());
+			Jsonizer.jsonize(player);
 			try {
 				URL url = new URL("http://chess.neumont.edu:80/ChessGame/register");
 				URLConnection connection = url.openConnection();
 				connection.setDoOutput(true);
 				OutputStreamWriter writer = new OutputStreamWriter(connection.getOutputStream());
-				writer.write(Jsonizer.jsonize(user));
+				writer.write(Jsonizer.jsonize(player));
 				writer.flush();
 
 				InputStreamReader in = new InputStreamReader(connection.getInputStream());
@@ -148,17 +152,15 @@ public class Main {
 				}
 				loggedIn = Jsonizer.dejsonize(jsonStringBuilder.toString(), User.class) != null;
 			} catch (MalformedURLException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
 		return loggedIn;
 	}
 
-	private static boolean login() {
+	private static boolean login(User player) {
 
 		boolean loggedIn = false;
 
@@ -172,17 +174,16 @@ public class Main {
 		LoginOptionMenu.setLayout(new GridLayout(2, 1, 0, 15));
 		JOptionPane.showMessageDialog(null, LoginOptionMenu, "Login", JOptionPane.OK_OPTION);
 
-		User user = new User();
-		user.setPassword(MD5(new String(userPasswordField.getPassword())));
-		user.setUsername((userNameField.getText()));
-		Jsonizer.jsonize(user);
+		player.setPassword(MD5(new String(userPasswordField.getPassword())));
+		player.setUsername((userNameField.getText()));
+		Jsonizer.jsonize(player);
 
 		try {
 			URL url = new URL("http://chess.neumont.edu:80/ChessGame/login");
 			URLConnection openConnection = url.openConnection();
 			openConnection.setDoOutput(true);
 			OutputStreamWriter writer = new OutputStreamWriter(openConnection.getOutputStream());
-			writer.write(Jsonizer.jsonize(user));
+			writer.write(Jsonizer.jsonize(player));
 			writer.flush();
 
 			StringBuilder jsonStringBuilder = new StringBuilder();
@@ -193,12 +194,10 @@ public class Main {
 					jsonStringBuilder.append((char) bytesRead);
 			}
 			loggedIn = Jsonizer.dejsonize(jsonStringBuilder.toString(), boolean.class);
-			
+
 		} catch (MalformedURLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
@@ -246,9 +245,6 @@ public class Main {
 			}
 			if (lengthFromClient != lengthFromServer)
 				throw new RuntimeException("Lengths are different!");
-			else
-				System.out.println("Lengths are the same");
-
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
