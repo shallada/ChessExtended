@@ -40,18 +40,18 @@ public class Main {
 	public static void main(String[] args) {
 		boolean loggedIn = false;
 		while (!loggedIn) {
-			int Choice = JOptionPane.showConfirmDialog(null, "Do you have an account?", "Login", JOptionPane.YES_NO_OPTION);
+			int choice = JOptionPane.showConfirmDialog(null, "Do you have an account?", "Login", JOptionPane.YES_NO_OPTION);
 //			System.out.println(Choice);
 //			boolean doAgain = true;
 //			while (doAgain) {
 //				{
-					switch (Choice) {
+					switch (choice) {
 					case 0:
-						loggedIn = Login();
+						loggedIn = login();
 //						doAgain = !loggedIn;
 						break;
 					case 1:
-						loggedIn = Register();
+						loggedIn = register();
 //						doAgain = !loggedIn;
 						break;
 //					default:
@@ -106,7 +106,7 @@ public class Main {
 		} while (JOptionPane.showConfirmDialog(null, "do you want to play again?", "play again?", JOptionPane.YES_NO_OPTION) == 0);
 	}
 
-	private static boolean Register() {
+	private static boolean register() {
 		boolean loggedIn = false;
 		JPanel RegisterOptionMenu = new JPanel();
 		JTextField userNameField = new JTextField();
@@ -158,7 +158,7 @@ public class Main {
 		return loggedIn;
 	}
 
-	private static boolean Login() {
+	private static boolean login() {
 
 		boolean loggedIn = false;
 
