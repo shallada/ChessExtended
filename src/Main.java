@@ -33,6 +33,10 @@ import edu.neumont.learningChess.model.TextCommandProcessorOutput;
 import edu.neumont.learningChess.model.User;
 
 public class Main {
+	
+	private static String theme = null;
+	private static GameController.PlayerType white = null;
+	private static GameController.PlayerType black = null;
 
 	public static void main(String[] args) {
 		boolean loggedIn = false;
@@ -71,7 +75,7 @@ public class Main {
 					JOptionPane.showMessageDialog(null, "Passwords dont match");
 					continue;
 				}
-				endpoint = "http://chess.neumont.edu:8081/ChessGame/register";
+				endpoint = "http://chess.neumont.edu:80/ChessGame/register";
 				String username = ((JTextField) components[1]).getText();
 				String MD5Passweord = MD5(new String(((JPasswordField) components[3]).getPassword()));
 				System.out.println("password: "+ new String(((JPasswordField) components[3]).getPassword()));
@@ -109,7 +113,7 @@ public class Main {
 				break;
 			case 4:
 
-				endpoint = "http://chess.neumont.edu:8081/ChessGame/login";
+				endpoint = "http://chess.neumont.edu:80/ChessGame/login";
 				username = ((JTextField) components[1]).getText();
 				MD5Passweord = MD5(((JPasswordField) components[3]).getPassword().toString());
 				user = new User();
@@ -154,7 +158,16 @@ public class Main {
 			JComboBox themeBox = new JComboBox(themeNames);
 			JComboBox whiteComboBox = new JComboBox(new Object[] { GameController.PlayerType.Human, GameController.PlayerType.LearningServer, GameController.PlayerType.AI });
 			JComboBox blackComboBox = new JComboBox(new Object[] { GameController.PlayerType.Human, GameController.PlayerType.LearningServer, GameController.PlayerType.AI });
-			blackComboBox.setSelectedIndex(1);
+			
+			if(white != null && black != null && theme != null){
+				whiteComboBox.setSelectedItem(white);
+				blackComboBox.setSelectedItem(black);
+				themeBox.setSelectedItem(theme);
+			}
+			else{
+				blackComboBox.setSelectedIndex(1);
+			}
+			
 			JPanel comboBoxes = new JPanel();
 			comboBoxes.setLayout(new GridLayout(3, 3, 0, 15));
 			comboBoxes.add(new JLabel("White:"));
@@ -165,9 +178,9 @@ public class Main {
 			comboBoxes.add(themeBox);
 
 			JOptionPane.showMessageDialog(null, comboBoxes, "Select Players", JOptionPane.INFORMATION_MESSAGE);
-			final String theme = themeBox.getSelectedItem().toString();
-			final GameController.PlayerType white = GameController.PlayerType.valueOf(whiteComboBox.getSelectedItem().toString());
-			final GameController.PlayerType black = GameController.PlayerType.valueOf(blackComboBox.getSelectedItem().toString());
+			theme = themeBox.getSelectedItem().toString();
+			white = GameController.PlayerType.valueOf(whiteComboBox.getSelectedItem().toString());
+			black = GameController.PlayerType.valueOf(blackComboBox.getSelectedItem().toString());
 
 			GameController.setShowBoard(true);
 			GameController game = new GameController(white, black, theme);
@@ -196,7 +209,7 @@ public class Main {
 		if (ServerPlayer.IS_LOCAL) {
 			endpoint = "http://localhost:8080/LearningChessWebServer/analyzehistory";
 		} else {
-			endpoint = "http://chess.neumont.edu:8081/ChessGame/analyzehistory";
+			endpoint = "http://chess.neumont.edu:80/ChessGame/analyzehistory";
 		}
 
 		try {

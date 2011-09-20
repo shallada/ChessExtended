@@ -9,13 +9,7 @@ import edu.neumont.learningChess.api.Location;
 
 public class Bishop extends ChessPiece {
 
-	public static final String NAME = "Bishop";
-	private static final int WORTH = 3;
-	
-
-	public Bishop() {
-		super(WORTH);
-	}
+	public static final String NAME = "Bishop";	
 
 	public String getName() {
 		return NAME;
