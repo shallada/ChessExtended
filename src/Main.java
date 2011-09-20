@@ -35,16 +35,11 @@ import edu.neumont.learningChess.model.User;
 public class Main {
 
 	public static void main(String[] args) {
-//		int count = 0;
-//		while (count < 100){
-//			System.out.println(MD5("1234"));
-//			
-//		}
-		boolean logedIn = false;
-		while (!logedIn) {
+		boolean loggedIn = false;
+		while (!loggedIn) {
 		JPanel LoginOptionMenu = new JPanel();
 		String title = "";
-		switch (JOptionPane.showConfirmDialog(null, "Do you have an account?", "Login", JOptionPane.YES_NO_OPTION)) {
+		switch (JOptionPane.showConfirmDialog(null, "Do you have an account?", "Loggin", JOptionPane.YES_NO_OPTION)) {
 		case 0:
 			LoginOptionMenu.add(new JLabel("User Name"));
 			LoginOptionMenu.add(new JTextField());
@@ -72,48 +67,81 @@ public class Main {
 			String endpoint = "";
 			switch (components.length) {
 			case 6:
-				System.out.println(new String(((JPasswordField) components[3]).getPassword())+"\nand\n"+new String(((JPasswordField) components[5]).getPassword()));
 				if (!new String(((JPasswordField) components[3]).getPassword()).equals(new String(((JPasswordField) components[5]).getPassword()))) {
 					JOptionPane.showMessageDialog(null, "Passwords dont match");
 					continue;
 				}
 				endpoint = "http://chess.neumont.edu:8081/ChessGame/register";
+				String username = ((JTextField) components[1]).getText();
+				String MD5Passweord = MD5(new String(((JPasswordField) components[3]).getPassword()));
+				System.out.println("password: "+ new String(((JPasswordField) components[3]).getPassword()));
+				System.out.println("MD5password: "+ MD5Passweord);
+				System.out.println("username: "+ username);
+				User user = new User();
+				user.setPassword(MD5Passweord);
+				user.setUsername(username);
+				Jsonizer.jsonize(user);
+				try{
+					URL url = new URL(endpoint);
+				URLConnection connection = url.openConnection();
+				connection.setDoOutput(true);
+				OutputStreamWriter writer = new OutputStreamWriter(connection.getOutputStream());
+				String jsonOut = Jsonizer.jsonize(user);
+				writer.write(jsonOut);
+				writer.flush();
+				
+				InputStreamReader in = new InputStreamReader(connection.getInputStream());
+				jsonStringBuilder = new StringBuilder();
+				int bytesRead;
+				while ((bytesRead = in.read()) > -1) {
+					if ((char) bytesRead != '\n' && (char) bytesRead != '\r')
+						jsonStringBuilder.append((char) bytesRead);
+				}
+				System.out.println(jsonStringBuilder.toString());
+				loggedIn = Jsonizer.dejsonize(jsonStringBuilder.toString(), User.class) != null;
+			} catch (MalformedURLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 				break;
 			case 4:
 
 				endpoint = "http://chess.neumont.edu:8081/ChessGame/login";
+				username = ((JTextField) components[1]).getText();
+				MD5Passweord = MD5(((JPasswordField) components[3]).getPassword().toString());
+				user = new User();
+				user.setPassword(MD5Passweord);
+				user.setUsername(username);
+				Jsonizer.jsonize(user);
+				try {
+					URL url = new URL(endpoint);
+				URLConnection connection = url.openConnection();
+				connection.setDoOutput(true);
+				OutputStreamWriter writer = new OutputStreamWriter(connection.getOutputStream());
+				String jsonOut = Jsonizer.jsonize(user);
+				writer.write(jsonOut);
+				writer.flush();
+				
+				InputStreamReader in = new InputStreamReader(connection.getInputStream());
+				jsonStringBuilder = new StringBuilder();
+				int bytesRead;
+				while ((bytesRead = in.read()) > -1) {
+					if ((char) bytesRead != '\n' && (char) bytesRead != '\r')
+						jsonStringBuilder.append((char) bytesRead);
+				}
+				System.out.println(jsonStringBuilder.toString());
+				loggedIn = Jsonizer.dejsonize(jsonStringBuilder.toString(), boolean.class);
+				} catch (MalformedURLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 				break;
-			}
-			String username = ((JTextField) components[1]).getText();
-			String MD5Passweord = MD5(((JPasswordField) components[3]).getPassword().toString());
-			User user = new User();
-			user.setPassword(MD5Passweord);
-			user.setUsername(username);
-			Jsonizer.jsonize(user);
-			try {
-				URL url = new URL(endpoint);
-			URLConnection connection = url.openConnection();
-			connection.setDoOutput(true);
-			OutputStreamWriter writer = new OutputStreamWriter(connection.getOutputStream());
-			String jsonOut = Jsonizer.jsonize(user);
-			writer.write(jsonOut);
-			writer.flush();
-			
-			InputStreamReader in = new InputStreamReader(connection.getInputStream());
-			jsonStringBuilder = new StringBuilder();
-			int bytesRead;
-			while ((bytesRead = in.read()) > -1) {
-				if ((char) bytesRead != '\n' && (char) bytesRead != '\r')
-					jsonStringBuilder.append((char) bytesRead);
-			}
-			System.out.println(jsonStringBuilder.toString());
-			logedIn = Jsonizer.dejsonize(jsonStringBuilder.toString(), boolean.class);
-			}catch (MalformedURLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
 			}
 		}
 		System.out.println("Here");
@@ -210,34 +238,34 @@ public class Main {
 	public static String MD5(String str) {
 		MessageDigest md;
 		byte[] md5hash = new byte[32];
-        try {
-        	md = MessageDigest.getInstance("MD5");
-	        md.update(str.getBytes("iso-8859-1"), 0, str.length());
-	        md5hash = md.digest();
+		try {
+			md = MessageDigest.getInstance("MD5");
+			md.update(str.getBytes("iso-8859-1"), 0, str.length());
+			md5hash = md.digest();
 		} catch (NoSuchAlgorithmException e) {
 			e.printStackTrace();
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
 		}
-        return convertToHex(md5hash);
-        
+		return convertToHex(md5hash);
+
 	}
-	
-	private static String convertToHex(byte[] data) { 
-        StringBuffer buf = new StringBuffer();
-        for (int i = 0; i < data.length; i++) { 
-            int halfbyte = (data[i] >>> 4) & 0x0F;
-            int two_halfs = 0;
-            do { 
-                if ((0 <= halfbyte) && (halfbyte <= 9)) 
-                    buf.append((char) ('0' + halfbyte));
-                else 
-                    buf.append((char) ('a' + (halfbyte - 10)));
-                halfbyte = data[i] & 0x0F;
-            } while(two_halfs++ < 1);
-        } 
-        return buf.toString();
-    } 
+
+	private static String convertToHex(byte[] data) {
+		StringBuffer buf = new StringBuffer();
+		for (int i = 0; i < data.length; i++) {
+			int halfbyte = (data[i] >>> 4) & 0x0F;
+			int two_halfs = 0;
+			do {
+				if ((0 <= halfbyte) && (halfbyte <= 9))
+					buf.append((char) ('0' + halfbyte));
+				else
+					buf.append((char) ('a' + (halfbyte - 10)));
+				halfbyte = data[i] & 0x0F;
+			} while (two_halfs++ < 1);
+		}
+		return buf.toString();
+	}
 
 	public static void old_main(String[] args) {
 
