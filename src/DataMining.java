@@ -44,7 +44,7 @@ public class DataMining {
 			while((temp = in.readLine()) != null)
 			{
 				ChessNotationText = ChessNotationText.concat(" " + temp);
-				System.out.println(temp);
+				//System.out.println(temp);
 			}
 			in.close();
 		} catch (FileNotFoundException e) {
@@ -58,8 +58,13 @@ public class DataMining {
 		Matcher matcher = pattern.matcher(ChessNotationText);
 		while (matcher.matches());
 		{
-			whitePGN.add(matcher.group(1));
-			blackPGN.add(matcher.group(2));
+			System.out.println("Matches found: " + matcher.find());
+			System.out.println("Group count: " + matcher.groupCount());
+			System.out.println("Start: " + matcher.start());
+			System.out.println("End: " + matcher.end());
+			System.out.println("Group: " + matcher.group());
+//			whitePGN.add(matcher.group(1));
+//			blackPGN.add(matcher.group(2));
 		}
 	}
 	
