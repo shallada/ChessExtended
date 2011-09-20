@@ -103,8 +103,8 @@ public class Main {
 					PlayerType winnerType = null;
 					if (gameOverType == GameOverType.checkmate)
 						winnerType = game.getCurrentTeam().isWhite() ? black : white;
-					tellTheServer(game.getGameHistory(), (white.getValue() == PlayerType.Human.getValue()) ? player.getUsername() : white.toString(),
-							(black.getValue() == PlayerType.Human.getValue()) ? player.getUsername() : black.toString(), winnerType);
+					tellTheServer(game.getGameHistory(), (white == PlayerType.Human) ? player.getUsername() : white.toString(),
+							(black == PlayerType.Human) ? player.getUsername() : black.toString(), winnerType);
 					game.close();
 				}
 			} while (JOptionPane.showConfirmDialog(null, "do you want to play again?", "play again?", JOptionPane.YES_NO_OPTION) == 0);
