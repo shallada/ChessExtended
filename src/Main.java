@@ -248,9 +248,6 @@ public class Main {
 			}
 			if (lengthFromClient != lengthFromServer)
 				throw new RuntimeException("Lengths are different!");
-			else
-				System.out.println("Lengths are the same");
-
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
