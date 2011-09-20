@@ -12,6 +12,13 @@ public class AIPlayer extends Player {
 	private ChessBoard board;
 	private Team otherTeam;
 	private ICheckChecker checkChecker;
+	
+	private static final int PAWN_VALUE = 1;
+	private static final int ROOK_VALUE = 5;
+	private static final int KNIGHT_VALUE = 3;
+	private static final int BISHOP_VALUE = 3;
+	private static final int QUEEN_VALUE = 9;
+	private static final int KING_VALUE = 10000;
 
 	public AIPlayer(ChessBoard board, Team team, Team otherTeam,
 			ICheckChecker checkChecker) {
@@ -102,9 +109,19 @@ public class AIPlayer extends Player {
 	}
 
 	private int getValueOfLocation(Location location) {
-		int pieceValue = board.hasPiece(location) ? board.getPiece(location)
-				.getValue() : 0;
+		int pieceValue = board.hasPiece(location) ? getPieceValue(board.getPiece(location)): 0;
 		return pieceValue;
+	}
+	
+	private int getPieceValue(ChessPiece piece) {
+		int value = 0;
+		if (piece instanceof Pawn) value = PAWN_VALUE;
+		else if (piece instanceof Rook) value = ROOK_VALUE;
+		else if (piece instanceof Knight) value = KNIGHT_VALUE;
+		else if (piece instanceof Bishop) value = BISHOP_VALUE;
+		else if (piece instanceof Queen) value = QUEEN_VALUE;
+		else if (piece instanceof King) value = KING_VALUE;
+		return value;
 	}
 
 	@Override

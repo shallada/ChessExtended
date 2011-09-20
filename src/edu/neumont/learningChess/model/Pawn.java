@@ -12,13 +12,11 @@ public class Pawn extends ChessPiece {
 	}
 
 	public static final String NAME = "Pawn";
-	private static final int WORTH = 1;
 	private ChessPiece promotionPiece = null;
 
 	private IPromotionListener promotionListener = null;
 
 	public Pawn(IPromotionListener promotionListener) {
-		super(WORTH);
 		this.setPromotionListener(promotionListener);
 	}
 
