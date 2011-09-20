@@ -26,6 +26,7 @@ import edu.neumont.learningChess.controller.GameController;
 import edu.neumont.learningChess.controller.GameController.PlayerType;
 import edu.neumont.learningChess.controller.GameOverType;
 import edu.neumont.learningChess.json.Jsonizer;
+import edu.neumont.learningChess.model.HumanPlayer;
 import edu.neumont.learningChess.model.ServerPlayer;
 import edu.neumont.learningChess.model.TextCommandProcessor;
 import edu.neumont.learningChess.model.TextCommandProcessorOutput;
@@ -38,27 +39,29 @@ public class Main {
 	private static GameController.PlayerType black = null;
 
 	public static void main(String[] args) {
+		User player = null;
 		boolean loggedIn = false;
 		boolean playGame = true;
 		while (!loggedIn && playGame) {
 			int choice = JOptionPane.showConfirmDialog(null, "Do you have an account?", "Login", JOptionPane.YES_NO_CANCEL_OPTION);
-			 System.out.println(choice);
+			player = new User();
 			// boolean doAgain = true;
 			// while (doAgain) {
 			// {
 			switch (choice) {
 			case 0:
-				loggedIn = login();
+				loggedIn = login(player);
 				// doAgain = !loggedIn;
 				break;
 			case 1:
-				loggedIn = register();
+				loggedIn = register(player);
 				// doAgain = !loggedIn;
 				break;
 			case 2:
 			case -1:
 				playGame = false;
 			}
+			// }
 		}
 		if (playGame) {
 			do {
@@ -101,14 +104,15 @@ public class Main {
 					PlayerType winnerType = null;
 					if (gameOverType == GameOverType.checkmate)
 						winnerType = game.getCurrentTeam().isWhite() ? black : white;
-					tellTheServer(game.getGameHistory(), white.toString(), black.toString(), winnerType);
+					tellTheServer(game.getGameHistory(), (white.getValue() == PlayerType.Human.getValue()) ? player.getUsername() : white.toString(),
+							(black.getValue() == PlayerType.Human.getValue()) ? player.getUsername() : black.toString(), winnerType);
 					game.close();
 				}
 			} while (JOptionPane.showConfirmDialog(null, "do you want to play again?", "play again?", JOptionPane.YES_NO_OPTION) == 0);
 		}
 	}
 
-	private static boolean register() {
+	private static boolean register(User player) {
 		boolean loggedIn = false;
 		JPanel RegisterOptionMenu = new JPanel();
 		JTextField userNameField = new JTextField();
@@ -129,16 +133,15 @@ public class Main {
 			JOptionPane.showMessageDialog(null, "Passwords dont match");
 			loggedIn = false;
 		} else {
-			User user = new User();
-			user.setPassword(MD5(new String(userPasswordField.getPassword())));
-			user.setUsername(userNameField.getText());
-			Jsonizer.jsonize(user);
+			player.setPassword(MD5(new String(userPasswordField.getPassword())));
+			player.setUsername(userNameField.getText());
+			Jsonizer.jsonize(player);
 			try {
 				URL url = new URL("http://chess.neumont.edu:80/ChessGame/register");
 				URLConnection connection = url.openConnection();
 				connection.setDoOutput(true);
 				OutputStreamWriter writer = new OutputStreamWriter(connection.getOutputStream());
-				writer.write(Jsonizer.jsonize(user));
+				writer.write(Jsonizer.jsonize(player));
 				writer.flush();
 
 				InputStreamReader in = new InputStreamReader(connection.getInputStream());
@@ -160,7 +163,7 @@ public class Main {
 		return loggedIn;
 	}
 
-	private static boolean login() {
+	private static boolean login(User player) {
 
 		boolean loggedIn = false;
 
@@ -174,17 +177,16 @@ public class Main {
 		LoginOptionMenu.setLayout(new GridLayout(2, 1, 0, 15));
 		JOptionPane.showMessageDialog(null, LoginOptionMenu, "Login", JOptionPane.OK_OPTION);
 
-		User user = new User();
-		user.setPassword(MD5(new String(userPasswordField.getPassword())));
-		user.setUsername((userNameField.getText()));
-		Jsonizer.jsonize(user);
+		player.setPassword(MD5(new String(userPasswordField.getPassword())));
+		player.setUsername((userNameField.getText()));
+		Jsonizer.jsonize(player);
 
 		try {
 			URL url = new URL("http://chess.neumont.edu:80/ChessGame/login");
 			URLConnection openConnection = url.openConnection();
 			openConnection.setDoOutput(true);
 			OutputStreamWriter writer = new OutputStreamWriter(openConnection.getOutputStream());
-			writer.write(Jsonizer.jsonize(user));
+			writer.write(Jsonizer.jsonize(player));
 			writer.flush();
 
 			StringBuilder jsonStringBuilder = new StringBuilder();
