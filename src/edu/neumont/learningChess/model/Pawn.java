@@ -11,17 +11,12 @@ public class Pawn extends ChessPiece {
 		public ChessPiece getPromotionPiece(Location location);
 	}
 
-	public static final String NAME = "Pawn";
 	private ChessPiece promotionPiece = null;
 
 	private IPromotionListener promotionListener = null;
 
 	public Pawn(IPromotionListener promotionListener) {
 		this.setPromotionListener(promotionListener);
-	}
-
-	public String getName() {
-		return NAME;
 	}
 
 	public ChessPiece getPromotionPiece(Location location) {

@@ -32,8 +32,8 @@ public abstract class ChessPiece {
 		moveCount--;
 	}
 
-	public String getName() {
-		return null;
+	public final String getName() {
+		return this.getClass().getSimpleName();
 	}
 
 	public void setTeam(Team team) {
