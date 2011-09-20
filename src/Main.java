@@ -39,71 +39,73 @@ public class Main {
 
 	public static void main(String[] args) {
 		boolean loggedIn = false;
-		while (!loggedIn) {
-			int choice = JOptionPane.showConfirmDialog(null, "Do you have an account?", "Login", JOptionPane.YES_NO_OPTION);
-//			System.out.println(Choice);
-//			boolean doAgain = true;
-//			while (doAgain) {
-//				{
-					switch (choice) {
-					case 0:
-						loggedIn = login();
-//						doAgain = !loggedIn;
-						break;
-					case 1:
-						loggedIn = register();
-//						doAgain = !loggedIn;
-						break;
-//					default:
-//						doAgain = false;
-//					}
-				}
-			
+		boolean playGame = true;
+		while (!loggedIn && playGame) {
+			int choice = JOptionPane.showConfirmDialog(null, "Do you have an account?", "Login", JOptionPane.YES_NO_CANCEL_OPTION);
+			 System.out.println(choice);
+			// boolean doAgain = true;
+			// while (doAgain) {
+			// {
+			switch (choice) {
+			case 0:
+				loggedIn = login();
+				// doAgain = !loggedIn;
+				break;
+			case 1:
+				loggedIn = register();
+				// doAgain = !loggedIn;
+				break;
+			case 2:
+			case -1:
+				playGame = false;
+			}
 		}
-		do {
-			ThemeNames[] values = ThemeNames.values();
-			String[] themeNames = new String[values.length];
-			for (int i = 0; i < values.length; i++) {
-				themeNames[i] = values[i].toString();
-			}
-			JComboBox themeBox = new JComboBox(themeNames);
-			JComboBox whiteComboBox = new JComboBox(new Object[] { GameController.PlayerType.Human, GameController.PlayerType.LearningServer, GameController.PlayerType.AI });
-			JComboBox blackComboBox = new JComboBox(new Object[] { GameController.PlayerType.Human, GameController.PlayerType.LearningServer, GameController.PlayerType.AI });
+		if (playGame) {
+			do {
+				ThemeNames[] values = ThemeNames.values();
+				String[] themeNames = new String[values.length];
+				for (int i = 0; i < values.length; i++) {
+					themeNames[i] = values[i].toString();
+				}
+				JComboBox themeBox = new JComboBox(themeNames);
+				JComboBox whiteComboBox = new JComboBox(new Object[] { GameController.PlayerType.Human, GameController.PlayerType.LearningServer, GameController.PlayerType.AI });
+				JComboBox blackComboBox = new JComboBox(new Object[] { GameController.PlayerType.Human, GameController.PlayerType.LearningServer, GameController.PlayerType.AI });
 
-			if (white != null && black != null && theme != null) {
-				whiteComboBox.setSelectedItem(white);
-				blackComboBox.setSelectedItem(black);
-				themeBox.setSelectedItem(theme);
-			} else {
-				blackComboBox.setSelectedIndex(1);
-			}
+				if (white != null && black != null && theme != null) {
+					whiteComboBox.setSelectedItem(white);
+					blackComboBox.setSelectedItem(black);
+					themeBox.setSelectedItem(theme);
+				} else {
+					blackComboBox.setSelectedIndex(1);
+				}
 
-			JPanel comboBoxes = new JPanel();
-			comboBoxes.setLayout(new GridLayout(3, 3, 0, 15));
-			comboBoxes.add(new JLabel("White:"));
-			comboBoxes.add(whiteComboBox);
-			comboBoxes.add(new JLabel("Black:"));
-			comboBoxes.add(blackComboBox);
-			comboBoxes.add(new JLabel("Piece theme:"));
-			comboBoxes.add(themeBox);
+				JPanel comboBoxes = new JPanel();
+				comboBoxes.setLayout(new GridLayout(3, 3, 0, 15));
+				comboBoxes.add(new JLabel("White:"));
+				comboBoxes.add(whiteComboBox);
+				comboBoxes.add(new JLabel("Black:"));
+				comboBoxes.add(blackComboBox);
+				comboBoxes.add(new JLabel("Piece theme:"));
+				comboBoxes.add(themeBox);
 
-			JOptionPane.showMessageDialog(null, comboBoxes, "Select Players", JOptionPane.INFORMATION_MESSAGE);
-			theme = themeBox.getSelectedItem().toString();
-			white = GameController.PlayerType.valueOf(whiteComboBox.getSelectedItem().toString());
-			black = GameController.PlayerType.valueOf(blackComboBox.getSelectedItem().toString());
+				JOptionPane.showMessageDialog(null, comboBoxes, "Select Players", JOptionPane.INFORMATION_MESSAGE);
+				theme = themeBox.getSelectedItem().toString();
+				white = GameController.PlayerType.valueOf(whiteComboBox.getSelectedItem().toString());
+				black = GameController.PlayerType.valueOf(blackComboBox.getSelectedItem().toString());
 
-			GameController.setShowBoard(true);
-			GameController game = new GameController(white, black, theme);
-			GameOverType gameOverType = game.play();
-			if (game.isCheckmate() || game.isStalemate()) {
-				game.disableClosing();
-				PlayerType winnerType = null;
-				if (gameOverType == GameOverType.checkmate)
-					winnerType = game.getCurrentTeam().isWhite() ? black : white;
-				tellTheServer(game.getGameHistory(), white.toString(), black.toString(), winnerType);
-				game.close();
-			}
-		} while (JOptionPane.showConfirmDialog(null, "do you want to play again?", "play again?", JOptionPane.YES_NO_OPTION) == 0);
+				GameController.setShowBoard(true);
+				GameController game = new GameController(white, black, theme);
+				GameOverType gameOverType = game.play();
+				if (game.isCheckmate() || game.isStalemate()) {
+					game.disableClosing();
+					PlayerType winnerType = null;
+					if (gameOverType == GameOverType.checkmate)
+						winnerType = game.getCurrentTeam().isWhite() ? black : white;
+					tellTheServer(game.getGameHistory(), white.toString(), black.toString(), winnerType);
+					game.close();
+				}
+			} while (JOptionPane.showConfirmDialog(null, "do you want to play again?", "play again?", JOptionPane.YES_NO_OPTION) == 0);
+		}
 	}
 
 	private static boolean register() {
@@ -120,9 +122,9 @@ public class Main {
 		RegisterOptionMenu.add(new JLabel("Password confirm"));
 		RegisterOptionMenu.add(userConfirmedPasswordField);
 		RegisterOptionMenu.setLayout(new GridLayout(3, 2, 0, 15));
-		
+
 		JOptionPane.showMessageDialog(null, RegisterOptionMenu, "Register", JOptionPane.OK_OPTION);
-		
+
 		if (!new String((userPasswordField).getPassword()).equals(new String(userConfirmedPasswordField.getPassword()))) {
 			JOptionPane.showMessageDialog(null, "Passwords dont match");
 			loggedIn = false;
@@ -193,7 +195,7 @@ public class Main {
 					jsonStringBuilder.append((char) bytesRead);
 			}
 			loggedIn = Jsonizer.dejsonize(jsonStringBuilder.toString(), boolean.class);
-			
+
 		} catch (MalformedURLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
