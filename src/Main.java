@@ -52,13 +52,13 @@ public class Main {
 				break;
 			case 1:
 				loggedIn = register(player);
-				JOptionPane.showMessageDialog(null, "Unable to make accout", "error", JOptionPane.INFORMATION_MESSAGE);
+				// this should be in an if statement, but its not, so its shown every time.
+				JOptionPane.showMessageDialog(null, "Unable to make account", "error", JOptionPane.INFORMATION_MESSAGE);
 				break;
 			case 2:
 			case -1:
 				playGame = false;
 			}
-			// }
 		}
 		int choice = 0;
 		if (playGame) {
